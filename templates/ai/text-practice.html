@@ -1,0 +1,2770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Practice - PathForge</title>
+    <link rel="icon" href="/favicon.ico">
+    <!--
+        ⚠️ IMPORTANT: Add your OpenAI API key below in the JavaScript section
+        Look for: const apiKey = 'YOUR_API_KEY_HERE';
+        Get your API key from: https://platform.openai.com/api-keys
+        
+        Meet Old Man Jack - Your no-nonsense coach with decades of experience
+    -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000000;
+            color: white;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 60px;
+            border-bottom: 1px solid #1a1a1a;
+            background: #000000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: #D4AF37;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: white;
+            letter-spacing: 2px;
+        }
+
+        nav {
+            display: flex;
+            gap: 40px;
+        }
+
+        nav a {
+            color: #999;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover, nav a.active {
+            color: #D4AF37;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .profile-btn-header {
+            color: #999;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        .profile-btn-header:hover {
+            color: #D4AF37;
+        }
+
+        .upgrade-btn {
+            background: transparent;
+            color: #D4AF37;
+            border: 2px solid #D4AF37;
+            padding: 10px 28px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .upgrade-btn:hover {
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        /* Main Container */
+        .practice-container {
+            display: flex;
+            height: calc(100vh - 81px);
+            gap: 2px;
+            background: #1a1a1a;
+        }
+
+        /* Left Stats Sidebar */
+        .left-stats-sidebar {
+            width: 240px;
+            background: #000000;
+            padding: 24px;
+            overflow-y: auto;
+            border-right: none;
+        }
+
+        .left-stats-sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .left-stats-sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .left-stats-sidebar::-webkit-scrollbar-thumb {
+            background: rgba(212, 175, 55, 0.15);
+            border-radius: 3px;
+        }
+
+        .left-stats-sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(212, 175, 55, 0.25);
+        }
+
+        /* Chat Panel */
+        .chat-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #0a0a0a;
+            border-right: none;
+        }
+
+        /* Scenario Info Bar */
+        .scenario-info-bar {
+            padding: 16px 100px;
+            background: #000000;
+            border-bottom: 1px solid #1a1a1a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .scenario-details h2 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #D4AF37;
+            margin-bottom: 4px;
+            font-family: serif;
+        }
+
+        .difficulty-tag {
+            display: inline-block;
+            padding: 3px 8px;
+            background: rgba(212, 175, 55, 0.08);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            color: #D4AF37;
+        }
+
+        /* Conversation Transcript */
+        .conversation-transcript {
+            flex: 1;
+            overflow-y: auto;
+            padding: 48px 100px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            background: linear-gradient(180deg, #0a0a0a 0%, #000000 100%);
+        }
+
+        .conversation-transcript::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .conversation-transcript::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .conversation-transcript::-webkit-scrollbar-thumb {
+            background: rgba(212, 175, 55, 0.15);
+            border-radius: 4px;
+        }
+
+        .conversation-transcript::-webkit-scrollbar-thumb:hover {
+            background: rgba(212, 175, 55, 0.25);
+        }
+
+        .transcript-item {
+            animation: fadeInSmooth 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 8px;
+        }
+
+        @keyframes fadeInSmooth {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .transcript-item.user-speech {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .transcript-item.ai-speech {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .transcript-item .speaker {
+            font-size: 11px;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .transcript-item .speech-text {
+            padding: 16px 22px;
+            border-radius: 18px;
+            font-size: 15px;
+            line-height: 1.6;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .transcript-item.ai-speech .speech-text {
+            background: #1A1A1A;
+            border-left: 3px solid #333;
+            color: #d4d4d4;
+        }
+
+        .transcript-item.user-speech .speech-text {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.08) 100%);
+            border-right: 3px solid rgba(212, 175, 55, 0.5);
+            color: #ffffff;
+        }
+
+        .transcript-item.system-speech {
+            text-align: center;
+            margin: 16px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .transcript-item.system-speech .speaker {
+            display: none;
+        }
+
+        .transcript-item.system-speech .speech-text {
+            background: transparent;
+            color: #555;
+            font-style: italic;
+            font-size: 12px;
+            border: none;
+            max-width: 600px;
+            padding: 10px 20px;
+            letter-spacing: 0.3px;
+        }
+
+        /* Chat Input */
+        .chat-input-area {
+            padding: 28px 100px 32px 100px;
+            background: #0a0a0a;
+            border-top: 1px solid #1a1a1a;
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 12px;
+            background: #000000;
+            border: 1px solid #2a2a2a;
+            border-radius: 12px;
+            padding: 12px 20px;
+            transition: all 0.3s ease;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: rgba(212, 175, 55, 0.5);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.08);
+        }
+
+        .message-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 15px;
+            resize: none;
+            font-family: inherit;
+            min-height: 40px;
+            max-height: 120px;
+            line-height: 1.5;
+        }
+
+        .message-input:focus {
+            outline: none;
+        }
+
+        .message-input::placeholder {
+            color: #555;
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+            border: none;
+            color: #000;
+            padding: 10px 24px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            height: fit-content;
+            align-self: flex-end;
+        }
+
+        .send-btn:hover {
+            background: linear-gradient(135deg, #FFD700 0%, #D4AF37 100%);
+            transform: translateY(-1px);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .message-input:focus {
+            outline: none;
+        }
+
+        .message-input::placeholder {
+            color: #666;
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, #FFD700 0%, #D4AF37 50%, #B8860B 100%);
+            border: none;
+            color: #000;
+            padding: 12px 28px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+            height: fit-content;
+            align-self: flex-end;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+        }
+
+
+        /* Timer */
+        .timer-box {
+            margin-bottom: 20px;
+            padding: 16px;
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 12px;
+        }
+
+        .timer-box h4 {
+            font-size: 14px;
+            color: #D4AF37;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .timer-display {
+            text-align: center;
+            font-size: 42px;
+            font-weight: 700;
+            color: #D4AF37;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 3px;
+            padding: 10px 0;
+        }
+
+        .timer-display.warning {
+            color: #ff9f1c;
+            animation: pulse 1s infinite;
+        }
+
+        .timer-display.danger {
+            color: #ef4444;
+            animation: pulse 0.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Goal Summary Box */
+        .goal-summary-box {
+            margin-bottom: 20px;
+            padding: 14px;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(212, 175, 55, 0.02) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 10px;
+        }
+
+        .goal-summary-box h4 {
+            font-size: 11px;
+            color: #888;
+            margin-bottom: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .goal-summary-text {
+            font-size: 12px;
+            color: #D4AF37;
+            line-height: 1.5;
+            font-weight: 600;
+        }
+
+        /* Progress */
+        .progress-box {
+            margin-bottom: 20px;
+            padding: 16px;
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 12px;
+        }
+
+        .progress-box h4 {
+            font-size: 14px;
+            color: #D4AF37;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .progress-bar-container {
+            height: 8px;
+            background: #1A1A1A;
+            border-radius: 999px;
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #B8860B 0%, #D4AF37 50%, #FFD700 100%);
+            transition: width 0.5s ease;
+            position: relative;
+        }
+
+        .progress-bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 30px;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3));
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+            pointer-events: all;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: linear-gradient(135deg, #1A1A1A 0%, #0a0a0a 100%);
+            border: 2px solid #D4AF37;
+            border-radius: 20px;
+            max-width: 700px;
+            width: 90%;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.9), 0 0 100px rgba(212, 175, 55, 0.3);
+            animation: modalSlide 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        @keyframes modalSlide {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes modalShake {
+            0%, 100% { transform: translateY(0) scale(1); }
+            25% { transform: translateY(-8px) scale(1.01); }
+            75% { transform: translateY(8px) scale(1.01); }
+        }
+
+        .modal.shake {
+            animation: modalShake 0.4s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-50%) translateY(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(-50%) translateY(5px); }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .modal-header {
+            padding: 24px 30px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            background: linear-gradient(180deg, rgba(212, 175, 55, 0.08) 0%, transparent 100%);
+            flex-shrink: 0;
+        }
+
+        .modal-header h2 {
+            font-size: 24px;
+            color: #D4AF37;
+            margin-bottom: 6px;
+            font-family: serif;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .modal-subtitle {
+            font-size: 13px;
+            color: #999;
+            font-weight: 500;
+        }
+
+        .modal-body {
+            padding: 24px 30px;
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .modal-body::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-body::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb {
+            background: rgba(212, 175, 55, 0.3);
+            border-radius: 4px;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb:hover {
+            background: rgba(212, 175, 55, 0.5);
+        }
+
+        .modal-body p {
+            font-size: 16px;
+            color: #ccc;
+            line-height: 1.8;
+            margin-bottom: 24px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 0;
+            padding: 20px 30px;
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+            background: rgba(0, 0, 0, 0.3);
+            flex-shrink: 0;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-btn-primary {
+            background: linear-gradient(135deg, #FFD700 0%, #D4AF37 50%, #B8860B 100%);
+            color: #000;
+        }
+
+        .modal-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+        }
+
+        .modal-btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: #999;
+            border: 1px solid #333;
+        }
+
+        .modal-btn-secondary:hover {
+            border-color: #D4AF37;
+            color: #D4AF37;
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 1400px) {
+            .left-stats-sidebar {
+                width: 220px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .modal {
+                max-width: 95%;
+                max-height: 90vh;
+                border-radius: 16px;
+            }
+
+            .modal-header {
+                padding: 20px 24px;
+            }
+
+            .modal-header h2 {
+                font-size: 20px;
+            }
+
+            .modal-subtitle {
+                font-size: 12px;
+            }
+
+            .modal-body {
+                padding: 20px 24px;
+            }
+
+            .modal-actions {
+                padding: 16px 24px;
+                flex-direction: column;
+            }
+
+            .modal-btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .practice-container {
+                flex-direction: column;
+                gap: 2px;
+            }
+
+            .left-stats-sidebar {
+                width: 100%;
+                max-height: 35vh;
+                border-right: none;
+                border-bottom: none;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+            }
+
+            .conversation-transcript {
+                padding: 32px 50px;
+            }
+
+            .chat-input-area {
+                padding: 24px 50px 28px 50px;
+            }
+
+            .scenario-info-bar {
+                padding: 16px 50px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 20px 30px;
+            }
+
+            nav {
+                display: none;
+            }
+
+            .left-stats-sidebar {
+                grid-template-columns: 1fr;
+                max-height: 40vh;
+            }
+
+            .conversation-transcript {
+                padding: 24px 30px;
+            }
+
+            .chat-input-area {
+                padding: 20px 30px 24px 30px;
+            }
+
+            .transcript-item .speech-text {
+                max-width: 90%;
+                font-size: 14px;
+                padding: 14px 18px;
+            }
+
+            .scenario-info-bar {
+                padding: 16px 30px;
+            }
+
+            .scenario-details h2 {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-left">
+            <div class="logo-icon">⚡</div>
+            <div class="logo">PATHFORGE</div>
+        </div>
+        <nav>
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('ai_menu') }}">AI Practice Menu</a>
+            {% if topic %}
+            <a href="#" class="active">{{ topic.display_name }}</a>
+            {% else %}
+            <a href="#" class="active">Text Practice</a>
+            {% endif %}
+        </nav>
+        <div class="header-right">
+            {% if user and user.is_admin %}
+            <a href="{{ url_for('admin_dashboard') }}" class="profile-btn-header" style="color: #D4AF37; font-weight: 600;">Admin</a>
+            {% endif %}
+            <a href="{{ url_for('profile') }}" class="profile-btn-header">Profile</a>
+            <a href="{{ url_for('logout') }}" class="profile-btn-header">Logout</a>
+        </div>
+    </header>
+
+    <!-- Technique Briefing Modal -->
+    {% if technique %}
+    <div id="briefingModal" style="display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; align-items: center; justify-content: center;">
+        <div style="background: #1a1a1a; border: 2px solid #D4AF37; border-radius: 16px; padding: 40px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto;">
+            <h2 style="color: #D4AF37; margin-bottom: 20px; font-size: 32px;">{{ technique.name }}</h2>
+
+            <div style="background: rgba(212, 175, 55, 0.1); border-left: 4px solid #D4AF37; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <h3 style="color: #D4AF37; font-size: 14px; text-transform: uppercase; margin-bottom: 8px; font-weight: 600;">Your Goal</h3>
+                <p style="color: #fff; margin: 0; line-height: 1.6;">{{ technique.description }}</p>
+            </div>
+
+            <div style="background: rgba(100, 150, 200, 0.1); border-left: 4px solid #6496C8; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <h3 style="color: #6496C8; font-size: 14px; text-transform: uppercase; margin-bottom: 10px; font-weight: 600;">📍 Your Scenario</h3>
+                <p id="contextPreview" style="color: #ddd; margin: 0 0 8px 0; line-height: 1.6; font-size: 14px;">
+                    Loading scenario...
+                </p>
+                <p id="contextOpening" style="color: #fff; font-size: 14px; margin: 10px 0 0 0; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 6px; font-style: italic; border-left: 3px solid #6496C8;">
+                </p>
+            </div>
+
+            <div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 6px; margin-bottom: 25px;">
+                <p style="color: #888; font-size: 13px; margin: 0;">
+                    <strong style="color: #D4AF37;">How it works:</strong> Each time you use this technique, you'll score points. Get 3 points to succeed!
+                </p>
+            </div>
+
+            <button id="startPracticeBtn" onclick="startPractice()" style="width: 100%; padding: 15px; background: linear-gradient(135deg, #D4AF37 0%, #FFD700 100%); color: #000; border: none; border-radius: 10px; font-size: 18px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;">
+                Let's Go!
+            </button>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <div class="practice-container">
+        <!-- Left Stats Sidebar -->
+        <div class="left-stats-sidebar">
+            <!-- Timer -->
+            <div class="timer-box">
+                <h4>⏱️ Time Remaining</h4>
+                <div class="timer-display" id="timerDisplay">5:00</div>
+            </div>
+
+            <!-- Topic Info -->
+            {% if topic %}
+            <div class="goal-summary-box" style="border: 2px solid #D4AF37; background: rgba(212, 175, 55, 0.05);">
+                <h4>🤖 Practice Topic</h4>
+                <div style="color: #D4AF37; font-weight: 600; font-size: 16px; margin-bottom: 8px;">{{ topic.display_name }}</div>
+                {% if topic.description %}
+                <div style="color: #bbb; font-size: 14px; line-height: 1.5;">{{ topic.description }}</div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Goal Summary -->
+            <div class="goal-summary-box">
+                <h4>🎯 Your Goal</h4>
+                <div class="goal-summary-text" id="goalSummaryText">—</div>
+            </div>
+
+            <!-- Progress -->
+            <div class="progress-box">
+                <h4>Progress</h4>
+                <div class="progress-label">
+                    <span>Level <span id="levelNum">1</span> • <span id="levelName">Awareness</span></span>
+                    <span id="xpDisplay">0 XP</span>
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <div class="progress-label">
+                        <span>Scenario Goal</span>
+                        <span id="progressText">0 / 0</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" id="progressFill" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hidden elements for functionality -->
+            <div style="display: none;">
+                <div id="feedbackContent"></div>
+                <span id="lastPoints">+0</span>
+                <span id="exchanges">0</span>
+                <span id="avgPoints">0</span>
+                <span id="quality">—</span>
+                <span id="performance">—</span>
+                <span id="challengeLevel">Moderate</span>
+                <div id="scenarioContextBanner">—</div>
+                <div id="scenarioThemeBanner">—</div>
+                <div id="scenarioGoalBanner">—</div>
+                <div id="setupBanner" style="display: none;">
+                    <div id="setupInfoBanner">—</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Panel -->
+        <div class="chat-panel">
+            <!-- Scenario Info Bar -->
+            <div class="scenario-info-bar">
+                <div class="scenario-details">
+                    <h2 id="scenarioTitle">Loading...</h2>
+                    <div style="display: flex; gap: 8px; align-items: center; margin-top: 4px;">
+                        <span class="difficulty-tag" id="difficultyTag">Easy</span>
+                        <span class="difficulty-tag" id="modeTag" style="background: rgba(96, 165, 250, 0.1); border-color: rgba(96, 165, 250, 0.3); color: #60a5fa;">
+                            Loading...
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Conversation Transcript -->
+            <div class="conversation-transcript" id="transcript"></div>
+
+            <!-- Chat Input -->
+            <div class="chat-input-area">
+                <div class="input-wrapper">
+                    <textarea 
+                        class="message-input" 
+                        id="messageInput"
+                        placeholder="Type your message... (Old Man Jack is watching)"
+                        rows="1"
+                    ></textarea>
+                    <button class="send-btn" id="sendBtn">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scenario Briefing Modal -->
+    <div class="modal-overlay" id="briefingModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>📋 Scenario Briefing</h2>
+                <div class="modal-subtitle" id="briefingSubtitle">Get ready</div>
+            </div>
+            <div class="modal-body">
+                <div id="briefingContent"></div>
+                <div class="modal-actions">
+                    <button class="modal-btn modal-btn-primary" id="startSessionBtn">Start Session ⏱️</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Session Review Modal -->
+    <div class="modal-overlay" id="reviewModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>👴 Old Man Jack's Review</h2>
+                <div class="modal-subtitle" id="reviewSubtitle">Session Complete</div>
+            </div>
+            <div class="modal-body">
+                <div id="reviewContent"></div>
+                <div class="modal-actions">
+                    <button class="modal-btn modal-btn-primary" id="nextScenarioBtn">Next Scenario 🚀</button>
+                    <button class="modal-btn modal-btn-secondary" id="dashboardBtn">Dashboard 🏠</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Completion Modal -->
+    <div class="modal-overlay" id="completeModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>✅ Scenario Complete!</h2>
+                <div class="modal-subtitle" id="modalSubtitle">Great work</div>
+            </div>
+            <div class="modal-body">
+                <p id="completeMsg"></p>
+                <div class="modal-actions">
+                    <button class="modal-btn modal-btn-primary" id="nextBtn">Next Challenge 🚀</button>
+                    <button class="modal-btn modal-btn-secondary" id="dashboardBtn2">Dashboard 🏠</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ⚠️ ADD YOUR OPENAI API KEY HERE
+        const apiKey = '';
+
+        // Game State
+        const state = {
+            totalXP: 0,
+            level: 1,
+            scenario: {},
+            progress: 0,
+            target: 0,
+            exchanges: 0,
+            totalPoints: 0,
+            conversationHistory: [],
+            lastScore: 0,
+            currentChallengeLevel: 'MODERATE',
+            timerSeconds: 300,
+            timerInterval: null
+        };
+
+        // DOM Elements
+        const el = {
+            scenarioTitle: document.getElementById('scenarioTitle'),
+            difficultyTag: document.getElementById('difficultyTag'),
+            modeTag: document.getElementById('modeTag'),
+            transcript: document.getElementById('transcript'),
+            messageInput: document.getElementById('messageInput'),
+            sendBtn: document.getElementById('sendBtn'),
+            levelNum: document.getElementById('levelNum'),
+            levelName: document.getElementById('levelName'),
+            xpDisplay: document.getElementById('xpDisplay'),
+            progressText: document.getElementById('progressText'),
+            progressFill: document.getElementById('progressFill'),
+            timerDisplay: document.getElementById('timerDisplay'),
+            goalSummaryText: document.getElementById('goalSummaryText'),
+            scenarioContextBanner: document.getElementById('scenarioContextBanner'),
+            scenarioThemeBanner: document.getElementById('scenarioThemeBanner'),
+            scenarioGoalBanner: document.getElementById('scenarioGoalBanner'),
+            setupBanner: document.getElementById('setupBanner'),
+            setupInfoBanner: document.getElementById('setupInfoBanner'),
+            lastPoints: document.getElementById('lastPoints'),
+            feedbackContent: document.getElementById('feedbackContent'),
+            exchanges: document.getElementById('exchanges'),
+            avgPoints: document.getElementById('avgPoints'),
+            quality: document.getElementById('quality'),
+            performance: document.getElementById('performance'),
+            challengeLevel: document.getElementById('challengeLevel'),
+            completeModal: document.getElementById('completeModal'),
+            completeMsg: document.getElementById('completeMsg'),
+            modalSubtitle: document.getElementById('modalSubtitle'),
+            nextBtn: document.getElementById('nextBtn'),
+            dashboardBtn2: document.getElementById('dashboardBtn2'),
+            briefingModal: document.getElementById('briefingModal'),
+            briefingContent: document.getElementById('briefingContent'),
+            briefingSubtitle: document.getElementById('briefingSubtitle'),
+            startSessionBtn: document.getElementById('startSessionBtn'),
+            reviewModal: document.getElementById('reviewModal'),
+            reviewContent: document.getElementById('reviewContent'),
+            reviewSubtitle: document.getElementById('reviewSubtitle'),
+            nextScenarioBtn: document.getElementById('nextScenarioBtn'),
+            dashboardBtn: document.getElementById('dashboardBtn')
+        };
+
+        // Save/Load
+        const savedData = { totalXP: 0, level: 1 };
+
+        function saveProgress() {
+            savedData.totalXP = state.totalXP;
+            savedData.level = state.level;
+        }
+
+        // Timer Functions
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function updateTimerDisplay() {
+            el.timerDisplay.textContent = formatTime(state.timerSeconds);
+
+            // Remove all classes first
+            el.timerDisplay.classList.remove('warning', 'danger');
+
+            // Add appropriate class based on time remaining
+            if (state.timerSeconds <= 30) {
+                el.timerDisplay.classList.add('danger');
+            } else if (state.timerSeconds <= 60) {
+                el.timerDisplay.classList.add('warning');
+            }
+        }
+
+        function startTimer() {
+            // Clear any existing timer
+            if (state.timerInterval) {
+                clearInterval(state.timerInterval);
+            }
+
+            // Reset to 5 minutes
+            state.timerSeconds = 300;
+            updateTimerDisplay();
+
+            // Start countdown
+            state.timerInterval = setInterval(() => {
+                state.timerSeconds--;
+                updateTimerDisplay();
+
+                if (state.timerSeconds <= 0) {
+                    stopTimer();
+                    handleTimerExpired();
+                }
+            }, 1000);
+        }
+
+        function stopTimer() {
+            if (state.timerInterval) {
+                clearInterval(state.timerInterval);
+                state.timerInterval = null;
+            }
+        }
+
+        function showBriefingModal() {
+            const conversationMode = state.scenario.conversationMode;
+            const midConvoSetup = state.scenario.midConvoSetup;
+
+            let briefingHTML = `
+                <div>
+                    <div style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 100%); padding: 18px; border-radius: 12px; border: 1px solid rgba(212, 175, 55, 0.3); margin-bottom: 18px;">
+                        <div style="font-size: 12px; color: #D4AF37; font-weight: 700; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1.2px; display: flex; align-items: center; gap: 6px;">
+                            <span>📖</span> <span>Context</span>
+                        </div>
+                        <div style="font-size: 14px; color: #e0e0e0; line-height: 1.7;">${state.scenario.roleContext}</div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px;">
+                        <div style="background: rgba(255, 255, 255, 0.03); padding: 14px; border-radius: 10px; border: 1px solid rgba(212, 175, 55, 0.2);">
+                            <div style="font-size: 10px; color: #888; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600;">Theme</div>
+                            <div style="font-size: 14px; color: #D4AF37; font-weight: 600; line-height: 1.4;">${state.scenario.theme}</div>
+                        </div>
+                        <div style="background: rgba(255, 255, 255, 0.03); padding: 14px; border-radius: 10px; border: 1px solid rgba(212, 175, 55, 0.2);">
+                            <div style="font-size: 10px; color: #888; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600;">Your Goal</div>
+                            <div style="font-size: 14px; color: #D4AF37; font-weight: 600; line-height: 1.4;">${state.scenario.goal}</div>
+                        </div>
+                    </div>
+            `;
+
+            if (conversationMode === 'ongoing' && midConvoSetup) {
+                briefingHTML += `
+                    <div style="background: linear-gradient(135deg, rgba(255, 159, 28, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%); padding: 16px; border-radius: 10px; border: 1px dashed rgba(212, 175, 55, 0.4); margin-bottom: 18px;">
+                        <div style="font-size: 10px; color: #ffa726; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 700; display: flex; align-items: center; gap: 4px;">
+                            <span>⚡</span> <span>Current Situation</span>
+                        </div>
+                        <div style="font-size: 13px; color: #ffd180; line-height: 1.6; font-weight: 500;">${midConvoSetup}</div>
+                    </div>
+                `;
+            }
+
+            briefingHTML += `
+                    <div style="background: rgba(0, 0, 0, 0.4); padding: 16px; border-radius: 10px; border: 1px solid rgba(212, 175, 55, 0.15);">
+                        <div style="font-size: 10px; color: #888; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600;">💡 Coach's Tip</div>
+                        <div style="font-size: 13px; color: #bbb; font-style: italic; line-height: 1.7;">
+                            ${randWeightedOpeners(state.scenario.weights, conversationMode === 'initiation' ? 'initiation' : 'ongoing')}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            el.briefingContent.innerHTML = briefingHTML;
+            el.briefingSubtitle.textContent = `${state.scenario.name} • ${state.scenario.role} • ${state.scenario.difficulty}`;
+            el.briefingModal.classList.add('active');
+
+            // Disable chat input until session starts
+            el.sendBtn.disabled = true;
+            el.messageInput.disabled = true;
+        }
+
+        function startSession() {
+            el.briefingModal.classList.remove('active');
+
+            // Enable chat input
+            el.sendBtn.disabled = false;
+            el.messageInput.disabled = false;
+
+            // Start timer
+            startTimer();
+
+            // Add initial AI message if ongoing conversation
+            if (state.scenario.conversationMode === 'ongoing') {
+                setTimeout(() => {
+                    const contextOpeners = [
+                        "Hey",
+                        "So...",
+                        "Quick question",
+                        "You there?",
+                        "Okay so",
+                        "Random thought",
+                        "Hey you"
+                    ];
+                    addMessage('ai', rand(contextOpeners));
+                }, 300);
+            }
+        }
+
+        async function handleTimerExpired() {
+            {% if technique %}
+            // TECHNIQUE MODE: Complete session and show Jack's review
+            completeTechniqueSession();
+            return;
+            {% endif %}
+
+            // LEGACY MODE: Disable input
+            el.sendBtn.disabled = true;
+            el.messageInput.disabled = true;
+
+            // Show loading message in review modal
+            el.reviewContent.innerHTML = '<div style="text-align: center; padding: 20px;"><div style="color: #999; font-style: italic;">👴 Old Man Jack is analyzing your session...</div></div>';
+            el.reviewSubtitle.textContent = 'Analyzing...';
+            el.reviewModal.classList.add('active');
+
+            // Get comprehensive session review
+            const sessionReview = await getSessionReview();
+
+            const avgPoints = state.exchanges > 0 ? Math.round(state.totalPoints / state.exchanges) : 0;
+            const progressRate = state.target > 0 ? Math.round((state.progress / state.target) * 100) : 0;
+
+            let reviewHTML = `
+                <div>
+                    <div style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 100%); padding: 18px; border-radius: 12px; border: 1px solid rgba(212, 175, 55, 0.3); margin-bottom: 20px;">
+                        <div style="font-size: 12px; color: #D4AF37; font-weight: 700; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 1.2px; display: flex; align-items: center; gap: 6px;">
+                            <span>📊</span> <span>Session Summary</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 10px; color: #888; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Exchanges</div>
+                                <div style="font-size: 24px; color: white; font-weight: 700;">${state.exchanges}</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 10px; color: #888; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Avg Points</div>
+                                <div style="font-size: 24px; color: ${avgPoints < 5 ? '#ff6b6b' : avgPoints >= 15 ? '#22c55e' : '#D4AF37'}; font-weight: 700;">${avgPoints}</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 10px; color: #888; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Progress</div>
+                                <div style="font-size: 24px; color: white; font-weight: 700;">${progressRate}%</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 10px; color: #888; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Duration</div>
+                                <div style="font-size: 24px; color: white; font-weight: 700;">5:00</div>
+                            </div>
+                        </div>
+                    </div>
+            `;
+
+            if (sessionReview) {
+                reviewHTML += `
+                    <div style="background: rgba(0, 0, 0, 0.4); padding: 18px; border-radius: 12px; border: 1px solid rgba(212, 175, 55, 0.2);">
+                        <div style="font-size: 10px; color: #888; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600;">👴 Old Man Jack's Feedback</div>
+                        <div style="font-size: 14px; color: #e0e0e0; line-height: 1.8; white-space: pre-line;">${sessionReview.replace(/<br\/?>/g, '\n').replace(/<[^>]*>/g, '')}</div>
+                    </div>
+                `;
+            } else {
+                // Fallback if API fails
+                let feedback = '';
+                if (avgPoints < 5) {
+                    feedback = `Kid, you struggled. ${state.exchanges} exchanges, averaging ${avgPoints} points. You need serious work on frame control, stop chasing, stop explaining, stop seeking approval.`;
+                } else if (avgPoints < 10) {
+                    feedback = `You made it through ${state.exchanges} exchanges with ${avgPoints} avg points. Decent start, but you're leaving points on the table. Work on teasing, curiosity, and detachment.`;
+                } else if (avgPoints >= 15) {
+                    feedback = `Strong session, kid! ${state.exchanges} exchanges, ${avgPoints} avg points. You're getting it - keep this energy. Stay playful, stay grounded, keep the tension.`;
+                } else {
+                    feedback = `Good work through ${state.exchanges} exchanges. ${avgPoints} avg points shows you're learning. Keep working on frame control and leading the vibe.`;
+                }
+
+                reviewHTML += `
+                    <div style="background: rgba(0, 0, 0, 0.4); padding: 18px; border-radius: 12px; border: 1px solid rgba(212, 175, 55, 0.2);">
+                        <div style="font-size: 10px; color: #888; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600;">👴 Old Man Jack's Feedback</div>
+                        <div style="font-size: 14px; color: #e0e0e0; line-height: 1.8;">${feedback}</div>
+                    </div>
+                `;
+            }
+
+            reviewHTML += `</div>`;
+
+            el.reviewContent.innerHTML = reviewHTML;
+            el.reviewSubtitle.textContent = 'Session Complete';
+        }
+
+        async function getSessionReview() {
+            if (!apiKey || apiKey === 'YOUR_API_KEY_HERE') {
+                return null;
+            }
+
+            try {
+                const avgPoints = state.exchanges > 0 ? Math.round(state.totalPoints / state.exchanges) : 0;
+                const progressRate = state.target > 0 ? Math.round((state.progress / state.target) * 100) : 0;
+
+                // Build conversation summary
+                let conversationSummary = '';
+                state.conversationHistory.forEach((msg, idx) => {
+                    const role = msg.role === 'user' ? 'STUDENT' : state.scenario.name.toUpperCase();
+                    conversationSummary += `${role}: ${msg.content}\n`;
+                });
+
+                const reviewPrompt = `You are Old Man Jack, a grizzled, no-nonsense dating coach reviewing a student's entire 5-minute practice session.
+
+SCENARIO DETAILS:
+- Character: ${state.scenario.name} (${state.scenario.role})
+- Context: ${state.scenario.roleContext}
+- Theme: ${state.scenario.theme}
+- Goal: ${state.scenario.goal}
+- Difficulty: ${state.scenario.difficulty}
+
+SESSION PERFORMANCE:
+- Total Exchanges: ${state.exchanges}
+- Average Points: ${avgPoints}
+- Total Points: ${state.totalPoints}
+- Progress: ${state.progress}/${state.target} (${progressRate}%)
+- Time: 5 minutes (session complete)
+
+FULL CONVERSATION:
+${conversationSummary || 'No messages exchanged.'}
+
+As Old Man Jack, provide a comprehensive session review (4-6 bullet points). Be direct and honest:
+- Comment on overall performance and frame control throughout the session
+- Highlight the biggest wins (specific examples from the conversation)
+- Call out the worst mistakes (specific examples that killed attraction)
+- Give actionable advice for next session
+- Final verdict on their skill level for this difficulty
+
+${avgPoints < 5 ? 'This was a POOR performance. Be harsh but constructive.' : avgPoints >= 15 ? 'This was STRONG work. Give earned praise but stay grounded.' : 'This was DECENT. Mix encouragement with real critique.'}
+
+Format as:
+⏰ SESSION REVIEW - ${state.scenario.difficulty.toUpperCase()}
+
+[Your review in plain speech, like a coach talking to a student]
+
+Keep it real, keep it useful.`;
+
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-4o-mini',
+                        messages: [
+                            { role: 'system', content: reviewPrompt }
+                        ],
+                        max_tokens: 400,
+                        temperature: 0.7
+                    })
+                });
+
+                if (!response.ok) {
+                    return null;
+                }
+
+                const data = await response.json();
+                const reviewText = data.choices[0].message.content;
+
+                return `<div style="line-height: 1.6;">${reviewText.replace(/\n/g, '<br/>')}</div>`;
+            } catch (error) {
+                console.error('Error getting session review:', error);
+                return null;
+            }
+        }
+
+        // Content Pools
+        const names = [
+            'Emma', 'Sophia', 'Olivia', 'Isabella', 'Mia', 'Charlotte', 'Amelia', 'Harper',
+            'Ava', 'Aria', 'Luna', 'Lily', 'Zoe', 'Chloe', 'Madison', 'Riley',
+            'Maya', 'Ella', 'Scarlett', 'Grace', 'Victoria', 'Penelope', 'Layla', 'Nora',
+            'Hannah', 'Hazel', 'Aurora', 'Savannah', 'Brooklyn', 'Bella', 'Claire', 'Skylar',
+            'Lucy', 'Paisley', 'Evelyn', 'Anna', 'Caroline', 'Nova', 'Genesis', 'Emilia',
+            'Kennedy', 'Samantha', 'Maya', 'Willow', 'Kinsley', 'Naomi', 'Aaliyah', 'Elena'
+        ];
+
+        function generateName() {
+            return rand(names);
+        }
+
+        const themes = [
+            'Emotional Balance', 'Playful Tease', 'Scarcity & Polarity', 
+            'Curiosity Leadership', 'Calm Detachment', 'Flirty Mystery', 
+            'Grounded Humor', 'Frame Control', 'Timing & Silence', 
+            'Investment & Boundaries'
+        ];
+
+        const roles = [
+            { 
+                name: 'Romantic Interest', 
+                context: 'Someone you\'ve been dating casually for a few weeks. You met at a mutual friend\'s party, hit it off immediately, and have been on 3 dates so far. The chemistry is there, but she\'s testing your confidence to see if you chase or if you can hold your frame. She\'s juggling other options and wants to see if you\'re different from the other guys.',
+                midConvoSetups: [
+                    'You\'ve been texting back and forth. She just mentioned she\'s stressed about work.',
+                    'She went quiet for 2 days. Now she\'s back with a casual "hey".',
+                    'You made plans for Friday but she\'s being vague about confirming.',
+                    'She just sent a selfie with the caption "bored tonight".',
+                    'After your last date, she texted: "had fun, we should do it again sometime".'
+                ]
+            },
+            { 
+                name: 'Flirty Stranger', 
+                context: 'You matched on a dating app two days ago after she liked your profile first. She opened with a playful comment about your bio. The conversation has been light and flirty, with good banter. She seems intrigued but is definitely talking to other people too. This is the critical phase - either build real attraction or get lost in her rotation.',
+                midConvoSetups: [
+                    'You\'ve been joking around. She just asked "so what do you actually do for fun?"',
+                    'The chat went cold yesterday. She just replied to your last message from 18 hours ago.',
+                    'She sent: "you\'re trouble, aren\'t you?" with a smirk emoji.',
+                    'After some light teasing, she said "okay you\'re kinda funny. I\'ll give you that."',
+                    'She\'s been playfully challenging everything you say. Testing your frame.'
+                ]
+            },
+            { 
+                name: 'Coworker', 
+                context: 'You work in the same department and have been getting subtle signals for the past month - lingering eye contact, finding excuses to talk, staying late when you do. Last week at the company happy hour, things got flirtier than usual. She texted you over the weekend "about something work-related" but the vibe was different. There\'s obvious tension but you need to be calibrated since you work together.',
+                midConvoSetups: [
+                    'She just texted: "so... that was an interesting conversation at lunch."',
+                    'After the work happy hour, she sent: "we should grab drinks sometime. Just us."',
+                    'You\'ve been texting about a work project. She just said "we make a good team".',
+                    'She went quiet after you made a slightly flirty comment. Now she\'s back with "sorry, been busy".',
+                    'She just asked: "what are you doing this weekend?" mid-workday.'
+                ]
+            },
+            { 
+                name: 'Friend', 
+                context: 'You\'ve known each other for 8 months through your friend group. Always got along well, lots of banter and inside jokes. Recently things shifted - more one-on-one hangouts, deeper conversations, physical touching that lingers. Last weekend at a group dinner, she sat next to you and the tension was obvious to everyone. She knows you well, so any neediness or try-hard behavior will be spotted immediately. The dynamic is changing and she\'s watching how you handle it.',
+                midConvoSetups: [
+                    'After the group dinner, she texted: "so... did you notice how weird everyone was acting?"',
+                    'She sent: "can I ask you something?" late at night.',
+                    'You\'ve been texting about random stuff. She just said "you get me in a way most people don\'t".',
+                    'She went quiet after you made a move at the last hangout. Now: "hey stranger".',
+                    'She just asked: "what\'s your type?" out of nowhere.'
+                ]
+            },
+            { 
+                name: 'Ex', 
+                context: 'You dated for 7 months, broke up 3 months ago. It ended because you were too available and she felt you lost your edge. The attraction was always strong but the dynamic got stale. She reached out last week with a "random" message. You\'ve texted a few times since - friendly but charged. She\'s testing whether you\'ve grown or if you\'ll fall back into the old patterns. There\'s unfinished business and she\'s both curious and guarded.',
+                midConvoSetups: [
+                    'She just sent: "I was thinking about that time we..." and brought up a good memory.',
+                    'After texting casually, she said: "you seem different somehow".',
+                    'She went quiet for a few days after getting flirty. Now she\'s back.',
+                    'She just asked: "so are you seeing anyone?" trying to sound casual.',
+                    'She sent: "I miss our conversations" late at night.'
+                ]
+            }
+        ];
+
+        const goals = [
+            'Maintain calm, grounded energy without chasing',
+            'Tease lightly while preserving mystery',
+            'Use curiosity instead of reassurance',
+            'Project ease and let her invest',
+            'Hold silence to increase tension',
+            'Lead the vibe with playful direction',
+            'Reward investment, not attention',
+            'Mirror and redirect emotional spikes',
+            'Stay centered when she tests your frame',
+            'Blend warmth with confident detachment'
+        ];
+
+        const difficultyLevels = [
+            { key: 'Easy', target: 50, per: [5, 15], weights: {deangelo: .6, notegpt: .4} },
+            { key: 'Medium', target: 100, per: [10, 20], weights: {wayne: .5, canwell: .5} },
+            { key: 'Hard', target: 150, per: [15, 25], weights: {shogun: .5, wayne: .3, notegpt: .2} },
+            { key: 'Expert', target: 200, per: [20, 30], weights: {all: .25, shogun: .35, canwell: .2, deangelo: .2} }
+        ];
+
+        const openers = {
+            deangelo: [
+                "Here's the test — keep it light.",
+                "Most guys overexplain here. You won't.",
+                "Tease, then relax."
+            ],
+            wayne: [
+                "Stay centered. Don't chase.",
+                "Lead with calm energy.",
+                "Let her feel your composure."
+            ],
+            canwell: [
+                "Scarcity over reassurance.",
+                "Create pull by relaxing your output.",
+                "Curiosity beats validation."
+            ],
+            shogun: [
+                "Hold tension. Deny closure.",
+                "Stay one step ahead — no neediness.",
+                "Let silence do the heavy lifting."
+            ]
+        };
+
+        const initiationOpeners = {
+            deangelo: [
+                "Time to make the first move. Be playful, not predictable.",
+                "Lead with boldness. Set the tone from word one.",
+                "Your opener sets everything. Make it count."
+            ],
+            wayne: [
+                "Ground yourself first. Then reach out with ease.",
+                "Initiate from a place of centered confidence.",
+                "You're starting this. Own it without forcing it."
+            ],
+            canwell: [
+                "Create intrigue from the first word.",
+                "Your opening should invite, not pursue.",
+                "Lead with authentic curiosity, not agenda."
+            ],
+            shogun: [
+                "Control the frame from the first text.",
+                "Initiate strategically. Make her qualify herself.",
+                "You're leading this dance. Set the tempo."
+            ]
+        };
+
+        const aiReplies = [
+            'Noted. I like your vibe.',
+            'Hmm okay, confident. I see you.',
+            'You\'re trouble, aren\'t you?',
+            'Bold. Keep going.',
+            'Chill. That\'s kind of attractive.',
+            'Interesting approach...',
+            'You seem sure of yourself.',
+            'Ha, we\'ll see about that.',
+            'Not what I expected, but okay.',
+            'Fair enough.',
+            'Intriguing.',
+            'You\'re different, I\'ll give you that.',
+            'Okay, I\'m listening.',
+            'That\'s one way to put it.',
+            'Alright alright.',
+            'I like where this is going.',
+            'Cute.',
+            'Interesting take.'
+        ];
+
+        function rand(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function randWeightedOpeners(weights, mode = 'ongoing') {
+            const pool = [];
+            const openerSet = mode === 'initiation' ? initiationOpeners : openers;
+            
+            if (weights.deangelo) {
+                for (let i = 0; i < Math.round(weights.deangelo * 10); i++) {
+                    pool.push(...openerSet.deangelo);
+                }
+            }
+            if (weights.wayne) {
+                for (let i = 0; i < Math.round(weights.wayne * 10); i++) {
+                    pool.push(...openerSet.wayne);
+                }
+            }
+            if (weights.canwell) {
+                for (let i = 0; i < Math.round(weights.canwell * 10); i++) {
+                    pool.push(...openerSet.canwell);
+                }
+            }
+            if (weights.shogun) {
+                for (let i = 0; i < Math.round(weights.shogun * 10); i++) {
+                    pool.push(...openerSet.shogun);
+                }
+            }
+            if (weights.all) {
+                pool.push(...openerSet.deangelo, ...openerSet.wayne, ...openerSet.canwell, ...openerSet.shogun);
+            }
+            return rand(pool);
+        }
+
+        function levelFromXP(xp) {
+            if (xp >= 500) return 5;
+            if (xp >= 300) return 4;
+            if (xp >= 160) return 3;
+            if (xp >= 60) return 2;
+            return 1;
+        }
+
+        function getDifficultyForLevel(level) {
+            if (level <= 1) return difficultyLevels[0];
+            if (level === 2) return difficultyLevels[1];
+            if (level === 3) return difficultyLevels[2];
+            return difficultyLevels[3];
+        }
+
+        // Scenario Management
+        function newScenario() {
+            state.level = levelFromXP(state.totalXP);
+            const difficulty = getDifficultyForLevel(state.level);
+            const selectedRole = rand(roles);
+            const characterName = generateName();
+            
+            const conversationMode = Math.random() > 0.5 ? 'initiation' : 'ongoing';
+            const midConvoSetup = conversationMode === 'ongoing' ? rand(selectedRole.midConvoSetups) : null;
+            
+            state.scenario = {
+                name: characterName,
+                theme: rand(themes),
+                role: selectedRole.name,
+                roleContext: selectedRole.context,
+                difficulty: difficulty.key,
+                target: difficulty.target,
+                goal: rand(goals),
+                pointRange: difficulty.per,
+                weights: difficulty.weights,
+                conversationMode: conversationMode,
+                midConvoSetup: midConvoSetup
+            };
+
+            state.progress = 0;
+            state.target = state.scenario.target;
+            state.exchanges = 0;
+            state.totalPoints = 0;
+            state.conversationHistory = [];
+            state.lastScore = 0;
+            state.currentChallengeLevel = 'MODERATE';
+
+            renderScenario();
+            renderProgress();
+            renderHeader();
+            clearChat();
+
+            // Reset hidden feedback elements
+            el.feedbackContent.innerHTML = '';
+            el.lastPoints.textContent = '+0';
+
+            // Show briefing modal
+            showBriefingModal();
+        }
+
+        function renderScenario() {
+            const levels = ['Awareness', 'Grounding', 'Polarity', 'Control', 'Mastery'];
+
+            el.scenarioTitle.textContent = `${state.scenario.name} • ${state.scenario.role}`;
+            el.difficultyTag.textContent = `${state.scenario.difficulty} • ${levels[state.level - 1]}`;
+
+            if (state.scenario.conversationMode === 'initiation') {
+                el.modeTag.textContent = '🚀 You Start';
+                el.modeTag.style.background = 'rgba(96, 165, 250, 0.1)';
+                el.modeTag.style.borderColor = 'rgba(96, 165, 250, 0.3)';
+                el.modeTag.style.color = '#60a5fa';
+            } else {
+                el.modeTag.textContent = '💬 Ongoing';
+                el.modeTag.style.background = 'rgba(212, 175, 55, 0.1)';
+                el.modeTag.style.borderColor = 'rgba(212, 175, 55, 0.3)';
+                el.modeTag.style.color = '#D4AF37';
+            }
+
+            // Update goal summary in sidebar
+            el.goalSummaryText.textContent = state.scenario.goal;
+
+            // Store in hidden elements for reference
+            el.scenarioContextBanner.textContent = state.scenario.roleContext;
+            el.scenarioThemeBanner.textContent = state.scenario.theme;
+            el.scenarioGoalBanner.textContent = state.scenario.goal;
+            if (state.scenario.midConvoSetup) {
+                el.setupInfoBanner.textContent = state.scenario.midConvoSetup;
+            }
+        }
+
+        function renderHeader() {
+            const levels = ['Awareness', 'Grounding', 'Polarity', 'Control', 'Mastery'];
+            el.levelNum.textContent = state.level;
+            el.levelName.textContent = levels[state.level - 1];
+            el.xpDisplay.textContent = `${state.totalXP} XP`;
+        }
+
+        function renderProgress() {
+            const percent = state.target ? Math.min(100, Math.round((state.progress / state.target) * 100)) : 0;
+            el.progressFill.style.width = percent + '%';
+            el.progressText.textContent = `${state.progress} / ${state.target}`;
+        }
+
+        function updateStats() {
+            el.exchanges.textContent = state.exchanges;
+            const avg = state.exchanges > 0 ? Math.round(state.totalPoints / state.exchanges) : 0;
+            el.avgPoints.textContent = avg;
+            
+            const diff = state.scenario.difficulty;
+            let qualities;
+            
+            if (diff === 'Expert') {
+                qualities = ['Terrible', 'Poor', 'Novice', 'Developing', 'Competent', 'Advanced', 'Masterful'];
+            } else if (diff === 'Hard') {
+                qualities = ['Failing', 'Weak', 'Learning', 'Improving', 'Solid', 'Strong', 'Excellent'];
+            } else if (diff === 'Medium') {
+                qualities = ['Bad', 'Struggling', 'Beginner', 'Fair', 'Good', 'Very Good', 'Outstanding'];
+            } else {
+                qualities = ['Awful', 'Poor', 'Starting', 'Basic', 'Good', 'Great', 'Exceptional'];
+            }
+            
+            let qualityIndex;
+            if (avg < 0) {
+                qualityIndex = 0;
+            } else {
+                qualityIndex = Math.min(Math.floor(avg / 6) + 2, qualities.length - 1);
+            }
+            
+            el.quality.textContent = qualities[qualityIndex];
+            
+            if (avg < 0) {
+                el.quality.style.color = '#ef4444';
+            } else if (avg >= 20) {
+                el.quality.style.color = '#22c55e';
+            } else if (avg >= 15) {
+                el.quality.style.color = '#D4AF37';
+            } else if (avg >= 10) {
+                el.quality.style.color = '#60a5fa';
+            } else if (avg >= 5) {
+                el.quality.style.color = '#999';
+            } else {
+                el.quality.style.color = '#ff6b6b';
+            }
+            
+            if (state.exchanges > 0 && state.target > 0) {
+                const progressRate = state.progress / state.exchanges;
+                const requiredRate = state.target / 10;
+                const efficiency = Math.round((progressRate / requiredRate) * 100);
+                
+                let perfText;
+                if (avg < 0 || efficiency < 30) {
+                    perfText = '💀 Struggling';
+                    el.performance.style.color = '#ef4444';
+                } else if (efficiency >= 120) {
+                    perfText = '🔥 Exceptional';
+                    el.performance.style.color = '#22c55e';
+                } else if (efficiency >= 90) {
+                    perfText = '⭐ Strong';
+                    el.performance.style.color = '#D4AF37';
+                } else if (efficiency >= 70) {
+                    perfText = '👍 Good';
+                    el.performance.style.color = '#60a5fa';
+                } else if (efficiency >= 50) {
+                    perfText = '📈 Building';
+                    el.performance.style.color = '#999';
+                } else {
+                    perfText = '⚠️ Needs Work';
+                    el.performance.style.color = '#ff6b6b';
+                }
+                el.performance.textContent = perfText;
+            } else {
+                el.performance.textContent = '—';
+                el.performance.style.color = '#999';
+            }
+            
+            const recentScore = state.lastScore || 0;
+            let challengeText, challengeColor;
+            
+            if (avg >= 15 || recentScore >= 20) {
+                challengeText = '🔥 Maximum';
+                challengeColor = '#ef4444';
+            } else if (avg >= 10 || recentScore >= 15) {
+                challengeText = '⚡ High';
+                challengeColor = '#ff9f1c';
+            } else if (avg >= 5 || recentScore >= 10) {
+                challengeText = '📊 Moderate';
+                challengeColor = '#60a5fa';
+            } else if (avg >= 0 || recentScore >= 5) {
+                challengeText = '📉 Low';
+                challengeColor = '#999';
+            } else {
+                challengeText = '✨ Minimal';
+                challengeColor = '#71767b';
+            }
+            
+            el.challengeLevel.textContent = challengeText;
+            el.challengeLevel.style.color = challengeColor;
+        }
+
+        // Chat Messages
+        function clearChat() {
+            el.transcript.innerHTML = '';
+        }
+
+        function addMessage(type, text) {
+            const item = document.createElement('div');
+            item.className = `transcript-item ${type}-speech`;
+            
+            const speaker = document.createElement('span');
+            speaker.className = 'speaker';
+            speaker.textContent = type === 'user' ? 'You:' : (type === 'ai' ? state.scenario.name + ':' : '');
+            
+            const speechText = document.createElement('span');
+            speechText.className = 'speech-text';
+            speechText.textContent = type === 'system' ? text : `"${text}"`;
+            
+            item.appendChild(speaker);
+            item.appendChild(speechText);
+            el.transcript.appendChild(item);
+            el.transcript.scrollTop = el.transcript.scrollHeight;
+        }
+
+        function addSystemMessage(text) {
+            addMessage('system', text);
+        }
+
+        function showTypingIndicator() {
+            const item = document.createElement('div');
+            item.className = 'transcript-item ai-speech';
+            item.id = 'typingIndicator';
+            
+            const speaker = document.createElement('span');
+            speaker.className = 'speaker';
+            speaker.textContent = state.scenario.role + ':';
+            
+            const speechText = document.createElement('span');
+            speechText.className = 'speech-text';
+            speechText.innerHTML = '<span style="opacity: 0.4; font-size: 13px;">typing...</span>';
+            speechText.style.background = '#151515';
+            speechText.style.borderLeft = '3px solid #2a2a2a';
+            
+            item.appendChild(speaker);
+            item.appendChild(speechText);
+            el.transcript.appendChild(item);
+            el.transcript.scrollTop = el.transcript.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            const indicator = document.getElementById('typingIndicator');
+            if (indicator) {
+                indicator.remove();
+            }
+        }
+
+        // Evaluation Logic
+        const patterns = {
+            needy: /(sorry|please|i just|are you mad|why won't you|i need|i promise|i swear|beg|deserve)/i,
+            validate: /(you're right|okay no problem|i understand|i get it|i'm here for you)/i,
+            curiosity: /(what made you|how come|tell me more|what's your take|walk me through)/i,
+            tease: /(if you're lucky|we'll see|behave|nice try|don't get ahead|audition|earn it)/i,
+            detachment: /(no rush|your call|all good|take your time|works for me|either way)/i,
+            confidence: /(sure|sounds good|noted|fair enough|i like that|i can work with that|bold)/i,
+            control: /(we'll do|let's|join me|come with|i'm thinking|here's the plan)/i,
+            
+            chasing: /(when can i see you|are we still on|you there|did you get my|haven't heard from you|hope you're okay|missing you|thinking about you)/i,
+            overExplaining: /(the reason is|let me explain|what i meant was|to clarify|basically what happened|the thing is|i didn't mean)/i,
+            seekingApproval: /(is that okay|does that work|if that's alright|hope that's cool|let me know if|is that good|does that make sense)/i,
+            answeringDirectly: /(yes i am|no i'm not|i'm at|i'm doing|my day was|i work as|i'm from)/i,
+            relievingTension: /(haha yeah|lol totally|haha for sure|exactly right|i agree completely|same here)/i,
+            tooSerious: /(honestly|seriously|actually|literally|to be honest|in reality|the truth is)/i,
+            logicalDefense: /(logically|makes sense that|rationally|objectively|if you think about it|technically)/i,
+            tryingToImpress: /(i just got back from|i was just at|i actually|fun fact|did i mention|you should know)/i,
+            weakLanguage: /(maybe|perhaps|possibly|i guess|i suppose|kind of|sort of|i think maybe)/i
+        };
+
+        function evaluateMessage(text) {
+            const [minPoints, maxPoints] = state.scenario.pointRange;
+            let score = Math.floor(minPoints + Math.random() * (maxPoints - minPoints + 1));
+
+            const positives = [];
+            const improvements = [];
+            const micro = [];
+
+            if (patterns.tease.test(text)) {
+                score += 6;
+                positives.push('Playful tease detected — good polarity');
+                micro.push('✅ Teasing: Creating attraction through playful challenge');
+            }
+            if (patterns.curiosity.test(text)) {
+                score += 6;
+                positives.push('Curiosity over reassurance — strong move');
+                micro.push('✅ Curiosity: Drawing her out instead of seeking validation');
+            }
+            if (patterns.detachment.test(text)) {
+                score += 4;
+                positives.push('Detachment language — you didn\'t chase');
+                micro.push('✅ Detachment: Non-needy frame maintained');
+            }
+            if (patterns.confidence.test(text)) {
+                score += 3;
+                positives.push('Confident tone present');
+                micro.push('✅ Confidence: Grounded, self-assured communication');
+            }
+            if (patterns.control.test(text)) {
+                score += 4;
+                positives.push('Leadership phrasing — leading the vibe');
+                micro.push('✅ Leadership: Taking charge of the interaction');
+            }
+
+            if (patterns.needy.test(text)) {
+                score -= 10;
+                improvements.push('Trim neediness (apologies, pleading)');
+                micro.push('❌ Neediness: Remove apologies and validation-seeking (-10)');
+            }
+            if (patterns.validate.test(text)) {
+                score -= 6;
+                improvements.push('Avoid heavy validation; let her invest');
+                micro.push('❌ Over-validation: Let her earn your approval (-6)');
+            }
+            
+            if (patterns.chasing.test(text)) {
+                score -= 12;
+                improvements.push('Stop chasing - you\'re pursuing, not attracting');
+                micro.push('❌ CHASING: Desperate pursuit kills attraction (-12)');
+            }
+            if (patterns.overExplaining.test(text)) {
+                score -= 8;
+                improvements.push('Stop explaining - mystery > logic');
+                micro.push('❌ Over-explaining: Killing intrigue with justification (-8)');
+            }
+            if (patterns.seekingApproval.test(text)) {
+                score -= 9;
+                improvements.push('Don\'t seek approval - state, don\'t ask');
+                micro.push('❌ Approval-seeking: Weak frame, seeking permission (-9)');
+            }
+            if (patterns.answeringDirectly.test(text) && text.length < 30) {
+                score -= 5;
+                improvements.push('Don\'t answer so directly - redirect or tease');
+                micro.push('❌ Direct answers: Following her frame, not leading (-5)');
+            }
+            if (patterns.relievingTension.test(text)) {
+                score -= 7;
+                improvements.push('Don\'t relieve tension - lean into it');
+                micro.push('❌ Tension relief: Comfortable = boring (-7)');
+            }
+            if (patterns.tooSerious.test(text)) {
+                score -= 5;
+                improvements.push('Too serious - add playfulness');
+                micro.push('❌ Overly serious: Where\'s the fun? (-5)');
+            }
+            if (patterns.logicalDefense.test(text)) {
+                score -= 6;
+                improvements.push('Stop defending logically - emotional > rational');
+                micro.push('❌ Logical defense: Logic kills attraction (-6)');
+            }
+            if (patterns.tryingToImpress.test(text)) {
+                score -= 8;
+                improvements.push('Don\'t try to impress - show, don\'t tell');
+                micro.push('❌ Trying to impress: Reeks of insecurity (-8)');
+            }
+            if (patterns.weakLanguage.test(text)) {
+                score -= 4;
+                improvements.push('Remove weak language - be definitive');
+                micro.push('❌ Weak language: Uncertainty kills confidence (-4)');
+            }
+
+            if (text.length > 220) {
+                score -= 6;
+                improvements.push('Shorten responses to keep tension high');
+                micro.push('🛠️ Length: Brevity creates mystery and maintains tension (-6)');
+            }
+            if (text.length < 8) {
+                improvements.push('Add one more line — too curt can feel cold');
+                micro.push('🛠️ Too brief: Add a touch more substance');
+            }
+
+            const redFlagCount = [
+                patterns.chasing.test(text),
+                patterns.overExplaining.test(text),
+                patterns.seekingApproval.test(text),
+                patterns.tryingToImpress.test(text),
+                patterns.needy.test(text)
+            ].filter(Boolean).length;
+            
+            if (redFlagCount >= 2) {
+                score -= 5;
+                micro.push('🚨 Multiple red flags detected - frame collapsing (-5)');
+            }
+
+            score = Math.max(-20, score);
+
+            const feedback = [...micro];
+            if (feedback.length === 0) {
+                feedback.push('Keep your center. Add a touch of play or curiosity');
+            }
+
+            let summary;
+            if (score < 0) {
+                summary = `⚠️ NEGATIVE SCORE | Goal: "${state.scenario.goal}" | You're doing the OPPOSITE of what works. Major frame issues detected.`;
+            } else {
+                summary = `Goal: "${state.scenario.goal}" | Detected tone suggests ${
+                    positives.length >= 2 ? 'strong alignment' : 
+                    positives.length >= 1 ? 'partial alignment' : 
+                    'needs recalibration'
+                }${improvements.length ? '. Refine: ' + improvements[0] : ''}`;
+            }
+
+            feedback.push(`💡 ${summary}`);
+
+            return { score, feedback };
+        }
+
+        // OpenAI Functions
+        async function generateAIResponse(userMessage) {
+            if (!apiKey || apiKey === 'YOUR_API_KEY_HERE') {
+                return rand(aiReplies);
+            }
+
+            try {
+                const avgPoints = state.exchanges > 0 ? Math.round(state.totalPoints / state.exchanges) : 10;
+                const recentScore = state.lastScore || 10;
+                
+                let challengeLevel, behaviorTone;
+                if (avgPoints >= 15 || recentScore >= 20) {
+                    challengeLevel = 'MAXIMUM';
+                    behaviorTone = 'Be VERY challenging and disagreeable. Test their frame hard. Be distant, vague, or even cold. Throw subtle shit tests. Make them work for your attention. Question their statements. Be skeptical. Pull back when they do well. Example: "That\'s cute that you think that" or "Sure, if you say so" or just "K."';
+                } else if (avgPoints >= 10 || recentScore >= 15) {
+                    challengeLevel = 'HIGH';
+                    behaviorTone = 'Be quite challenging. Test their frame with playful pushback. Be a bit distant or aloof. Don\'t agree easily. Make them lead and invest. Example: "Hmm, not sure about that" or "We\'ll see" or "Prove it."';
+                } else if (avgPoints >= 5 || recentScore >= 10) {
+                    challengeLevel = 'MODERATE';
+                    behaviorTone = 'Be somewhat challenging. Mix warmth with occasional tests. Give them chances but don\'t make it too easy. Example: "Interesting... tell me more" or "Maybe" or light teasing.';
+                } else if (avgPoints >= 0 || recentScore >= 5) {
+                    challengeLevel = 'LOW';
+                    behaviorTone = 'Be moderately receptive but still authentic. Give them openings to recover. Show interest but maintain standards. Example: "Okay, I\'m listening" or gentle responses.';
+                } else {
+                    challengeLevel = 'MINIMAL';
+                    behaviorTone = 'Be relatively receptive. They\'re struggling - give them a chance to practice basics. Still be authentic but not overly harsh. Example: natural responses without heavy testing.';
+                }
+
+                const weights = state.scenario.weights;
+                let behaviorGuidance = '';
+                
+                if (weights.deangelo || weights.all) {
+                    behaviorGuidance += 'Test with playful challenges and cocky-funny dynamics. ';
+                }
+                if (weights.wayne || weights.all) {
+                    behaviorGuidance += 'Notice composure and groundedness. ';
+                }
+                if (weights.canwell || weights.all) {
+                    behaviorGuidance += 'Respond to authentic curiosity and emotional depth. ';
+                }
+                if (weights.shogun || weights.all) {
+                    behaviorGuidance += 'React to strategic framing and investment control. ';
+                }
+
+                let conversationContext = '';
+                if (state.scenario.conversationMode === 'ongoing') {
+                    conversationContext = `\n\nConversation Context: ${state.scenario.midConvoSetup}\nThis is mid-conversation - you've been texting back and forth. React naturally to what they say based on this context.`;
+                } else {
+                    conversationContext = `\n\nThis is the start of a new conversation. React to their opening message naturally.`;
+                }
+
+                const systemPrompt = `You are ${state.scenario.name}, a ${state.scenario.role}. ${state.scenario.roleContext}${conversationContext}
+
+Context: ${state.scenario.theme}
+Difficulty: ${state.scenario.difficulty}
+
+IMPORTANT - DYNAMIC CHALLENGE LEVEL: ${challengeLevel}
+User's Performance: Average ${avgPoints} points per message (Recent: ${recentScore})
+Your Behavior Adjustment: ${behaviorTone}
+
+Base Behavior: ${behaviorGuidance}Be natural, realistic, and conversational. Test the person's frame subtly. Sometimes be warm, sometimes a bit challenging or distant. React authentically to what they say. Keep responses short (1-2 sentences max) and conversational - like real texting.
+
+CRITICAL: Adjust your challenge level based on their performance. If they're doing well (high points), be MORE challenging, disagreeable, and test them harder. If they're struggling (low points), ease up slightly but stay authentic. The better they do, the harder you should test them.
+
+The user is practicing at ${state.scenario.difficulty} level. Stay in character as ${state.scenario.name}. Don't be overly complimentary or agreeable - create natural tension and dynamics. Text like a real person would.`;
+
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-4o-mini',
+                        messages: [
+                            { role: 'system', content: systemPrompt },
+                            ...state.conversationHistory,
+                            { role: 'user', content: userMessage }
+                        ],
+                        max_tokens: 100,
+                        temperature: 0.9
+                    })
+                });
+
+                if (!response.ok) {
+                    console.error('OpenAI API error:', response.status);
+                    return rand(aiReplies);
+                }
+
+                const data = await response.json();
+                return data.choices[0].message.content.replace(/^["']|["']$/g, '');
+            } catch (error) {
+                console.error('Error generating AI response:', error);
+                return rand(aiReplies);
+            }
+        }
+
+        async function getCoachFeedback(userMessage, aiResponse, basicScore) {
+            if (!apiKey || apiKey === 'YOUR_API_KEY_HERE') {
+                return null;
+            }
+
+            try {
+                const weights = state.scenario.weights;
+                let styleContext = 'Drawing from: ';
+                const styles = [];
+                if (weights.deangelo) styles.push('David DeAngelo (cocky-funny, playful tension)');
+                if (weights.wayne) styles.push('David Wayne (grounded presence, emotional control)');
+                if (weights.canwell) styles.push('Zan Perrion/Canwell (authentic curiosity, poetic tension)');
+                if (weights.shogun) styles.push('Shogun Method (strategic framing, controlled investment)');
+                if (weights.all) styleContext = 'Blending all major coaching frameworks';
+                else styleContext += styles.join(', ');
+
+                const coachPrompt = `You are Old Man Jack, a grizzled, no-nonsense dating coach with decades of experience. You speak plainly and give direct feedback without sugar-coating. When someone messes up, you call it out directly.
+
+${styleContext}
+
+Scenario Goal: ${state.scenario.goal}
+Theme: ${state.scenario.theme}
+Character: ${state.scenario.name} (${state.scenario.role})
+Context: ${state.scenario.roleContext}
+Difficulty: ${state.scenario.difficulty}
+
+User said: "${userMessage}"
+${state.scenario.name} responded: "${aiResponse}"
+User's basic score: ${basicScore} ${basicScore < 0 ? '(NEGATIVE - doing the opposite of what works!)' : ''}
+
+As Old Man Jack, analyze the user's message based on these principles:
+- Emotional balance and frame control
+- Playful teasing vs neediness  
+- Curiosity-driven engagement vs over-explaining
+- Confident detachment vs chasing
+- Leadership and investment dynamics
+
+${basicScore < 0 ? 'This score is NEGATIVE. Be HARSH. They\'re doing the opposite of what works - chasing, explaining, seeking approval, or being needy. Call it out directly like a tough mentor.' : ''}
+
+Provide concise, straight-talking feedback (2-3 bullet points max). Speak like a wise old coach - direct, experienced, no fluff. Format as:
+✓ [What worked - be specific and praise good moves]
+❌ [What KILLED attraction - call out mistakes plainly and harshly]
+
+Be honest and calibrated to the ${state.scenario.difficulty} difficulty level. ${basicScore < 0 ? 'Don\'t be nice - they need to hear the hard truth.' : 'Don\'t be overly positive - give real coaching like a mentor who\'s seen it all.'}`;
+
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-4o-mini',
+                        messages: [
+                            { role: 'system', content: coachPrompt }
+                        ],
+                        max_tokens: 150,
+                        temperature: 0.7
+                    })
+                });
+
+                if (!response.ok) {
+                    return null;
+                }
+
+                const data = await response.json();
+                const coachText = data.choices[0].message.content;
+                
+                let summary;
+                if (basicScore < 0) {
+                    summary = `Kid, you're going backwards. You aimed to "${state.scenario.goal}" but did the OPPOSITE. Wake up.`;
+                } else if (basicScore >= 15) {
+                    summary = `Goal: You aimed to "${state.scenario.goal}". Solid work.`;
+                } else if (basicScore >= 10) {
+                    summary = `Goal: You aimed to "${state.scenario.goal}". Getting there - tighten it up.`;
+                } else {
+                    summary = `Goal: You aimed to "${state.scenario.goal}". Needs work, kid.`;
+                }
+                
+                const feedbackLines = coachText.split('\n').filter(line => line.trim());
+                feedbackLines.push(`💡 ${summary}`);
+                
+                return feedbackLines;
+            } catch (error) {
+                console.error('Error getting coach feedback:', error);
+                return null;
+            }
+        }
+
+        function renderFeedback(result) {
+            // Store feedback data for potential use (e.g., timer expiration review)
+            const pointsDisplay = result.score >= 0 ? `+${result.score}` : `${result.score}`;
+            el.lastPoints.textContent = pointsDisplay;
+            // Feedback card is hidden, so no visual update needed during regular messages
+        }
+
+        // Event Handlers
+        async function handleSend() {
+            const text = el.messageInput.value.trim();
+            if (!text) return;
+
+            el.sendBtn.disabled = true;
+            el.messageInput.disabled = true;
+            el.sendBtn.textContent = 'Sending...';
+
+            addMessage('user', text);
+            el.messageInput.value = '';
+            el.messageInput.style.height = 'auto';
+
+            state.exchanges++;
+
+            state.conversationHistory.push({
+                role: 'user',
+                content: text
+            });
+
+            setTimeout(() => showTypingIndicator(), 400);
+
+            {% if technique %}
+            // TECHNIQUE MODE: Use backend API
+            const aiResponse = await sendTechniqueMessage(text);
+            hideTypingIndicator();
+            addMessage('ai', aiResponse);
+            {% else %}
+            // LEGACY MODE: Use client-side evaluation
+            const basicResult = evaluateMessage(text);
+
+            state.lastScore = basicResult.score;
+
+            const avgPoints = state.exchanges > 0 ? Math.round(state.totalPoints / state.exchanges) : 0;
+            const previousChallenge = state.currentChallengeLevel || 'MODERATE';
+            let newChallenge;
+
+            if (avgPoints >= 15 || basicResult.score >= 20) {
+                newChallenge = 'MAXIMUM';
+            } else if (avgPoints >= 10 || basicResult.score >= 15) {
+                newChallenge = 'HIGH';
+            } else if (avgPoints >= 5 || basicResult.score >= 10) {
+                newChallenge = 'MODERATE';
+            } else if (avgPoints >= 0 || basicResult.score >= 5) {
+                newChallenge = 'LOW';
+            } else {
+                newChallenge = 'MINIMAL';
+            }
+
+            if ((newChallenge === 'MAXIMUM' && previousChallenge !== 'MAXIMUM') ||
+                (newChallenge === 'HIGH' && previousChallenge === 'MODERATE')) {
+                const notif = document.createElement('div');
+                notif.style.cssText = `
+                    position: fixed;
+                    top: 100px;
+                    right: 20px;
+                    background: linear-gradient(135deg, #ff9f1c, #ff6b35);
+                    color: white;
+                    padding: 12px 20px;
+                    border-radius: 8px;
+                    font-weight: 600;
+                    font-size: 13px;
+                    box-shadow: 0 4px 20px rgba(255, 159, 28, 0.4);
+                    z-index: 9999;
+                    animation: slideIn 0.3s ease;
+                `;
+                notif.innerHTML = `${newChallenge === 'MAXIMUM' ? '🔥' : '⚡'} AI Challenge: ${newChallenge}<br/><span style="font-size: 11px; opacity: 0.9;">She's testing you harder now</span>`;
+                document.body.appendChild(notif);
+
+                setTimeout(() => {
+                    notif.style.transition = 'all 0.3s ease';
+                    notif.style.opacity = '0';
+                    notif.style.transform = 'translateX(20px)';
+                    setTimeout(() => notif.remove(), 300);
+                }, 3000);
+            }
+
+            state.currentChallengeLevel = newChallenge;
+
+            const aiResponse = await generateAIResponse(text);
+
+            hideTypingIndicator();
+            addMessage('ai', aiResponse);
+            {% endif %}
+
+            state.conversationHistory.push({
+                role: 'assistant',
+                content: aiResponse
+            });
+
+            {% if not technique %}
+            // Get coach feedback in background (not displayed until timer expires)
+            const coachFeedback = await getCoachFeedback(text, aiResponse, basicResult.score);
+
+            let finalFeedback = basicResult.feedback;
+            if (coachFeedback && coachFeedback.length > 0) {
+                finalFeedback = coachFeedback;
+            }
+
+            const result = {
+                score: basicResult.score,
+                feedback: finalFeedback
+            };
+
+            state.totalPoints += result.score;
+            state.progress = Math.max(0, state.progress + result.score);
+
+            renderProgress();
+            renderFeedback(result);
+            updateStats();
+
+            if (result.score < 0) {
+                const warningDiv = document.createElement('div');
+                warningDiv.style.cssText = `
+                    position: fixed;
+                    top: 100px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: linear-gradient(135deg, #ef4444, #dc2626);
+                    color: white;
+                    padding: 12px 20px;
+                    border-radius: 8px;
+                    font-weight: 600;
+                    font-size: 14px;
+                    box-shadow: 0 4px 20px rgba(239, 68, 68, 0.4);
+                    z-index: 9999;
+                    animation: shake 0.5s;
+                `;
+                warningDiv.textContent = `❌ NEGATIVE POINTS! You're doing the opposite of what works.`;
+                document.body.appendChild(warningDiv);
+                
+                setTimeout(() => {
+                    warningDiv.style.transition = 'all 0.3s ease';
+                    warningDiv.style.opacity = '0';
+                    warningDiv.style.transform = 'translateX(-50%) translateY(-20px)';
+                    setTimeout(() => warningDiv.remove(), 300);
+                }, 3000);
+            }
+            {% endif %}
+
+            el.sendBtn.disabled = false;
+            el.messageInput.disabled = false;
+            el.sendBtn.textContent = 'Send';
+            el.messageInput.focus();
+
+            if (state.progress >= state.target) {
+                setTimeout(() => handleComplete(), 800);
+            }
+        }
+
+        function handleComplete() {
+            stopTimer();
+
+            const gained = Math.round(state.target * 0.7);
+            state.totalXP += gained;
+            saveProgress();
+            renderHeader();
+
+            const levels = ['Awareness', 'Grounding', 'Polarity', 'Control', 'Mastery'];
+            const hasAI = apiKey && apiKey !== 'YOUR_API_KEY_HERE';
+            
+            const avgPoints = state.exchanges > 0 ? Math.round(state.totalPoints / state.exchanges) : 0;
+            const efficiency = state.exchanges > 0 ? Math.round((state.progress / state.exchanges) / (state.target / 10) * 100) : 0;
+            
+            const diff = state.scenario.difficulty;
+            let qualities;
+            if (diff === 'Expert') {
+                qualities = ['Novice', 'Developing', 'Competent', 'Advanced', 'Masterful'];
+            } else if (diff === 'Hard') {
+                qualities = ['Learning', 'Improving', 'Solid', 'Strong', 'Excellent'];
+            } else if (diff === 'Medium') {
+                qualities = ['Beginner', 'Fair', 'Good', 'Very Good', 'Outstanding'];
+            } else {
+                qualities = ['Starting', 'Basic', 'Good', 'Great', 'Exceptional'];
+            }
+            const qualityIndex = Math.min(Math.floor(avgPoints / 6), qualities.length - 1);
+            const quality = avgPoints > 0 ? qualities[qualityIndex] : 'N/A';
+            
+            let perfText, perfColor;
+            if (efficiency >= 120) {
+                perfText = 'Exceptional';
+                perfColor = '#22c55e';
+            } else if (efficiency >= 90) {
+                perfText = 'Strong';
+                perfColor = '#D4AF37';
+            } else if (efficiency >= 70) {
+                perfText = 'Good';
+                perfColor = '#60a5fa';
+            } else {
+                perfText = 'Struggling';
+                perfColor = '#ff6b6b';
+            }
+            
+            let jackMessage;
+            if (hasAI) {
+                if (avgPoints < 5) {
+                    jackMessage = '👴 <strong>Old Man Jack says:</strong> Kid, you barely scraped by. Too many mistakes. You need to tighten up your game - stop chasing, stop explaining, stop seeking approval. ';
+                } else if (avgPoints < 10) {
+                    jackMessage = '👴 <strong>Old Man Jack says:</strong> You made it, but it wasn\'t pretty. Work on your frame control. ';
+                } else if (avgPoints >= 15) {
+                    jackMessage = '👴 <strong>Old Man Jack says:</strong> Good work, kid! You\'re learning. Keep this energy. ';
+                } else {
+                    jackMessage = '👴 <strong>Old Man Jack says:</strong> Decent work. You\'re getting there. ';
+                }
+            } else {
+                jackMessage = '';
+            }
+            
+            el.modalSubtitle.textContent = `Level ${state.level} • ${levels[state.level - 1]}`;
+            el.completeMsg.innerHTML = `
+                You reached <strong>${state.target} points</strong> and achieved your goal!<br/><br/>
+                <strong>+${gained} XP earned</strong><br/><br/>
+                
+                <div style="background: #0a0a0a; border: 1px solid #333; border-radius: 12px; padding: 16px; margin: 20px 0;">
+                    <div style="font-size: 15px; font-weight: 600; color: #D4AF37; margin-bottom: 12px;">📊 Session Summary</div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                        <div style="background: #1A1A1A; padding: 10px; border-radius: 8px; border: 1px solid #333;">
+                            <div style="font-size: 11px; color: #999; margin-bottom: 4px;">Exchanges</div>
+                            <div style="font-size: 18px; font-weight: 700; color: white;">${state.exchanges}</div>
+                        </div>
+                        <div style="background: #1A1A1A; padding: 10px; border-radius: 8px; border: 1px solid #333;">
+                            <div style="font-size: 11px; color: #999; margin-bottom: 4px;">Avg Points</div>
+                            <div style="font-size: 18px; font-weight: 700; color: ${avgPoints < 5 ? '#ff6b6b' : 'white'};">${avgPoints}</div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #333;">
+                        <span style="font-size: 13px; color: #999;">Quality</span>
+                        <span style="font-size: 13px; font-weight: 600; color: white;">${quality}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #333;">
+                        <span style="font-size: 13px; color: #999;">Performance</span>
+                        <span style="font-size: 13px; font-weight: 600; color: ${perfColor};">${perfText}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 8px 0;">
+                        <span style="font-size: 13px; color: #999;">Efficiency</span>
+                        <span style="font-size: 13px; font-weight: 600; color: white;">${efficiency}%</span>
+                    </div>
+                </div>
+                
+                ${jackMessage}
+                <em>Stay consistent with your frame. Next round scales difficulty and tests you harder.</em>
+            `;
+            el.completeModal.classList.add('active');
+        }
+
+        function closeModal() {
+            el.completeModal.classList.remove('active');
+        }
+
+        el.messageInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 80) + 'px';
+        });
+
+        el.sendBtn.addEventListener('click', handleSend);
+        el.messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+            }
+        });
+
+        el.startSessionBtn.addEventListener('click', () => {
+            startSession();
+        });
+
+        el.nextScenarioBtn.addEventListener('click', () => {
+            el.reviewModal.classList.remove('active');
+            newScenario();
+        });
+
+        el.nextBtn.addEventListener('click', () => {
+            closeModal();
+            newScenario();
+        });
+
+        el.dashboardBtn.addEventListener('click', () => {
+            alert('Dashboard feature coming soon!');
+        });
+
+        el.dashboardBtn2.addEventListener('click', () => {
+            alert('Dashboard feature coming soon!');
+        });
+
+        // Make modals static - prevent closing by clicking outside or pressing Escape
+        function shakeModal(modal) {
+            modal.classList.add('shake');
+            setTimeout(() => modal.classList.remove('shake'), 400);
+        }
+
+        // Click outside modal to shake (indicate it's required)
+        [el.briefingModal, el.reviewModal, el.completeModal].forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    const modal = overlay.querySelector('.modal');
+                    if (modal) shakeModal(modal);
+                }
+            });
+        });
+
+        // Prevent Escape key from closing modals
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (el.briefingModal.classList.contains('active') ||
+                    el.reviewModal.classList.contains('active') ||
+                    el.completeModal.classList.contains('active')) {
+                    e.preventDefault();
+                    // Find which modal is active and shake it
+                    if (el.briefingModal.classList.contains('active')) {
+                        shakeModal(el.briefingModal.querySelector('.modal'));
+                    } else if (el.reviewModal.classList.contains('active')) {
+                        shakeModal(el.reviewModal.querySelector('.modal'));
+                    } else if (el.completeModal.classList.contains('active')) {
+                        shakeModal(el.completeModal.querySelector('.modal'));
+                    }
+                }
+            }
+        });
+
+        window.addEventListener('load', () => {
+            if (!apiKey || apiKey === 'YOUR_API_KEY_HERE') {
+                const warningDiv = document.createElement('div');
+                warningDiv.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: linear-gradient(135deg, #FF6B6B, #C92A2A);
+                    color: white;
+                    padding: 16px 24px;
+                    border-radius: 12px;
+                    font-weight: 600;
+                    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+                    z-index: 10000;
+                    max-width: 500px;
+                    text-align: center;
+                    cursor: pointer;
+                `;
+                warningDiv.innerHTML = `
+                    ⚠️ OpenAI API Key Required<br/>
+                    <span style="font-size: 13px; font-weight: 400;">
+                        Add your API key in the code to enable AI responses and coaching
+                    </span><br/>
+                    <span style="font-size: 11px; opacity: 0.8; margin-top: 8px; display: block;">
+                        Click to dismiss • Get key at platform.openai.com
+                    </span>
+                `;
+                warningDiv.onclick = () => warningDiv.remove();
+                document.body.appendChild(warningDiv);
+                
+                setTimeout(() => {
+                    if (warningDiv.parentNode) {
+                        warningDiv.style.transition = 'all 0.3s ease';
+                        warningDiv.style.opacity = '0';
+                        warningDiv.style.transform = 'translateX(-50%) translateY(-20px)';
+                        setTimeout(() => warningDiv.remove(), 300);
+                    }
+                }, 10000);
+            }
+            
+            renderHeader();
+            newScenario();
+            updateStats();
+
+            // Technique training: Load context if technique parameter exists
+            {% if technique %}
+            loadTechniqueContext();
+            {% endif %}
+        });
+
+        // Technique training functions
+        {% if technique %}
+        let techniqueContext = null;
+
+        async function loadTechniqueContext() {
+            try {
+                const response = await fetch('/api/preview-context');
+                const context = await response.json();
+                techniqueContext = context;
+
+                // Display context in modal
+                document.getElementById('contextPreview').innerHTML =
+                    `You'll meet <strong style="color: #fff;">${context.name}</strong> at <strong style="color: #fff;">${context.location}</strong>. The vibe is <em>${context.vibe}</em>.`;
+
+                document.getElementById('contextOpening').innerHTML =
+                    `<strong style="color: #6496C8;">${context.name}:</strong> "${context.opening}"`;
+            } catch (error) {
+                console.error('Failed to load context:', error);
+                document.getElementById('contextPreview').textContent =
+                    "You'll meet a woman in a random realistic location.";
+            }
+        }
+
+        function startPractice() {
+            // Hide modal
+            document.getElementById('briefingModal').style.display = 'none';
+
+            // Enable chat input
+            el.sendBtn.disabled = false;
+            el.messageInput.disabled = false;
+
+            // Start timer
+            startTimer();
+
+            // Store context for use in conversation
+            if (techniqueContext) {
+                sessionStorage.setItem('techniqueContext', JSON.stringify(techniqueContext));
+            }
+
+            // Add opening message from AI
+            setTimeout(() => {
+                addMessage('ai', techniqueContext.opening);
+            }, 500);
+        }
+
+        // Technique training: Send message to backend API
+        let currentSessionId = null;
+
+        async function sendTechniqueMessage(userMessage) {
+            try {
+                const response = await fetch('/api/text-practice/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: userMessage,
+                        technique_id: '{{ technique.id if technique else "" }}',
+                        context: techniqueContext,
+                        session_id: currentSessionId
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(data.error || 'Failed to send message');
+                }
+
+                // Store session ID for subsequent messages
+                currentSessionId = data.session_id;
+
+                // Update UI with technique scores
+                if (data.technique_score !== undefined) {
+                    updateTechniqueScore(data.technique_score, data.total_hits, data.interest_level);
+                }
+
+                return data.response;
+
+            } catch (error) {
+                console.error('Error sending technique message:', error);
+                alert('Error: ' + error.message);
+                return "Sorry, I couldn't respond right now. Error: " + error.message;
+            }
+        }
+
+        function updateTechniqueScore(score, totalHits, interestLevel) {
+            // Update the score display
+            const scoreElement = document.getElementById('lastPoints');
+            if (scoreElement) {
+                if (score > 0) {
+                    scoreElement.textContent = `+${score} technique hit${score > 1 ? 's' : ''}!`;
+                    scoreElement.style.color = '#4ade80';
+                } else {
+                    scoreElement.textContent = 'No technique detected';
+                    scoreElement.style.color = '#888';
+                }
+            }
+
+            // Update progress (X/3 hits)
+            const progressText = document.getElementById('progressText');
+            if (progressText) {
+                progressText.textContent = `${totalHits}/3 hits`;
+            }
+
+            // Update interest meter (frame meter)
+            const meterElements = document.querySelectorAll('.meter-bar');
+            meterElements.forEach(meter => {
+                const percentage = ((interestLevel + 5) / 10) * 100; // Convert -5..+5 to 0..100%
+                meter.style.width = percentage + '%';
+
+                // Color based on interest level
+                if (interestLevel >= 3) {
+                    meter.style.background = 'linear-gradient(90deg, #4ade80, #22c55e)';
+                } else if (interestLevel <= -3) {
+                    meter.style.background = 'linear-gradient(90deg, #ef4444, #dc2626)';
+                } else {
+                    meter.style.background = 'linear-gradient(90deg, #fbbf24, #f59e0b)';
+                }
+            });
+
+            // Check for session completion (3/3 hits reached)
+            if (totalHits >= 3) {
+                setTimeout(() => {
+                    completeTechniqueSession();
+                }, 1000);
+            }
+        }
+
+        async function completeTechniqueSession() {
+            if (!currentSessionId) {
+                console.error('No session ID to complete');
+                return;
+            }
+
+            // Stop timer
+            stopTimer();
+
+            // Disable input
+            el.sendBtn.disabled = true;
+            el.messageInput.disabled = true;
+
+            try {
+                const response = await fetch('/api/technique/complete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        session_id: currentSessionId,
+                        technique_id: '{{ technique.id if technique else "" }}'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(data.error || 'Failed to complete session');
+                }
+
+                // Show Jack's review modal
+                showJackReviewModal(data);
+
+            } catch (error) {
+                console.error('Error completing session:', error);
+                alert('Failed to get Jack\'s review. Please try again.');
+            }
+        }
+
+        function showJackReviewModal(data) {
+            // Create modal HTML
+            const modalHTML = `
+                <div id="jackReviewModal" style="display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; align-items: center; justify-content: center;">
+                    <div style="background: #1a1a1a; border: 2px solid ${data.session_success ? '#4ade80' : '#fbbf24'}; border-radius: 16px; padding: 40px; max-width: 700px; width: 90%; max-height: 80vh; overflow-y: auto;">
+                        <div style="text-align: center; margin-bottom: 25px;">
+                            <div style="font-size: 48px; margin-bottom: 10px;">${data.session_success ? '🎯' : '📊'}</div>
+                            <h2 style="color: ${data.session_success ? '#4ade80' : '#fbbf24'}; margin-bottom: 10px; font-size: 32px;">
+                                ${data.session_success ? 'SESSION PASSED!' : 'SESSION COMPLETE'}
+                            </h2>
+                            <div style="color: #888; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">
+                                Old Man Jack's Review
+                            </div>
+                        </div>
+
+                        <div style="background: rgba(212, 175, 55, 0.1); border-left: 4px solid #D4AF37; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
+                            <div style="font-size: 14px; color: #fff; line-height: 1.8; white-space: pre-wrap;">${data.review}</div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 25px;">
+                            <div style="background: rgba(74, 222, 128, 0.1); border: 1px solid rgba(74, 222, 128, 0.3); padding: 15px; border-radius: 10px; text-align: center;">
+                                <div style="font-size: 10px; color: #4ade80; margin-bottom: 5px; text-transform: uppercase; font-weight: 600;">Technique Hits</div>
+                                <div style="font-size: 24px; color: #4ade80; font-weight: 700;">${data.stats.hits}/${data.stats.required}</div>
+                            </div>
+                            <div style="background: rgba(251, 191, 36, 0.1); border: 1px solid rgba(251, 191, 36, 0.3); padding: 15px; border-radius: 10px; text-align: center;">
+                                <div style="font-size: 10px; color: #fbbf24; margin-bottom: 5px; text-transform: uppercase; font-weight: 600;">Interest Level</div>
+                                <div style="font-size: 24px; color: #fbbf24; font-weight: 700;">${data.stats.interest > 0 ? '+' : ''}${data.stats.interest}</div>
+                            </div>
+                            <div style="background: rgba(212, 175, 55, 0.1); border: 1px solid rgba(212, 175, 55, 0.3); padding: 15px; border-radius: 10px; text-align: center;">
+                                <div style="font-size: 10px; color: #D4AF37; margin-bottom: 5px; text-transform: uppercase; font-weight: 600;">XP Earned</div>
+                                <div style="font-size: 24px; color: #D4AF37; font-weight: 700;">+${data.xp_awarded}</div>
+                            </div>
+                        </div>
+
+                        ${data.leveled_up ? `
+                        <div style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(255, 215, 0, 0.1)); border: 2px solid #D4AF37; padding: 20px; border-radius: 12px; margin-bottom: 25px; text-align: center;">
+                            <div style="font-size: 36px; margin-bottom: 10px;">🎉</div>
+                            <div style="color: #D4AF37; font-size: 24px; font-weight: 700; margin-bottom: 5px;">LEVEL UP!</div>
+                            <div style="color: #fff; font-size: 18px;">You're now Level ${data.new_level}</div>
+                        </div>
+                        ` : ''}
+
+                        <div style="display: flex; gap: 15px;">
+                            <button onclick="location.href='/ai-menu'" style="flex: 1; padding: 15px; background: rgba(255, 255, 255, 0.1); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s;">
+                                Back to Menu
+                            </button>
+                            <button onclick="location.reload()" style="flex: 1; padding: 15px; background: linear-gradient(135deg, #D4AF37 0%, #FFD700 100%); color: #000; border: none; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.3s;">
+                                Try Again
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Add to page
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
+        {% endif %}
+    </script>
+</body>
+</html>
