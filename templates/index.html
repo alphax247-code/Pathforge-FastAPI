@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PathForge</title>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pathforge-complete.css') }}">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    {% include 'nav.html' %}
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-background"></div>
+            <div class="hero-text">
+                <h1>Welcome back{% if progress and progress.name %}, {{ progress.name }}{% elif user.username %}, {{ user.username }}{% endif %}!</h1>
+                <p>Continue your journey to confidence and social mastery</p>
+                <button class="hero-cta-btn" onclick="window.location.href='{{ url_for('challenges') }}'">Start Your Challenge</button>
+            </div>
+        </section>
+
+        <!-- Two Column Layout -->
+        <div class="content-wrapper">
+            <!-- Left Column -->
+            <div class="left-column">
+                <!-- Main Features -->
+                <div class="main-features">
+                    <div class="feature-card" onclick="window.location.href='{{ url_for('lessons') }}'">
+                        <div class="feature-image lessons-img"></div>
+                        <div class="feature-content">
+                            <h3><img src="{{ url_for('static', filename='assets/icons/lesson.svg') }}" class="feature-icon"> Video Lessons</h3>
+                            <p>Watch expert-guided videos on confidence, conversation, and attraction</p>
+                        </div>
+                    </div>
+
+                    {# HIDDEN: Daily Tasks feature temporarily disabled
+                    <div class="feature-card" onclick="window.location.href='{{ url_for('daily_directive') }}'">
+                        <div class="feature-image daily-tasks-img"></div>
+                        <div class="feature-content">
+                            <h3><img src="{{ url_for('static', filename='assets/icons/daily tasks.svg') }}" class="feature-icon"> Daily Tasks</h3>
+                            <p>View all your daily directives and track progress</p>
+                        </div>
+                    </div>
+                    #}
+
+                    <div class="feature-card" onclick="window.location.href='{{ url_for('ai_menu') }}'">
+                        <div class="feature-image text-practice-img"></div>
+                        <div class="feature-content">
+                            <h3><img src="{{ url_for('static', filename='assets/icons/practice.svg') }}" class="feature-icon"> AI Practice Menu</h3>
+                            <p>Choose topics and practice with AI-powered conversations</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-card" onclick="window.location.href='{{ url_for('challenges') }}'">
+                        <div class="feature-image challenges-img"></div>
+                        <div class="feature-content">
+                            <h3><img src="{{ url_for('static', filename='assets/icons/challenge.svg') }}" class="feature-icon"> Challenges</h3>
+                            <p>Complete real-world social challenges to level up</p>
+                        </div>
+                    </div>
+
+                    <!-- TEMPORARILY HIDDEN - Inner Game being rebuilt
+                    <div class="feature-card" onclick="window.location.href='{{ url_for('inner_game') }}'">
+                        <div class="feature-image inner-game-img"></div>
+                        <div class="feature-content">
+                            <h3><img src="{{ url_for('static', filename='assets/icons/inner game..svg') }}" class="feature-icon"> Inner Game</h3>
+                            <p>Build confidence and mindset with exercises and meditations</p>
+                        </div>
+                    </div>
+                    -->
+
+                    <div class="feature-card" onclick="window.location.href='{{ url_for('psychology_games') }}'">
+                        <div class="feature-image games-img"></div>
+                        <div class="feature-content">
+                            <h3><img src="{{ url_for('static', filename='assets/icons/games.svg') }}" class="feature-icon"> Social Skills Game</h3>
+                            <p>Practice social scenarios in an interactive game environment</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-card" onclick="window.location.href='{{ url_for('community') }}'">
+                        <div class="feature-image community-img"></div>
+                        <div class="feature-content">
+                            <h3>💬 Community Forum</h3>
+                            <p>Connect with others, share experiences, and learn from the community</p>
+                        </div>
+                    </div>
+
+                    {% if is_admin %}
+                    <div class="feature-card admin-card" onclick="window.location.href='{{ url_for('admin.dashboard') }}'">
+                        <div class="feature-image admin-img"></div>
+                        <div class="feature-content">
+                            <h3>⚙️ Admin Panel</h3>
+                            <p>Manage users, content, and platform settings</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="right-column">
+                <!-- Progress Card -->
+                <div class="progress-card">
+                    <h2>Your Progress</h2>
+
+                    <!-- Cinematic Circular Progress Display -->
+                    <style>
+                        @keyframes pulse {
+                            0%, 100% { opacity: 1; }
+                            50% { opacity: 0.6; }
+                        }
+
+                        @keyframes glow {
+                            0%, 100% { filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.5)); }
+                            50% { filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.8)); }
+                        }
+
+                        @keyframes shimmer {
+                            0% { transform: translateX(-100%) translateY(-100%) rotate(-90deg); }
+                            100% { transform: translateX(100%) translateY(100%) rotate(-90deg); }
+                        }
+
+                        @keyframes counterUp {
+                            from { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+                            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+                        }
+
+                        .progress-container {
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            margin: 20px 0;
+                            position: relative;
+                        }
+
+                        .progress-ring-wrapper {
+                            position: relative;
+                            width: 150px;
+                            height: 150px;
+                        }
+
+                        .progress-ring-wrapper::before {
+                            content: '';
+                            position: absolute;
+                            inset: -8px;
+                            background: radial-gradient(circle, rgba(212, 175, 55, 0.2) 0%, transparent 70%);
+                            border-radius: 50%;
+                            animation: pulse 3s ease-in-out infinite;
+                            pointer-events: none;
+                        }
+
+                        .progress-svg {
+                            transform: rotate(-90deg);
+                            filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.3));
+                        }
+
+                        #progressCircle {
+                            transition: stroke-dashoffset 2s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.3s ease;
+                            animation: glow 2s ease-in-out infinite;
+                        }
+
+                        .progress-text {
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                            text-align: center;
+                        }
+
+                        #progressPercent {
+                            color: #D4AF37;
+                            font-size: 42px;
+                            font-weight: bold;
+                            line-height: 1;
+                            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5),
+                                         0 0 40px rgba(212, 175, 55, 0.3);
+                            animation: counterUp 1s ease-out;
+                        }
+
+                        .progress-label {
+                            color: #9E9E9E;
+                            font-size: 11px;
+                            margin-top: 6px;
+                            letter-spacing: 1.5px;
+                            text-transform: uppercase;
+                            opacity: 0;
+                            animation: fadeIn 0.5s ease-out 0.5s forwards;
+                        }
+
+                        @keyframes fadeIn {
+                            from { opacity: 0; transform: translateY(-5px); }
+                            to { opacity: 1; transform: translateY(0); }
+                        }
+
+                        .progress-particles {
+                            position: absolute;
+                            inset: 0;
+                            pointer-events: none;
+                            overflow: hidden;
+                            border-radius: 50%;
+                        }
+
+                        .particle {
+                            position: absolute;
+                            width: 2px;
+                            height: 2px;
+                            background: #D4AF37;
+                            border-radius: 50%;
+                            opacity: 0;
+                        }
+
+                        @keyframes particleFloat {
+                            0% {
+                                transform: translate(0, 0) scale(0);
+                                opacity: 0;
+                            }
+                            10% {
+                                opacity: 1;
+                            }
+                            100% {
+                                transform: translate(var(--tx), var(--ty)) scale(1);
+                                opacity: 0;
+                            }
+                        }
+                    </style>
+
+                    <div class="progress-container">
+                        <div class="progress-ring-wrapper">
+                            <!-- Animated particles -->
+                            <div class="progress-particles" id="progressParticles"></div>
+
+                            <!-- SVG Progress Ring -->
+                            <svg width="150" height="150" class="progress-svg">
+                                <!-- Outer glow circle -->
+                                <circle cx="75" cy="75" r="65" fill="none" stroke="rgba(212, 175, 55, 0.1)" stroke-width="1"/>
+
+                                <!-- Background track -->
+                                <circle cx="75" cy="75" r="60" fill="none" stroke="rgba(255, 255, 255, 0.05)" stroke-width="12"/>
+
+                                <!-- Inner shadow circle -->
+                                <circle cx="75" cy="75" r="56" fill="none" stroke="rgba(0, 0, 0, 0.3)" stroke-width="1"/>
+
+                                <!-- Progress Circle with gradient -->
+                                <defs>
+                                    <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+                                        <stop offset="50%" style="stop-color:#D4AF37;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#B8860B;stop-opacity:1" />
+                                    </linearGradient>
+                                    <filter id="glow">
+                                        <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                                        <feMerge>
+                                            <feMergeNode in="coloredBlur"/>
+                                            <feMergeNode in="SourceGraphic"/>
+                                        </feMerge>
+                                    </filter>
+                                </defs>
+
+                                <circle id="progressCircle" cx="75" cy="75" r="60" fill="none"
+                                        stroke="url(#progressGradient)" stroke-width="12"
+                                        stroke-dasharray="376.99" stroke-dashoffset="376.99"
+                                        stroke-linecap="round"
+                                        filter="url(#glow)"/>
+                            </svg>
+
+                            <!-- Center text -->
+                            <div class="progress-text">
+                                <div id="progressPercent">0%</div>
+                                <div class="progress-label">Daily Progress</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div class="progress-stats" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
+                        <div style="text-align: center; padding: 15px; background: rgba(212, 175, 55, 0.1); border-radius: 8px; border: 1px solid rgba(212, 175, 55, 0.3);">
+                            <div style="color: #D4AF37; font-size: 32px; font-weight: bold;">{{ progress.level }}</div>
+                            <div style="color: #9E9E9E; font-size: 14px; margin-top: 5px;">Level</div>
+                        </div>
+                        <div style="text-align: center; padding: 15px; background: rgba(76, 175, 80, 0.1); border-radius: 8px; border: 1px solid rgba(76, 175, 80, 0.3);">
+                            <div style="color: #4CAF50; font-size: 32px; font-weight: bold;">{{ progress.xp }}</div>
+                            <div style="color: #9E9E9E; font-size: 14px; margin-top: 5px;">Total XP</div>
+                        </div>
+                        <div style="text-align: center; padding: 15px; background: rgba(33, 150, 243, 0.1); border-radius: 8px; border: 1px solid rgba(33, 150, 243, 0.3);">
+                            <div style="color: #2196F3; font-size: 32px; font-weight: bold;">{{ progress.streak }}</div>
+                            <div style="color: #9E9E9E; font-size: 14px; margin-top: 5px;">Day Streak</div>
+                        </div>
+                        <div style="text-align: center; padding: 15px; background: rgba(156, 39, 176, 0.1); border-radius: 8px; border: 1px solid rgba(156, 39, 176, 0.3);">
+                            <div style="color: #9C27B0; font-size: 32px; font-weight: bold;" id="totalCompleted">0</div>
+                            <div style="color: #9E9E9E; font-size: 14px; margin-top: 5px;">Completed Today</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Daily Tasks Overview -->
+                <div class="modules-card">
+                    <div class="card-header-with-action">
+                        <h2>Today's Tasks</h2>
+                        <button class="view-all-btn" onclick="goTo('challenges')">View All</button>
+                    </div>
+                    <div id="dailyTasksContainer" style="padding: 15px;">
+                        <div style="text-align: center; color: #9E9E9E; padding: 20px;">
+                            Loading tasks...
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Notification -->
+    <div id="notification"></div>
+
+    <script src="{{ url_for('static', filename='js/pathforge-complete.js') }}"></script>
+    <script>
+        // Load daily tasks when page loads
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadDailyTasks();
+        });
+
+        async function loadDailyTasks() {
+            try {
+                // Fetch challenges, video lessons, and carousel lessons data
+                const [challengesResponse, videoLessonsResponse, carouselLessonsResponse] = await Promise.all([
+                    fetch('/api/challenges'),
+                    fetch('/api/lessons'),
+                    fetch('/api/carousel-lessons')
+                ]);
+
+                const challengesData = await challengesResponse.json();
+                const videoLessonsData = await videoLessonsResponse.json();
+                const carouselLessonsData = await carouselLessonsResponse.json();
+
+                // Combine video and carousel lessons
+                const allLessons = [
+                    ...(videoLessonsData.lessons || []),
+                    ...(carouselLessonsData.lessons || [])
+                ];
+
+                if (challengesData.success) {
+                    displayDailyTasks(challengesData.daily_progress, challengesData.challenges, allLessons);
+                } else {
+                    console.error('API returned error:', challengesData);
+                    document.getElementById('dailyTasksContainer').innerHTML =
+                        '<div style="text-align: center; color: #F44336; padding: 20px;">Failed to load tasks</div>';
+                }
+            } catch (error) {
+                console.error('Error loading daily tasks:', error);
+                document.getElementById('dailyTasksContainer').innerHTML =
+                    '<div style="text-align: center; color: #F44336; padding: 20px;">Error loading tasks</div>';
+            }
+        }
+
+        function displayDailyTasks(dp, challenges, lessons) {
+            const container = document.getElementById('dailyTasksContainer');
+            if (!container) {
+                console.error('dailyTasksContainer not found!');
+                return;
+            }
+
+            console.log('Daily progress:', dp);
+            console.log('Challenges:', challenges);
+            console.log('Lessons:', lessons);
+
+            // Get first incomplete challenge
+            const incompleteChallenge = challenges.find(c => c.is_unlocked && c.status !== 'completed');
+
+            // Get first incomplete lesson (video or carousel)
+            const incompleteLesson = lessons.find(l => !l.completed && l.has_access && l.is_unlocked);
+
+            // Define icon URLs outside of the task objects
+            const iconUrls = {
+                challenge: "{{ url_for('static', filename='assets/icons/challenge.svg') }}",
+                practice: "{{ url_for('static', filename='assets/icons/practice.svg') }}",
+                lesson: "{{ url_for('static', filename='assets/icons/lesson.svg') }}"
+            };
+
+            const tasks = [
+                {
+                    icon: `<img src="${iconUrls.challenge}" class="feature-icon">`,
+                    name: 'Challenges',
+                    description: incompleteChallenge ? incompleteChallenge.task.substring(0, 50) + '...' : 'Complete any challenge',
+                    completed: dp.challenges.completed,
+                    required: dp.challenges.required,
+                    action: () => goTo('challenges'),
+                    color: '#D4AF37'
+                },
+                {
+                    icon: `<img src="${iconUrls.practice}" class="feature-icon">`,
+                    name: 'AI Practice',
+                    description: 'Practice conversations with AI',
+                    completed: dp.ai.completed,
+                    required: dp.ai.required,
+                    action: () => goTo('text-practice'),
+                    color: '#4CAF50'
+                },
+                {
+                    icon: `<img src="${iconUrls.lesson}" class="feature-icon">`,
+                    name: 'Video Lessons',
+                    description: incompleteLesson ? incompleteLesson.title.substring(0, 50) + '...' : 'Watch educational content',
+                    completed: dp.videos.completed,
+                    required: dp.videos.required,
+                    action: () => goTo('lessons'),
+                    color: '#2196F3'
+                }
+            ];
+
+            // Update total completed counter
+            const totalCompleted = tasks.reduce((sum, task) => sum + task.completed, 0);
+            document.getElementById('totalCompleted').textContent = totalCompleted;
+
+            // Update cinematic circular progress indicator
+            const totalRequired = tasks.reduce((sum, task) => sum + task.required, 0);
+            const overallProgressPercent = Math.round((totalCompleted / totalRequired) * 100);
+
+            const progressCircle = document.getElementById('progressCircle');
+            const progressPercentText = document.getElementById('progressPercent');
+
+            if (progressCircle && progressPercentText) {
+                const circumference = 376.99; // 2 * PI * 60 (radius)
+                const offset = circumference - (circumference * overallProgressPercent / 100);
+
+                // Animate the circle with a slight delay for dramatic effect
+                setTimeout(() => {
+                    progressCircle.style.strokeDashoffset = offset;
+
+                    // Animate counter
+                    animateCounter(progressPercentText, 0, overallProgressPercent, 1500);
+
+                    // Trigger particles if progress > 0
+                    if (overallProgressPercent > 0) {
+                        createProgressParticles(overallProgressPercent);
+                    }
+
+                    // Change color based on progress
+                    if (overallProgressPercent === 100) {
+                        progressCircle.style.stroke = '#4CAF50';
+                        progressCircle.style.filter = 'url(#glow) drop-shadow(0 0 10px rgba(76, 175, 80, 0.8))';
+                    }
+                }, 300);
+            }
+
+            // Render the tasks
+            renderDailyTasks(tasks, container);
+        }
+
+        // Animate counter from start to end
+        function animateCounter(element, start, end, duration) {
+            const startTime = performance.now();
+
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+
+                // Easing function for smooth animation
+                const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+                const current = Math.floor(start + (end - start) * easeOutQuart);
+
+                element.textContent = current + '%';
+
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                } else {
+                    element.textContent = end + '%';
+                }
+            }
+
+            requestAnimationFrame(update);
+        }
+
+        // Create floating particles for progress indicator
+        function createProgressParticles(percent) {
+            const particleContainer = document.getElementById('progressParticles');
+            if (!particleContainer) return;
+
+            particleContainer.innerHTML = '';
+
+            // Number of particles based on progress
+            const particleCount = Math.floor(percent / 10) + 5;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+
+                // Random position around the circle (adjusted for smaller size)
+                const angle = (Math.random() * 360) * (Math.PI / 180);
+                const distance = 45 + Math.random() * 30;
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+
+                particle.style.left = '50%';
+                particle.style.top = '50%';
+                particle.style.setProperty('--tx', tx + 'px');
+                particle.style.setProperty('--ty', ty + 'px');
+                particle.style.animation = `particleFloat ${1 + Math.random()}s ease-out ${Math.random() * 0.5}s forwards`;
+
+                particleContainer.appendChild(particle);
+            }
+        }
+
+        // Render daily tasks in container
+        function renderDailyTasks(tasks, container) {
+            container.innerHTML = tasks.map(task => {
+                const isComplete = task.completed >= task.required;
+                const progressPercent = Math.min(100, (task.completed / task.required) * 100);
+
+                return `
+                    <div style="background: rgba(255, 255, 255, 0.03); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.3s ease;"
+                         onmouseover="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.borderColor='${task.color}30';"
+                         onmouseout="this.style.background='rgba(255, 255, 255, 0.03)'; this.style.borderColor='rgba(255, 255, 255, 0.1)';">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="font-size: 32px; width: 40px; text-align: center;">${task.icon}</div>
+                            <div style="flex: 1;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                                    <span style="font-weight: bold; color: ${task.color};">${task.name}</span>
+                                    ${isComplete
+                                        ? `<span style="color: #4CAF50; font-size: 12px; font-weight: bold;">✓ COMPLETE</span>`
+                                        : `<span style="color: #FF9800; font-size: 12px;">${task.completed}/${task.required}</span>`
+                                    }
+                                </div>
+                                <div style="font-size: 12px; color: #9E9E9E; margin-bottom: 8px;">${task.description}</div>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div style="flex: 1; height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 3px; overflow: hidden;">
+                                        <div style="height: 100%; background: ${isComplete ? '#4CAF50' : task.color}; width: ${progressPercent}%; transition: width 0.3s ease;"></div>
+                                    </div>
+                                    <button onclick="event.stopPropagation(); (${task.action.toString()})();"
+                                            style="padding: 6px 14px; background: ${isComplete ? 'rgba(76, 175, 80, 0.2)' : task.color + '30'};
+                                                   color: ${isComplete ? '#4CAF50' : task.color}; border: 1px solid ${isComplete ? '#4CAF50' : task.color};
+                                                   border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;
+                                                   white-space: nowrap; transition: all 0.2s ease;"
+                                            onmouseover="this.style.background='${task.color}'; this.style.color='#000';"
+                                            onmouseout="this.style.background='${isComplete ? 'rgba(76, 175, 80, 0.2)' : task.color + '30'}'; this.style.color='${isComplete ? '#4CAF50' : task.color}';">
+                                        ${isComplete ? 'VIEW' : 'START'}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    </script>
+</body>
+</html>

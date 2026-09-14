@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - PathForge{% endblock %}
+
+{% block extra_style %}
+<style>
+    .dashboard-header {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .dashboard-header h1 {
+        color: #667eea;
+        margin-bottom: 0.5rem;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .stat-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .stat-card h3 {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-card .stat-value {
+        font-size: 2.5rem;
+        font-weight: bold;
+    }
+
+    .quick-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .action-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        text-align: center;
+        transition: transform 0.3s;
+        cursor: pointer;
+    }
+
+    .action-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .action-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .action-card h3 {
+        color: #667eea;
+        margin-bottom: 0.5rem;
+    }
+
+    .action-card p {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .level-bar {
+        background: #e0e0e0;
+        height: 10px;
+        border-radius: 5px;
+        overflow: hidden;
+        margin-top: 1rem;
+    }
+
+    .level-progress {
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        height: 100%;
+        transition: width 0.5s;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>Welcome{% if progress and progress.name %}, {{ progress.name }}{% elif user.username %}, {{ user.username }}{% endif %}!</h1>
+    <p>Your journey to mastery continues</p>
+
+    {% if progress %}
+    <div class="level-bar">
+        <div class="level-progress" style="width: {{ (progress.xp % 100) }}%"></div>
+    </div>
+    <p style="margin-top: 0.5rem; color: #666;">
+        {{ progress.xp % 100 }}/100 XP to next level
+    </p>
+    {% endif %}
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <h3>Level</h3>
+        <div class="stat-value">{{ progress.level if progress else 1 }}</div>
+    </div>
+
+    <div class="stat-card">
+        <h3>Total XP</h3>
+        <div class="stat-value">{{ progress.xp if progress else 0 }}</div>
+    </div>
+
+    <div class="stat-card">
+        <h3>Streak</h3>
+        <div class="stat-value">{{ progress.streak if progress else 0 }}</div>
+    </div>
+
+    <div class="stat-card">
+        <h3>Challenges</h3>
+        <div class="stat-value">{{ progress.daily_challenges_completed if progress else 0 }}/{{ progress.daily_challenges_required if progress else 3 }}</div>
+    </div>
+</div>
+
+<div class="quick-actions">
+    <div class="action-card">
+        <div class="action-icon">🎯</div>
+        <h3>Practice Techniques</h3>
+        <p>Master attraction techniques with AI feedback</p>
+    </div>
+
+    <div class="action-card">
+        <div class="action-icon">📚</div>
+        <h3>Watch Lessons</h3>
+        <p>Learn new concepts and strategies</p>
+    </div>
+
+    <div class="action-card">
+        <div class="action-icon">🏆</div>
+        <h3>Daily Challenges</h3>
+        <p>Complete today's challenges</p>
+    </div>
+
+    <div class="action-card">
+        <div class="action-icon">🎮</div>
+        <h3>Play Games</h3>
+        <p>Develop skills through interactive games</p>
+    </div>
+
+    <div class="action-card">
+        <div class="action-icon">💬</div>
+        <h3>AI Practice</h3>
+        <p>Practice conversations with AI partner</p>
+    </div>
+
+    <div class="action-card">
+        <div class="action-icon">👥</div>
+        <h3>Community</h3>
+        <p>Connect with others on the journey</p>
+    </div>
+</div>
+
+<div class="card" style="margin-top: 2rem;">
+    <h2 style="margin-bottom: 1rem;">Test XP System</h2>
+    <button onclick="addXP(10)" class="btn btn-primary">Add 10 XP</button>
+    <button onclick="addXP(50)" class="btn btn-primary">Add 50 XP</button>
+    <button onclick="addXP(100)" class="btn btn-primary">Add 100 XP</button>
+    <div id="xp-result" style="margin-top: 1rem; color: #28a745; font-weight: bold;"></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    async function addXP(amount) {
+        try {
+            const response = await fetch('/api/user/add-xp', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ xp: amount })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                const result = document.getElementById('xp-result');
+                result.textContent = `Added ${amount} XP! Total: ${data.xp} XP, Level: ${data.level}`;
+
+                if (data.leveled_up) {
+                    result.textContent += ' - LEVEL UP!';
+                }
+
+                // Reload after 2 seconds to show updated stats
+                setTimeout(() => location.reload(), 2000);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+</script>
+{% endblock %}

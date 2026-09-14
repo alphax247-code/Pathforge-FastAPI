@@ -1,0 +1,175 @@
+{
+  "title": "Communication Styles Assessment",
+  "description": "Discover your primary communication style",
+  "questions": [
+    {
+      "id": 1,
+      "question": "When you need something from someone, you typically:",
+      "options": [
+        {
+          "text": "Ask directly and clearly for what you need",
+          "style": "assertive",
+          "points": 3
+        },
+        {
+          "text": "Demand it and get frustrated if they don't comply immediately",
+          "style": "aggressive",
+          "points": 3
+        },
+        {
+          "text": "Hint at what you need and hope they figure it out",
+          "style": "passive",
+          "points": 3
+        },
+        {
+          "text": "Act nice but make subtle jabs if they don't give you what you want",
+          "style": "passive_aggressive",
+          "points": 3
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "question": "When someone criticizes you, you usually:",
+      "options": [
+        {
+          "text": "Listen calmly and consider if the feedback is valid",
+          "style": "assertive",
+          "points": 3
+        },
+        {
+          "text": "Get defensive and criticize them back",
+          "style": "aggressive",
+          "points": 3
+        },
+        {
+          "text": "Apologize immediately even if you don't think you're wrong",
+          "style": "passive",
+          "points": 3
+        },
+        {
+          "text": "Say it's fine but hold a grudge",
+          "style": "passive_aggressive",
+          "points": 3
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "question": "In a disagreement, you tend to:",
+      "options": [
+        {
+          "text": "Express your viewpoint while respecting theirs",
+          "style": "assertive",
+          "points": 3
+        },
+        {
+          "text": "Argue forcefully until they see your point",
+          "style": "aggressive",
+          "points": 3
+        },
+        {
+          "text": "Go along with what they want to avoid conflict",
+          "style": "passive",
+          "points": 3
+        },
+        {
+          "text": "Agree outwardly but sabotage or complain behind their back",
+          "style": "passive_aggressive",
+          "points": 3
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "question": "When setting boundaries, you:",
+      "options": [
+        {
+          "text": "Clearly state your limits while being respectful",
+          "style": "assertive",
+          "points": 3
+        },
+        {
+          "text": "Set harsh boundaries and don't care how others feel",
+          "style": "aggressive",
+          "points": 3
+        },
+        {
+          "text": "Have trouble saying no even when uncomfortable",
+          "style": "passive",
+          "points": 3
+        },
+        {
+          "text": "Say yes but then don't follow through",
+          "style": "passive_aggressive",
+          "points": 3
+        }
+      ]
+    }
+  ],
+  "results": {
+    "assertive": {
+      "title": "Assertive Communication",
+      "description": "You have an assertive communication style. You express your needs and opinions clearly while respecting others. This is generally the healthiest communication style.",
+      "traits": [
+        "Clear and direct expression of needs",
+        "Respects both your rights and others' rights",
+        "Good at setting healthy boundaries",
+        "Confident but not aggressive"
+      ],
+      "tips": [
+        "Continue to model this healthy communication for others",
+        "Help others develop assertiveness skills",
+        "Maintain this balance even in stressful situations"
+      ]
+    },
+    "aggressive": {
+      "title": "Aggressive Communication",
+      "description": "You tend toward aggressive communication. You express your needs forcefully, sometimes at the expense of others' feelings and rights.",
+      "traits": [
+        "Loud or forceful expression",
+        "May interrupt or dominate conversations",
+        "Focused on winning rather than understanding",
+        "May intimidate others"
+      ],
+      "tips": [
+        "Practice active listening before responding",
+        "Consider others' perspectives and feelings",
+        "Use 'I' statements instead of 'you' accusations",
+        "Take a breath before responding when upset"
+      ]
+    },
+    "passive": {
+      "title": "Passive Communication",
+      "description": "You have a passive communication style. You may avoid expressing your needs or opinions to prevent conflict or please others.",
+      "traits": [
+        "Difficulty saying no",
+        "Avoids conflict at personal cost",
+        "May bottle up feelings",
+        "Puts others' needs before your own"
+      ],
+      "tips": [
+        "Practice expressing small preferences",
+        "Remember that your needs are valid",
+        "Use 'I' statements to express feelings",
+        "Start with low-stakes situations to build confidence"
+      ]
+    },
+    "passive_aggressive": {
+      "title": "Passive-Aggressive Communication",
+      "description": "You show passive-aggressive tendencies. You may avoid direct confrontation but express negative feelings indirectly through subtle actions or words.",
+      "traits": [
+        "Indirect expression of anger or frustration",
+        "May use sarcasm or backhanded compliments",
+        "Agrees outwardly but resists inwardly",
+        "May procrastinate or 'forget' to avoid conflict"
+      ],
+      "tips": [
+        "Practice direct, honest communication",
+        "Identify and acknowledge your true feelings",
+        "Express disagreements openly and respectfully",
+        "Address conflicts when they're small"
+      ]
+    }
+  }
+}

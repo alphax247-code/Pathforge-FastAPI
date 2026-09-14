@@ -1,0 +1,324 @@
+<!-- Paywall Modal Component -->
+<!-- Include this file in templates that need premium content protection -->
+
+<style>
+    .paywall-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(10px);
+        z-index: 10000;
+        justify-content: center;
+        align-items: center;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .paywall-overlay.active {
+        display: flex;
+    }
+
+    .paywall-modal {
+        background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+        border: 2px solid #D4AF37;
+        border-radius: 20px;
+        padding: 40px;
+        max-width: 500px;
+        width: 90%;
+        box-shadow: 0 20px 60px rgba(212, 175, 55, 0.3);
+        animation: slideUp 0.4s ease;
+        position: relative;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(50px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .paywall-close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: none;
+        border: none;
+        color: #9E9E9E;
+        font-size: 28px;
+        cursor: pointer;
+        transition: color 0.3s ease;
+        line-height: 1;
+    }
+
+    .paywall-close:hover {
+        color: #D4AF37;
+    }
+
+    .paywall-icon {
+        text-align: center;
+        font-size: 60px;
+        margin-bottom: 20px;
+    }
+
+    .paywall-title {
+        text-align: center;
+        color: #D4AF37;
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+
+    .paywall-message {
+        text-align: center;
+        color: #E0E0E0;
+        font-size: 16px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+    }
+
+    .paywall-features {
+        list-style: none;
+        padding: 0;
+        margin: 20px 0 30px;
+    }
+
+    .paywall-features li {
+        color: #E0E0E0;
+        padding: 10px 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .paywall-features li::before {
+        content: '✓';
+        color: #D4AF37;
+        font-weight: bold;
+        font-size: 20px;
+    }
+
+    .paywall-buttons {
+        display: flex;
+        gap: 15px;
+        flex-direction: column;
+    }
+
+    .paywall-btn {
+        padding: 15px 30px;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+        text-decoration: none;
+        display: block;
+    }
+
+    .paywall-btn-primary {
+        background: linear-gradient(135deg, #D4AF37, #FFD700);
+        color: #000;
+    }
+
+    .paywall-btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(212, 175, 55, 0.4);
+    }
+
+    .paywall-btn-secondary {
+        background: rgba(212, 175, 55, 0.1);
+        border: 1px solid #D4AF37;
+        color: #D4AF37;
+    }
+
+    .paywall-btn-secondary:hover {
+        background: rgba(212, 175, 55, 0.2);
+    }
+
+    .trial-badge {
+        background: linear-gradient(135deg, #4CAF50, #66BB6A);
+        color: white;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: bold;
+        display: inline-block;
+        margin-bottom: 15px;
+    }
+</style>
+
+<!-- Trial Start Modal -->
+<div class="paywall-overlay" id="trialModal">
+    <div class="paywall-modal">
+        <button class="paywall-close" onclick="closePaywall('trial')">&times;</button>
+
+        <div class="paywall-icon">🚀</div>
+        <div class="trial-badge">3-DAY FREE TRIAL</div>
+        <h2 class="paywall-title">Start Your Free Trial</h2>
+        <p class="paywall-message">
+            Get full access to all AI features for 3 days, absolutely free!
+        </p>
+
+        <ul class="paywall-features">
+            <li>Unlimited AI text practice conversations</li>
+            <li>Unlimited AI speech practice sessions</li>
+            <li>AI-powered feedback and coaching</li>
+            <li>No credit card required</li>
+        </ul>
+
+        <div class="paywall-buttons">
+            <button class="paywall-btn paywall-btn-primary" onclick="startTrial()">
+                Start Free Trial
+            </button>
+            <button class="paywall-btn paywall-btn-secondary" onclick="closePaywall('trial')">
+                Maybe Later
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Upgrade Required Modal - Modified to show Coming Soon -->
+<div class="paywall-overlay" id="upgradeModal">
+    <div class="paywall-modal">
+        <button class="paywall-close" onclick="closePaywall('upgrade')">&times;</button>
+
+        <div class="paywall-icon">🚀</div>
+        <h2 class="paywall-title">Premium Coming Soon</h2>
+        <p class="paywall-message" id="upgradeMessage">
+            This feature is part of our upcoming premium subscription
+        </p>
+
+        <ul class="paywall-features">
+            <li>Premium video lessons</li>
+            <li>Exclusive psychology games</li>
+            <li>Inner game exercises</li>
+            <li>Unlimited AI coaching</li>
+        </ul>
+
+        <p style="text-align: center; color: #9E9E9E; font-size: 14px; margin-bottom: 20px;">
+            We're working hard to bring you these amazing features. Stay tuned!
+        </p>
+
+        <div class="paywall-buttons">
+            <button class="paywall-btn paywall-btn-primary" onclick="closePaywall('upgrade')">
+                Got It!
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Show paywall modal
+    function showPaywall(type, customMessage) {
+        if (type === 'trial') {
+            document.getElementById('trialModal').classList.add('active');
+        } else if (type === 'upgrade') {
+            const modal = document.getElementById('upgradeModal');
+            if (customMessage) {
+                document.getElementById('upgradeMessage').textContent = customMessage;
+            }
+            modal.classList.add('active');
+        }
+    }
+
+    // Close paywall modal
+    function closePaywall(type) {
+        if (type === 'trial') {
+            document.getElementById('trialModal').classList.remove('active');
+        } else if (type === 'upgrade') {
+            document.getElementById('upgradeModal').classList.remove('active');
+        }
+    }
+
+    // Start AI trial
+    async function startTrial() {
+        try {
+            const response = await fetch('/api/ai-trial/start', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                closePaywall('trial');
+                alert('✅ ' + data.message);
+                // Reload the page to refresh AI access
+                window.location.reload();
+            } else {
+                alert('❌ ' + (data.message || 'Failed to start trial'));
+            }
+        } catch (error) {
+            console.error('Error starting trial:', error);
+            alert('❌ Error starting trial. Please try again.');
+        }
+    }
+
+    // Check AI trial status on page load
+    async function checkAITrialStatus() {
+        try {
+            const response = await fetch('/api/ai-trial/status');
+            const data = await response.json();
+
+            return data;
+        } catch (error) {
+            console.error('Error checking trial status:', error);
+            return null;
+        }
+    }
+
+    // Handle API errors and show appropriate paywall
+    function handlePremiumError(error, trialAvailable) {
+        if (error === 'trial_required' || trialAvailable) {
+            showPaywall('trial');
+        } else if (error === 'subscription_required') {
+            showPaywall('upgrade', 'Subscribe to access this feature');
+        } else {
+            showPaywall('upgrade');
+        }
+    }
+
+    // Navigate to pricing page
+    function goToPricing() {
+        // Check if user is logged in by trying to fetch subscription status
+        fetch('/api/subscription/status')
+            .then(response => {
+                if (response.status === 401) {
+                    // Not logged in, redirect to login with return URL
+                    window.location.href = '/login?next=/pricing';
+                } else {
+                    // Logged in, go to pricing
+                    window.location.href = '/pricing';
+                }
+            })
+            .catch(error => {
+                // On error, just go to pricing (it will redirect to login if needed)
+                window.location.href = '/pricing';
+            });
+    }
+
+    // Close modals when clicking outside
+    document.addEventListener('click', function(event) {
+        if (event.target.classList.contains('paywall-overlay')) {
+            const modalId = event.target.id;
+            if (modalId === 'trialModal') {
+                closePaywall('trial');
+            } else if (modalId === 'upgradeModal') {
+                closePaywall('upgrade');
+            }
+        }
+    });
+</script>

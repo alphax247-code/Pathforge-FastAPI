@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - PathForge Admin</title>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pathforge-complete.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .main-nav {
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(10, 10, 10, 0.98) 100%);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+            padding: 0 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 70px;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-brand {
+            font-size: 24px;
+            font-weight: 700;
+            color: #D4AF37;
+            letter-spacing: 1px;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 8px;
+        }
+
+        .nav-menu li a {
+            display: block;
+            padding: 12px 20px;
+            color: #9E9E9E;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-menu li a:hover {
+            color: #D4AF37;
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .nav-menu li a.active {
+            color: #D4AF37;
+            background: rgba(212, 175, 55, 0.15);
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .admin-header h1 {
+            color: #D4AF37;
+            margin: 0;
+        }
+
+        .users-table-container {
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.8) 0%, rgba(10, 10, 10, 0.9) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            overflow-x: auto;
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .users-table th {
+            text-align: left;
+            padding: 15px 12px;
+            color: #9E9E9E;
+            border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .users-table td {
+            padding: 15px 12px;
+            color: #CCCCCC;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+        }
+
+        .users-table tr:hover {
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+
+        .badge.admin {
+            background: #D4AF37;
+            color: #000;
+        }
+
+        .badge.user {
+            background: rgba(212, 175, 55, 0.2);
+            color: #D4AF37;
+        }
+
+        .badge.completed {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .badge.pending {
+            background: #FF9800;
+            color: white;
+        }
+
+        .badge.premium {
+            background: linear-gradient(135deg, #FFD700, #D4AF37);
+            color: #000;
+        }
+
+        .badge.free {
+            background: rgba(158, 158, 158, 0.3);
+            color: #9E9E9E;
+        }
+
+        .progress-bar {
+            width: 100px;
+            height: 8px;
+            background: rgba(212, 175, 55, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #D4AF37);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.8) 0%, rgba(10, 10, 10, 0.9) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-card .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .stat-label {
+            font-size: 14px;
+            color: #9E9E9E;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-card.total .stat-value {
+            color: #D4AF37;
+        }
+
+        .stat-card.premium .stat-value {
+            color: #FFD700;
+        }
+
+        .stat-card.free .stat-value {
+            color: #9E9E9E;
+        }
+
+        .stat-percentage {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .chart-container {
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.8) 0%, rgba(10, 10, 10, 0.9) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        .chart-container h3 {
+            color: #D4AF37;
+            margin: 0 0 20px 0;
+            font-size: 18px;
+        }
+
+        .milestones-container {
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.8) 0%, rgba(10, 10, 10, 0.9) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        .milestones-container h3 {
+            color: #D4AF37;
+            margin: 0 0 20px 0;
+            font-size: 18px;
+        }
+
+        .milestone-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+        }
+
+        .milestone-item:last-child {
+            border-bottom: none;
+        }
+
+        .milestone-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 18px;
+        }
+
+        .milestone-icon.achieved {
+            background: linear-gradient(135deg, #FFD700, #D4AF37);
+            color: #000;
+        }
+
+        .milestone-icon.achieved.premium {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .milestone-icon.pending {
+            background: rgba(158, 158, 158, 0.2);
+            color: #9E9E9E;
+        }
+
+        .milestone-icon.pending.premium {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px dashed rgba(255, 215, 0, 0.3);
+        }
+
+        .milestone-info {
+            flex: 1;
+        }
+
+        .milestone-label {
+            font-weight: 600;
+            color: #CCCCCC;
+            margin-bottom: 4px;
+        }
+
+        .milestone-status {
+            font-size: 12px;
+            color: #9E9E9E;
+        }
+
+        .milestone-status.achieved {
+            color: #4CAF50;
+        }
+
+        .btn-edit {
+            padding: 6px 12px;
+            background: rgba(212, 175, 55, 0.2);
+            color: #D4AF37;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 8px;
+        }
+
+        .btn-edit:hover {
+            background: rgba(212, 175, 55, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .btn-delete {
+            padding: 6px 12px;
+            background: rgba(239, 68, 68, 0.2);
+            color: #EF4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-delete:hover {
+            background: rgba(239, 68, 68, 0.3);
+            transform: translateY(-1px);
+        }
+
+        /* Delete Confirmation Modal */
+        .delete-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .delete-modal.active {
+            display: flex;
+        }
+
+        .delete-modal-content {
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(10, 10, 10, 0.98) 100%);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 12px;
+            padding: 32px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 16px 64px rgba(0, 0, 0, 0.6);
+        }
+
+        .delete-modal-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .delete-modal-header h3 {
+            color: #EF4444;
+            margin: 0 0 10px 0;
+            font-size: 22px;
+        }
+
+        .delete-modal-header p {
+            color: #9E9E9E;
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .delete-warning {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 20px;
+            color: #EF4444;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .delete-input-group {
+            margin-bottom: 20px;
+        }
+
+        .delete-input-group label {
+            display: block;
+            color: #CCCCCC;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .delete-input-group input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(10, 10, 10, 0.5);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .delete-input-group input:focus {
+            outline: none;
+            border-color: #EF4444;
+        }
+
+        .delete-modal-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .delete-modal-actions button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cancel-delete {
+            background: rgba(158, 158, 158, 0.1);
+            color: #9E9E9E;
+            border: 1px solid rgba(158, 158, 158, 0.2);
+        }
+
+        .btn-cancel-delete:hover {
+            background: rgba(158, 158, 158, 0.2);
+            color: white;
+        }
+
+        .btn-confirm-delete {
+            background: rgba(239, 68, 68, 0.2);
+            color: #EF4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-confirm-delete:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-confirm-delete:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Edit User Modal */
+        .edit-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .edit-modal.active {
+            display: flex;
+        }
+
+        .edit-modal-content {
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(10, 10, 10, 0.98) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            padding: 32px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 16px 64px rgba(0, 0, 0, 0.6);
+        }
+
+        .edit-modal-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .edit-modal-header h3 {
+            color: #D4AF37;
+            margin: 0 0 10px 0;
+            font-size: 22px;
+        }
+
+        .edit-modal-header p {
+            color: #9E9E9E;
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #CCCCCC;
+            font-size: 14px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(10, 10, 10, 0.5);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #D4AF37;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            cursor: pointer;
+        }
+
+        .edit-modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .edit-modal-actions button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-cancel-edit {
+            background: rgba(158, 158, 158, 0.1);
+            color: #9E9E9E;
+            border: 1px solid rgba(158, 158, 158, 0.2);
+        }
+
+        .btn-cancel-edit:hover {
+            background: rgba(158, 158, 158, 0.2);
+            color: white;
+        }
+
+        .btn-save-edit {
+            background: rgba(212, 175, 55, 0.2);
+            color: #D4AF37;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-save-edit:hover {
+            background: rgba(212, 175, 55, 0.3);
+        }
+
+        @media (max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="main-nav">
+        <div class="nav-brand">PathForge Admin</div>
+        <ul class="nav-menu">
+            <li><a href="{{ url_for('admin_dashboard') }}">Dashboard</a></li>
+            <li><a href="{{ url_for('admin_users') }}" class="active">Users</a></li>
+            <li><a href="{{ url_for('admin_videos') }}">Videos</a></li>
+            <li><a href="{{ url_for('admin_forum_posts') }}">Community</a></li>
+            <li><a href="{{ url_for('admin_database') }}">Database</a></li>
+            <li><a href="{{ url_for('dashboard') }}">Exit Admin</a></li>
+        </ul>
+    </nav>
+
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>User Management</h1>
+            <div style="color: #9E9E9E;">Total Users: {{ users|length }}</div>
+        </div>
+
+        <div class="stats-cards">
+            <div class="stat-card total">
+                <div class="stat-value">{{ user_stats.total }}</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat-card premium">
+                <div class="stat-value">{{ user_stats.premium }}</div>
+                <div class="stat-label">Premium Users</div>
+                <div class="stat-percentage">
+                    {% if user_stats.total > 0 %}
+                        {{ ((user_stats.premium / user_stats.total) * 100) | round(1) }}% of total
+                    {% else %}
+                        0%
+                    {% endif %}
+                </div>
+            </div>
+            <div class="stat-card free">
+                <div class="stat-value">{{ user_stats.free }}</div>
+                <div class="stat-label">Free Users</div>
+                <div class="stat-percentage">
+                    {% if user_stats.total > 0 %}
+                        {{ ((user_stats.free / user_stats.total) * 100) | round(1) }}% of total
+                    {% else %}
+                        0%
+                    {% endif %}
+                </div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 100%);">
+                <div class="stat-value" style="color: #D4AF37;">{{ "{:,}".format(user_stats.total_xp) }}</div>
+                <div class="stat-label">Total XP</div>
+                <div class="stat-percentage" style="color: #D4AF37;">
+                    Avg: {{ "{:,}".format(user_stats.avg_xp) }} XP per user
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="chart-container">
+                <h3>New Signups (Last 30 Days)</h3>
+                <canvas id="userChart"></canvas>
+            </div>
+
+            <div class="milestones-container">
+                <h3>Milestones</h3>
+                {% for milestone in milestones %}
+                <div class="milestone-item">
+                    <div class="milestone-icon {{ 'achieved' if milestone.achieved else 'pending' }} {{ milestone.type }}">
+                        {% if milestone.achieved %}✓{% else %}○{% endif %}
+                    </div>
+                    <div class="milestone-info">
+                        <div class="milestone-label">{{ milestone.label }}</div>
+                        <div class="milestone-status {{ 'achieved' if milestone.achieved else '' }}">
+                            {% if milestone.achieved %}
+                                Achieved!
+                            {% else %}
+                                {{ milestone.count - milestone.current }} more to go
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="users-table-container">
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Plan</th>
+                        <th>Level</th>
+                        <th>XP</th>
+                        <th>Streak</th>
+                        <th>Onboarding</th>
+                        <th>Joined</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td><strong style="color: #D4AF37;">{{ user.get('username', user.email.split('@')[0] if user.email else 'N/A') }}</strong></td>
+                        <td>{{ user.email or 'N/A' }}</td>
+                        <td>
+                            {% if user.get('is_admin') %}
+                                <span class="badge admin">Admin</span>
+                            {% else %}
+                                <span class="badge user">User</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user.get('is_premium') %}
+                                <span class="badge premium">Premium</span>
+                            {% else %}
+                                <span class="badge free">Free</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span style="color: #D4AF37; font-weight: 600;">
+                                Lv {{ user.get('progress', {}).get('level', 1) }}
+                            </span>
+                        </td>
+                        <td>
+                            <span style="color: #D4AF37; font-weight: 600; font-family: monospace;">
+                                {{ "{:,}".format(user.get('progress', {}).get('xp', 0)) }} XP
+                            </span>
+                        </td>
+                        <td>
+                            <span style="{% if user.get('progress', {}).get('streak', 0) > 0 %}color: #FF6B35; font-weight: 600;{% else %}color: #666;{% endif %}">
+                                {{ user.get('progress', {}).get('streak', 0) }} 🔥
+                            </span>
+                        </td>
+                        <td>
+                            {% if user.get('progress', {}).get('onboarding_completed') %}
+                                <span class="badge completed">Completed</span>
+                            {% else %}
+                                <span class="badge pending">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ user.created_at[:10] if user.created_at else 'N/A' }}</td>
+                        <td>
+                            <button class="btn-edit" onclick="editUser('{{ user.id }}', '{{ user.get('username', user.email.split('@')[0] if user.email else 'User') }}', '{{ user.email }}', {{ 'true' if user.get('is_admin') else 'false' }}, '{{ user.get('subscription_status', 'free') }}')">Edit</button>
+                            <button class="btn-delete" onclick="deleteUser('{{ user.id }}', '{{ user.get('username', user.email.split('@')[0] if user.email else 'User') }}')">Delete</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div id="edit-user-modal" class="edit-modal">
+        <div class="edit-modal-content">
+            <div class="edit-modal-header">
+                <h3>Edit User</h3>
+                <p>Modify user settings and subscription status</p>
+            </div>
+
+            <form id="edit-user-form">
+                <input type="hidden" id="edit-user-id">
+
+                <div class="form-group">
+                    <label style="color: #9E9E9E;">Username</label>
+                    <div style="padding: 12px; background: rgba(10, 10, 10, 0.3); border: 1px solid rgba(158, 158, 158, 0.2); border-radius: 8px; color: #9E9E9E;" id="display-username"></div>
+                </div>
+
+                <div class="form-group">
+                    <label style="color: #9E9E9E;">Email</label>
+                    <div style="padding: 12px; background: rgba(10, 10, 10, 0.3); border: 1px solid rgba(158, 158, 158, 0.2); border-radius: 8px; color: #9E9E9E;" id="display-email"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-group">
+                        <input type="checkbox" id="edit-is-admin">
+                        <span>Admin Access</span>
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>Subscription Status</label>
+                    <select id="edit-subscription-status">
+                        <option value="free">Free</option>
+                        <option value="pro">Pro</option>
+                        <option value="premium">Premium</option>
+                    </select>
+                </div>
+
+                <div class="edit-modal-actions">
+                    <button type="button" class="btn-cancel-edit" onclick="closeEditModal()">Cancel</button>
+                    <button type="submit" class="btn-save-edit">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete User Confirmation Modal -->
+    <div id="delete-user-modal" class="delete-modal">
+        <div class="delete-modal-content">
+            <div class="delete-modal-header">
+                <h3>Delete User</h3>
+                <p>This action is permanent and cannot be undone.</p>
+            </div>
+
+            <div class="delete-warning">
+                Warning: All user data including progress, subscriptions, and activity will be permanently deleted.
+            </div>
+
+            <div class="delete-input-group">
+                <label>Type <strong id="delete-username-display"></strong> to confirm:</label>
+                <input type="text" id="delete-confirm-input" placeholder="Enter username" autocomplete="off">
+            </div>
+
+            <div class="delete-modal-actions">
+                <button class="btn-cancel-delete" onclick="closeDeleteModal()">Cancel</button>
+                <button class="btn-confirm-delete" id="confirm-delete-btn" disabled onclick="confirmDeleteUser()">Delete User</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // User Growth Chart
+        const ctx = document.getElementById('userChart').getContext('2d');
+        const chartData = {{ chart_data | tojson }};
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: chartData.labels.map(date => {
+                    const d = new Date(date);
+                    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                }),
+                datasets: [
+                    {
+                        label: 'New Users',
+                        data: chartData.signups,
+                        borderColor: '#D4AF37',
+                        backgroundColor: 'rgba(212, 175, 55, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#D4AF37',
+                        pointBorderColor: '#FFD700',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    },
+                    {
+                        label: 'Active Users',
+                        data: chartData.active,
+                        borderColor: '#4CAF50',
+                        backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#4CAF50',
+                        pointBorderColor: '#81C784',
+                        pointBorderWidth: 2,
+                        pointRadius: 3,
+                        pointHoverRadius: 5
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            color: '#9E9E9E',
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            color: 'rgba(212, 175, 55, 0.1)'
+                        },
+                        ticks: {
+                            color: '#9E9E9E',
+                            maxTicksLimit: 10
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(212, 175, 55, 0.1)'
+                        },
+                        ticks: {
+                            color: '#9E9E9E',
+                            stepSize: 1
+                        }
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                }
+            }
+        });
+
+        // Edit user modal management
+        function editUser(userId, username, email, isAdmin, subscriptionTier) {
+            document.getElementById('edit-user-id').value = userId;
+            document.getElementById('display-username').textContent = username;
+            document.getElementById('display-email').textContent = email;
+            document.getElementById('edit-is-admin').checked = isAdmin;
+            document.getElementById('edit-subscription-status').value = subscriptionTier.toLowerCase();
+
+            document.getElementById('edit-user-modal').classList.add('active');
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-user-modal').classList.remove('active');
+        }
+
+        // Handle edit form submission
+        document.getElementById('edit-user-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const userId = document.getElementById('edit-user-id').value;
+            const formData = {
+                is_admin: document.getElementById('edit-is-admin').checked,
+                subscription_status: document.getElementById('edit-subscription-status').value
+            };
+
+            try {
+                const response = await fetch(`/admin/users/${userId}/edit`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('User updated successfully!');
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (error) {
+                alert('Network error: ' + error);
+                console.error(error);
+            }
+        });
+
+        // Close edit modal on outside click
+        document.getElementById('edit-user-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeEditModal();
+            }
+        });
+
+        // Delete user modal management
+        let deleteUserId = null;
+        let deleteUsername = '';
+
+        function deleteUser(userId, username) {
+            deleteUserId = userId;
+            deleteUsername = username;
+
+            document.getElementById('delete-username-display').textContent = username;
+            document.getElementById('delete-confirm-input').value = '';
+            document.getElementById('confirm-delete-btn').disabled = true;
+            document.getElementById('delete-user-modal').classList.add('active');
+
+            // Focus on input
+            setTimeout(() => {
+                document.getElementById('delete-confirm-input').focus();
+            }, 100);
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('delete-user-modal').classList.remove('active');
+            deleteUserId = null;
+            deleteUsername = '';
+        }
+
+        // Validate username input
+        document.getElementById('delete-confirm-input').addEventListener('input', function(e) {
+            const btn = document.getElementById('confirm-delete-btn');
+            if (e.target.value === deleteUsername) {
+                btn.disabled = false;
+            } else {
+                btn.disabled = true;
+            }
+        });
+
+        // Close modal on outside click
+        document.getElementById('delete-user-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDeleteModal();
+            }
+        });
+
+        function confirmDeleteUser() {
+            if (!deleteUserId || document.getElementById('delete-confirm-input').value !== deleteUsername) {
+                return;
+            }
+
+            fetch(`/admin/users/${deleteUserId}/delete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('User deleted successfully');
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+                closeDeleteModal();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to delete user');
+                closeDeleteModal();
+            });
+        }
+
+        // ============= TABLE SORTING =============
+        let currentSort = { column: null, ascending: true };
+
+        function sortTable(columnIndex, type = 'string') {
+            const table = document.querySelector('.users-table tbody');
+            const rows = Array.from(table.querySelectorAll('tr'));
+
+            // Determine sort direction
+            if (currentSort.column === columnIndex) {
+                currentSort.ascending = !currentSort.ascending;
+            } else {
+                currentSort.column = columnIndex;
+                currentSort.ascending = true;
+            }
+
+            // Sort rows
+            rows.sort((a, b) => {
+                let aValue = a.cells[columnIndex].textContent.trim();
+                let bValue = b.cells[columnIndex].textContent.trim();
+
+                // Extract numeric values for XP, Level, Streak
+                if (type === 'number') {
+                    aValue = parseInt(aValue.replace(/[^0-9]/g, '')) || 0;
+                    bValue = parseInt(bValue.replace(/[^0-9]/g, '')) || 0;
+                }
+
+                if (aValue < bValue) return currentSort.ascending ? -1 : 1;
+                if (aValue > bValue) return currentSort.ascending ? 1 : -1;
+                return 0;
+            });
+
+            // Re-append rows in sorted order
+            rows.forEach(row => table.appendChild(row));
+
+            // Update sort indicators
+            updateSortIndicators(columnIndex);
+        }
+
+        function updateSortIndicators(activeColumn) {
+            const headers = document.querySelectorAll('.users-table th');
+            headers.forEach((header, index) => {
+                const indicator = header.querySelector('.sort-indicator');
+                if (indicator) {
+                    if (index === activeColumn) {
+                        indicator.textContent = currentSort.ascending ? '▲' : '▼';
+                        indicator.style.opacity = '1';
+                    } else {
+                        indicator.textContent = '▼';
+                        indicator.style.opacity = '0.3';
+                    }
+                }
+            });
+        }
+
+        // Add sort indicators to headers
+        document.addEventListener('DOMContentLoaded', function() {
+            const headers = document.querySelectorAll('.users-table th');
+            const sortableColumns = [
+                { index: 0, type: 'string', label: 'ID' },
+                { index: 1, type: 'string', label: 'Username' },
+                { index: 5, type: 'number', label: 'Level' },
+                { index: 6, type: 'number', label: 'XP' },
+                { index: 7, type: 'number', label: 'Streak' },
+                { index: 9, type: 'string', label: 'Joined' }
+            ];
+
+            sortableColumns.forEach(col => {
+                const header = headers[col.index];
+                if (header) {
+                    header.style.cursor = 'pointer';
+                    header.style.userSelect = 'none';
+                    header.style.position = 'relative';
+
+                    const indicator = document.createElement('span');
+                    indicator.className = 'sort-indicator';
+                    indicator.textContent = '▼';
+                    indicator.style.marginLeft = '5px';
+                    indicator.style.opacity = '0.3';
+                    indicator.style.fontSize = '10px';
+                    header.appendChild(indicator);
+
+                    header.addEventListener('click', () => sortTable(col.index, col.type));
+                    header.title = `Click to sort by ${col.label}`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

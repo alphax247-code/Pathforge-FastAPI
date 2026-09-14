@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Skills Game - PathForge</title>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pathforge-complete.css') }}">
+    <style>
+        .game-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .game-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .game-header h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #D4AF37 0%, #FFD700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .game-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            padding: 15px 30px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #D4AF37;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #9E9E9E;
+            margin-top: 5px;
+        }
+
+        .game-board {
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            min-height: 400px;
+            position: relative;
+        }
+
+        .scenario-container {
+            text-align: center;
+        }
+
+        .scenario-title {
+            font-size: 24px;
+            color: #D4AF37;
+            margin-bottom: 20px;
+        }
+
+        .scenario-description {
+            font-size: 18px;
+            line-height: 1.6;
+            color: #E0E0E0;
+            margin-bottom: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .choices {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .choice-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            color: #E0E0E0;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .choice-btn:hover {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: #D4AF37;
+            transform: translateX(10px);
+        }
+
+        .choice-btn.correct {
+            background: rgba(76, 175, 80, 0.2);
+            border-color: #4CAF50;
+            animation: pulse-green 0.5s ease;
+        }
+
+        .choice-btn.incorrect {
+            background: rgba(244, 67, 54, 0.2);
+            border-color: #F44336;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes pulse-green {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .feedback {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(212, 175, 55, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .feedback h3 {
+            color: #D4AF37;
+            margin-bottom: 10px;
+        }
+
+        .next-btn {
+            background: linear-gradient(135deg, #D4AF37 0%, #FFD700 100%);
+            color: #000;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .next-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .game-complete {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+
+        .game-complete.show {
+            display: block;
+        }
+
+        .completion-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .xp-earned {
+            font-size: 48px;
+            color: #4CAF50;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .restart-btn {
+            background: rgba(212, 175, 55, 0.2);
+            border: 2px solid #D4AF37;
+            color: #D4AF37;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .restart-btn:hover {
+            background: #D4AF37;
+            color: #000;
+        }
+
+        .games-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .game-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 16px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .game-card:hover {
+            border-color: #D4AF37;
+            transform: translateX(10px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.15);
+        }
+
+        .game-card-icon {
+            font-size: 50px;
+            flex-shrink: 0;
+        }
+
+        .game-card-content {
+            flex: 1;
+        }
+
+        .game-card-title {
+            font-size: 22px;
+            color: #D4AF37;
+            margin-bottom: 8px;
+        }
+
+        .game-card-desc {
+            color: #9E9E9E;
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .game-card-stats {
+            display: flex;
+            gap: 10px;
+        }
+
+        .game-stat {
+            background: rgba(212, 175, 55, 0.1);
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #D4AF37;
+        }
+
+        .play-arrow {
+            font-size: 24px;
+            color: #D4AF37;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+
+        .game-card:hover .play-arrow {
+            opacity: 1;
+            transform: translateX(5px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-left">
+            <div class="logo-icon">
+                <img src="{{ url_for('static', filename='assets/icons/main icon.svg') }}" alt="PathForge Logo" style="width: 60px; height: 60px;">
+            </div>
+            <div class="logo">PATHFORGE</div>
+        </div>
+        <nav>
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('challenges') }}">Challenges</a>
+            <a href="{{ url_for('lessons') }}">Lessons</a>
+            <a href="{{ url_for('text_practice') }}">Practice</a>
+            <a href="{{ url_for('psychology_games') }}" class="active">Game</a>
+        </nav>
+        <div class="header-right">
+            <a href="{{ url_for('profile') }}" class="profile-btn-header">Profile</a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="game-container">
+            <div class="game-header">
+                <h1>Psychology Games</h1>
+                <p style="color: #9E9E9E;">Build social intelligence through pattern recognition</p>
+            </div>
+
+            <!-- Games List -->
+            <div class="games-list">
+                <a href="{{ url_for('attachment_game') }}" class="game-card">
+                    <div class="game-card-icon">🔗</div>
+                    <div class="game-card-content">
+                        <div class="game-card-title">Attachment Styles</div>
+                        <div class="game-card-desc">Identify Secure, Anxious, Avoidant, and Fearful patterns in relationships</div>
+                        <div class="game-card-stats">
+                            <span class="game-stat">24 Scenarios</span>
+                            <span class="game-stat">10-15 XP</span>
+                        </div>
+                    </div>
+                    <div class="play-arrow">→</div>
+                </a>
+
+                <a href="{{ url_for('cognitive_distortions_game') }}" class="game-card">
+                    <div class="game-card-icon">🧠</div>
+                    <div class="game-card-content">
+                        <div class="game-card-title">Cognitive Distortions</div>
+                        <div class="game-card-desc">Spot thinking errors like Catastrophizing and Mind Reading</div>
+                        <div class="game-card-stats">
+                            <span class="game-stat">16 Scenarios</span>
+                            <span class="game-stat">10-15 XP</span>
+                        </div>
+                    </div>
+                    <div class="play-arrow">→</div>
+                </a>
+
+                <a href="{{ url_for('love_languages_game') }}" class="game-card">
+                    <div class="game-card-icon">💝</div>
+                    <div class="game-card-content">
+                        <div class="game-card-title">Love Languages</div>
+                        <div class="game-card-desc">Recognize how people express and receive love</div>
+                        <div class="game-card-stats">
+                            <span class="game-stat">16 Scenarios</span>
+                            <span class="game-stat">10-15 XP</span>
+                        </div>
+                    </div>
+                    <div class="play-arrow">→</div>
+                </a>
+
+                <a href="{{ url_for('communication_styles_game') }}" class="game-card">
+                    <div class="game-card-icon">💬</div>
+                    <div class="game-card-content">
+                        <div class="game-card-title">Communication Styles</div>
+                        <div class="game-card-desc">Identify Passive, Aggressive, Assertive patterns</div>
+                        <div class="game-card-stats">
+                            <span class="game-stat">16 Scenarios</span>
+                            <span class="game-stat">10-15 XP</span>
+                        </div>
+                    </div>
+                    <div class="play-arrow">→</div>
+                </a>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

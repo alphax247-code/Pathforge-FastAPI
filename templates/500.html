@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>500 - Server Error | PathForge</title>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pathforge-complete.css') }}">
+    <style>
+        .error-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+        .error-content {
+            max-width: 600px;
+        }
+        .error-code {
+            font-size: 120px;
+            font-weight: bold;
+            color: var(--accent, #FFD700);
+            line-height: 1;
+            margin-bottom: 20px;
+        }
+        .error-message {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .error-description {
+            font-size: 16px;
+            opacity: 0.8;
+            margin-bottom: 30px;
+        }
+        .error-button {
+            display: inline-block;
+            padding: 12px 30px;
+            background: var(--accent, #FFD700);
+            color: var(--dark, #1a1a1a);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        .error-button:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="error-page">
+    <div class="error-content">
+        <div class="logo">⚡</div>
+        <div class="error-code">500</div>
+        <h1 class="error-message">Server Error</h1>
+        <p class="error-description">
+            Something went wrong on our end. We're working to fix it. Please try again later.
+        </p>
+        <a href="{{ url_for('index') }}" class="error-button">Return Home</a>
+    </div>
+</body>
+</html>

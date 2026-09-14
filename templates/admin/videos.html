@@ -1,0 +1,1498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Management - PathForge Admin</title>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pathforge-complete.css') }}">
+</head>
+<body>
+    <nav class="main-nav">
+        <div class="nav-brand">PathForge Admin</div>
+        <ul class="nav-menu">
+            <li><a href="{{ url_for('admin_dashboard') }}">Dashboard</a></li>
+            <li><a href="{{ url_for('admin_users') }}">Users</a></li>
+            <li><a href="{{ url_for('admin_videos') }}" class="active">Videos</a></li>
+            <li><a href="{{ url_for('admin_forum_posts') }}">Community</a></li>
+            <li><a href="{{ url_for('admin_database') }}">Database</a></li>
+            <li><a href="{{ url_for('dashboard') }}">Exit Admin</a></li>
+        </ul>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div style="max-width: 1400px; margin: 20px auto; padding: 0 20px;">
+                {% for category, message in messages %}
+                    <div class="flash-message flash-{{ category }}" style="padding: 15px; margin-bottom: 10px; border-radius: 8px; {% if category == 'success' %}background: rgba(76, 175, 80, 0.2); border: 1px solid rgba(76, 175, 80, 0.4); color: #4CAF50;{% elif category == 'error' %}background: rgba(244, 67, 54, 0.2); border: 1px solid rgba(244, 67, 54, 0.4); color: #F44336;{% elif category == 'warning' %}background: rgba(255, 165, 0, 0.2); border: 1px solid rgba(255, 165, 0, 0.4); color: #FFA500;{% else %}background: rgba(33, 150, 243, 0.2); border: 1px solid rgba(33, 150, 243, 0.4); color: #2196F3;{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <main>
+        <div class="page-header">
+            <h1>Video Management</h1>
+            <p>Upload and manage video content for your platform</p>
+        </div>
+
+        <!-- JSON Import/Export Section -->
+        <div class="admin-card" style="margin-bottom: 30px;">
+            <h2>📂 Bulk Chapter Management (JSON)</h2>
+            <p style="color: #9E9E9E; font-size: 14px; margin-bottom: 20px;">
+                Import or export chapters for multiple videos using JSON files. Great for bulk operations and version control.
+            </p>
+
+            <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                <!-- Import Section -->
+                <div style="flex: 1; min-width: 300px;">
+                    <h3 style="color: #D4AF37; font-size: 18px; margin-bottom: 15px;">Import Chapters</h3>
+                    <div class="form-group">
+                        <label>Upload JSON File</label>
+                        <div class="video-input-wrapper" onclick="document.getElementById('chapters-json-file').click()" style="min-height: 100px;">
+                            <div class="upload-icon">📄</div>
+                            <div class="upload-text" id="json-upload-text">Click to upload JSON file<br><small>Format: {"filename.mp4": [{"time": 0, "title": "Chapter"}]}</small></div>
+                            <input type="file" id="chapters-json-file" accept="application/json,.json" style="display: none;">
+                        </div>
+                    </div>
+                    <button class="gold-btn" onclick="importChaptersFromJSON()" id="import-json-btn" disabled>
+                        Import Chapters
+                    </button>
+                    <a href="/static/chapters_example.json" download class="gold-btn-outline" style="display: inline-block; text-align: center; margin-top: 10px; text-decoration: none;">
+                        Download Example JSON
+                    </a>
+                </div>
+
+                <!-- Export Section -->
+                <div style="flex: 1; min-width: 300px;">
+                    <h3 style="color: #D4AF37; font-size: 18px; margin-bottom: 15px;">Export Chapters</h3>
+                    <p style="color: #9E9E9E; font-size: 13px; margin-bottom: 15px;">
+                        Download all current video chapters as a JSON file. Edit and re-import to update in bulk.
+                    </p>
+                    <button class="gold-btn" onclick="exportChaptersToJSON()" style="width: 100%;">
+                        📥 Export All Chapters to JSON
+                    </button>
+                    <div id="export-status" style="margin-top: 10px; font-size: 13px; color: #9E9E9E;"></div>
+                </div>
+            </div>
+
+            <div class="info-note" style="margin-top: 20px;">
+                <strong>JSON Format:</strong> Use filename as key, array of chapters as value.
+                Time in seconds. Example: <code style="color: #D4AF37;">{"video.mp4": [{"time": 0, "title": "Intro"}]}</code>
+            </div>
+        </div>
+
+        <div class="video-management-grid">
+            <!-- Left - Video Library -->
+            <div class="admin-card">
+                <div class="card-header-with-action">
+                    <h2>Video Library</h2>
+                    <div class="search-bar">
+                        <input type="text" id="video-search" class="admin-input" placeholder="Search videos...">
+                        <button class="gold-btn-outline" onclick="searchVideos()">Search</button>
+                    </div>
+                </div>
+
+                <div class="bulk-actions" style="opacity: 0.5; pointer-events: none;">
+                    <select id="bulk-action" class="admin-input" disabled>
+                        <option value="">Bulk Actions (Disabled - Use Supabase)</option>
+                    </select>
+                    <button class="gold-btn-outline" disabled>Apply</button>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Playlist</th>
+                                <th>Status</th>
+                                <th>Date Added</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if videos %}
+                                {% for video in videos %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ video.title or video.filename }}</strong>
+                                        {% if video.filename %}
+                                        <br><small style="color: #9E9E9E;">{{ video.filename }}</small>
+                                        {% endif %}
+                                        {% if video.needs_sync %}
+                                        <br><small style="color: #FFA500;">⚠️ Not in database</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ video.playlist or video.category or 'No Playlist' }}</td>
+                                    <td>
+                                        {% if video.needs_sync %}
+                                            <span class="status-badge" style="background: rgba(255, 165, 0, 0.2); color: #FFA500; border: 1px solid rgba(255, 165, 0, 0.3);">⚠️ Not Synced</span>
+                                        {% elif video.is_premium %}
+                                            <span class="status-badge premium">💎 Premium</span>
+                                        {% else %}
+                                            <span class="status-badge free">✓ Free</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ video.created_at[:10] if video.created_at else 'N/A' }}</td>
+                                    <td>
+                                        {% if video.needs_sync %}
+                                            <button onclick="syncVideo('{{ video.filename }}')" class="toggle-btn" style="background: rgba(255, 165, 0, 0.2); border-color: rgba(255, 165, 0, 0.4); color: #FFA500;">
+                                                Sync to Database
+                                            </button>
+                                        {% elif video.id %}
+                                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                                <button onclick='editVideo({{ video.id }}, "{{ video.title|replace('"', '\\"') }}", "{{ video.description|replace('"', '\\"') if video.description else "" }}", "{{ video.playlist or video.category or "" }}", {{ video.chapters|tojson|safe if video.chapters else "[]" }})' class="toggle-btn" style="background: rgba(33, 150, 243, 0.1); border-color: rgba(33, 150, 243, 0.3); color: #2196F3;">
+                                                    ✏️ Edit
+                                                </button>
+                                                <button onclick="togglePremium('{{ video.id }}', {{ 'true' if not video.is_premium else 'false' }})" class="toggle-btn">
+                                                    {% if video.is_premium %}
+                                                        Set Free
+                                                    {% else %}
+                                                        Set Premium
+                                                    {% endif %}
+                                                </button>
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="empty-state">No videos found. Add videos through Supabase Storage!</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="table-footer">
+                    <span>Total Videos: <strong style="color: #D4AF37;">{{ videos|length }}</strong></span>
+                </div>
+
+                <div class="info-note">
+                    <strong>Note:</strong> Supported formats: MP4, WebM, OGG. Max file size: 500MB.
+                    <a href="#" class="gold-link">Learn more about video formats</a>.
+                </div>
+            </div>
+
+            <!-- Right - Add New Video -->
+            <div class="admin-card">
+                <h2>Add New Video</h2>
+                <form method="POST" action="{{ url_for('admin.videos') }}" enctype="multipart/form-data" id="upload-form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                    <input type="hidden" name="chapters" id="chapters-json" value="">
+
+                    <div class="form-group">
+                        <label for="video-title">Title *</label>
+                        <input type="text" id="video-title" name="title" class="admin-input" required placeholder="Enter video title">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="video-playlist">Playlist</label>
+                        <div style="display: flex; gap: 10px;">
+                            <select id="video-playlist" name="playlist" class="admin-input" style="flex: 1;">
+                                <option value="">Select Playlist</option>
+                                {% if playlists %}
+                                    {% for playlist in playlists %}
+                                    <option value="{{ playlist.name }}">{{ playlist.name }}</option>
+                                    {% endfor %}
+                                {% else %}
+                                    <option value="Lessons">Lessons</option>
+                                    <option value="Challenges">Challenges</option>
+                                    <option value="Inner Game">Inner Game</option>
+                                    <option value="Practice">Practice</option>
+                                {% endif %}
+                            </select>
+                            <button type="button" class="gold-btn-outline" onclick="openPlaylistModal()" style="padding: 8px 16px; white-space: nowrap;">
+                                + New Playlist
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="video-description">Description</label>
+                        <textarea id="video-description" name="description" class="admin-textarea" rows="3" placeholder="Brief description of the video content"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Access Level *</label>
+                        <div style="display: flex; gap: 20px; margin-top: 8px;">
+                            <label style="display: flex; align-items: center; cursor: pointer;">
+                                <input type="radio" name="is_premium" value="false" checked style="margin-right: 8px;">
+                                <span>✓ Free (All Users)</span>
+                            </label>
+                            <label style="display: flex; align-items: center; cursor: pointer;">
+                                <input type="radio" name="is_premium" value="true" style="margin-right: 8px;">
+                                <span>💎 Premium (Paid Users Only)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Video Chapters (Optional)</label>
+                        <div class="chapters-info" style="font-size: 12px; color: #9E9E9E; margin-bottom: 10px;">
+                            Add chapters to help users navigate through the video content (like YouTube chapters)
+                        </div>
+                        <div id="upload-chapters-list" class="chapters-list">
+                            <!-- Chapters will be dynamically added here -->
+                        </div>
+                        <button type="button" class="gold-btn-outline" onclick="addUploadChapterRow()" style="width: 100%; margin-top: 10px;">
+                            + Add Chapter
+                        </button>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Video File *</label>
+                        <div class="video-input-wrapper" onclick="document.getElementById('video-file').click()">
+                            <div class="upload-icon">🎬</div>
+                            <div class="upload-text" id="upload-text">Click to upload video file<br><small>(MP4, WebM, OGG - Max 500MB)</small></div>
+                            <input type="file" id="video-file" name="video_file" accept="video/*" required style="display: none;">
+                        </div>
+                    </div>
+
+                    <div class="video-preview" id="video-preview" style="display: none;">
+                        <video id="preview-player" controls style="max-width: 100%; border-radius: 8px;"></video>
+                        <button type="button" class="remove-video-btn" onclick="removeVideoPreview()">Remove Video</button>
+                    </div>
+
+                    <button type="submit" class="gold-btn" id="upload-btn">Upload Video</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add Playlist Modal -->
+    <div id="playlist-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create New Playlist</h3>
+                <button class="modal-close" onclick="closePlaylistModal()">&times;</button>
+            </div>
+            <form id="playlist-form" onsubmit="addPlaylist(event)">
+                <div class="form-group">
+                    <label for="playlist-name">Playlist Name *</label>
+                    <input type="text" id="playlist-name" class="admin-input" required placeholder="e.g., Beginner Lessons">
+                </div>
+                <div class="form-group">
+                    <label for="playlist-description">Description (optional)</label>
+                    <textarea id="playlist-description" class="admin-textarea" rows="3" placeholder="Brief description of this playlist"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="secondary-btn" onclick="closePlaylistModal()">Cancel</button>
+                    <button type="submit" class="gold-btn">Create Playlist</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Video Modal -->
+    <div id="edit-video-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Video</h3>
+                <button class="modal-close" onclick="closeEditModal()">&times;</button>
+            </div>
+            <form id="edit-video-form" onsubmit="saveVideoEdit(event)">
+                <input type="hidden" id="edit-video-id">
+
+                <div class="form-group">
+                    <label for="edit-video-title">Title *</label>
+                    <input type="text" id="edit-video-title" class="admin-input" required placeholder="Enter video title">
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-video-playlist">Playlist</label>
+                    <select id="edit-video-playlist" class="admin-input">
+                        <option value="">Select Playlist</option>
+                        {% if playlists %}
+                            {% for playlist in playlists %}
+                            <option value="{{ playlist.name }}">{{ playlist.name }}</option>
+                            {% endfor %}
+                        {% else %}
+                            <option value="Lessons">Lessons</option>
+                            <option value="Challenges">Challenges</option>
+                            <option value="Inner Game">Inner Game</option>
+                            <option value="Practice">Practice</option>
+                        {% endif %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-video-description">Description</label>
+                    <textarea id="edit-video-description" class="admin-textarea" rows="4" placeholder="Brief description of the video content"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Video Chapters (Optional)</label>
+                    <div class="chapters-info" style="font-size: 12px; color: #9E9E9E; margin-bottom: 10px;">
+                        Add chapters to help users navigate through the video content (like YouTube chapters)
+                    </div>
+                    <div id="chapters-list" class="chapters-list">
+                        <!-- Chapters will be dynamically added here -->
+                    </div>
+                    <button type="button" class="gold-btn-outline" onclick="addChapterRow()" style="width: 100%; margin-top: 10px;">
+                        + Add Chapter
+                    </button>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="secondary-btn" onclick="closeEditModal()">Cancel</button>
+                    <button type="submit" class="gold-btn">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        /* Video Management Page Styles - PathForge Theme */
+        .main-nav {
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(10, 10, 10, 0.98) 100%);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+            padding: 0 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 70px;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-brand {
+            font-size: 24px;
+            font-weight: 700;
+            color: #D4AF37;
+            letter-spacing: 1px;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 8px;
+        }
+
+        .nav-menu li a {
+            display: block;
+            padding: 12px 20px;
+            color: #9E9E9E;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-menu li a:hover {
+            color: #D4AF37;
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .nav-menu li a.active {
+            color: #D4AF37;
+            background: rgba(212, 175, 55, 0.15);
+        }
+
+        main {
+            padding: 32px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            color: #D4AF37;
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            color: #9E9E9E;
+            font-size: 16px;
+        }
+
+        .video-management-grid {
+            display: grid;
+            grid-template-columns: 500px 1fr;
+            gap: 32px;
+        }
+
+        .admin-card {
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.8) 0%, rgba(10, 10, 10, 0.9) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+            padding: 32px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .admin-card h2 {
+            font-size: 24px;
+            color: #D4AF37;
+            margin-bottom: 24px;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .admin-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(10, 10, 10, 0.5);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .admin-input:focus {
+            outline: none;
+            border-color: rgba(212, 175, 55, 0.5);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        }
+
+        .admin-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .admin-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 12px 16px;
+            background: rgba(10, 10, 10, 0.5);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        .admin-textarea:focus {
+            outline: none;
+            border-color: rgba(212, 175, 55, 0.5);
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: #9E9E9E;
+            margin-top: 6px;
+        }
+
+        .video-input-wrapper {
+            border: 2px dashed rgba(212, 175, 55, 0.3);
+            padding: 40px 30px;
+            text-align: center;
+            border-radius: 8px;
+            background: rgba(212, 175, 55, 0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-input-wrapper:hover {
+            border-color: rgba(212, 175, 55, 0.6);
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .video-input-wrapper input[type="file"] {
+            display: none;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .upload-text {
+            color: #9E9E9E;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .upload-text small {
+            color: #666;
+        }
+
+        .video-preview {
+            margin-top: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 8px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .video-preview.active {
+            display: block;
+        }
+
+        .video-preview video {
+            width: 100%;
+            max-height: 200px;
+        }
+
+        .remove-video-btn {
+            width: 100%;
+            padding: 10px;
+            background: rgba(239, 68, 68, 0.2);
+            color: #EF4444;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .remove-video-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        .gold-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #FFD700 0%, #D4AF37 100%);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(212, 175, 55, 0.3);
+        }
+
+        .gold-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(212, 175, 55, 0.5);
+        }
+
+        .category-select-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .category-select-wrapper .admin-input {
+            flex: 1;
+        }
+
+        .add-category-btn {
+            width: 42px;
+            height: 42px;
+            background: rgba(212, 175, 55, 0.1);
+            color: #D4AF37;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 8px;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .add-category-btn:hover {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: rgba(212, 175, 55, 0.5);
+            transform: scale(1.05);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(10, 10, 10, 0.98) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            padding: 32px;
+            width: 100%;
+            max-width: 500px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 16px 64px rgba(0, 0, 0, 0.6);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-header h3 {
+            font-size: 20px;
+            color: #D4AF37;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #9E9E9E;
+            font-size: 28px;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: #EF4444;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+
+        .modal-actions .gold-btn,
+        .modal-actions .secondary-btn {
+            width: auto;
+            padding: 12px 24px;
+        }
+
+        .gold-btn-outline {
+            padding: 10px 20px;
+            background: rgba(212, 175, 55, 0.1);
+            color: #D4AF37;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .gold-btn-outline:hover {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: rgba(212, 175, 55, 0.5);
+        }
+
+        .secondary-btn {
+            padding: 10px 20px;
+            background: rgba(158, 158, 158, 0.1);
+            color: #9E9E9E;
+            border: 1px solid rgba(158, 158, 158, 0.2);
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .secondary-btn:hover {
+            background: rgba(158, 158, 158, 0.15);
+            color: white;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 12px;
+        }
+
+        .search-bar .admin-input {
+            flex: 1;
+        }
+
+        .bulk-actions {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .bulk-actions .admin-input {
+            width: 200px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 400px;
+            border-radius: 8px;
+            border: 1px solid rgba(212, 175, 55, 0.1);
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .admin-table th,
+        .admin-table td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+        }
+
+        .admin-table th {
+            background: rgba(212, 175, 55, 0.1);
+            color: #D4AF37;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .admin-table td {
+            color: #9E9E9E;
+            font-size: 14px;
+        }
+
+        .admin-table tbody tr {
+            transition: background 0.3s ease;
+        }
+
+        .admin-table tbody tr:hover {
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .gold-link {
+            color: #D4AF37;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .gold-link:hover {
+            color: #FFD700;
+        }
+
+        .danger-link {
+            color: #EF4444;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .danger-link:hover {
+            color: #F87171;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-badge.premium {
+            background: linear-gradient(135deg, #D4AF37 0%, #F4D03F 100%);
+            color: #1A1A1A;
+        }
+
+        .status-badge.free {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .toggle-btn {
+            padding: 6px 16px;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 6px;
+            color: #D4AF37;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn:hover {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: rgba(212, 175, 55, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px !important;
+            color: #666 !important;
+        }
+
+        .table-footer {
+            margin-top: 16px;
+            font-size: 14px;
+            color: #9E9E9E;
+        }
+
+        .info-note {
+            margin-top: 20px;
+            padding: 16px;
+            background: rgba(212, 175, 55, 0.05);
+            border-left: 3px solid #D4AF37;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #9E9E9E;
+        }
+
+        .info-note strong {
+            color: #D4AF37;
+        }
+
+        @media (max-width: 1200px) {
+            .video-management-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .search-bar {
+                flex-direction: column;
+            }
+
+            .bulk-actions {
+                flex-direction: column;
+            }
+
+            .bulk-actions .admin-input {
+                width: 100%;
+            }
+        }
+
+        /* Chapters Management Styles */
+        .chapters-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .chapter-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            padding: 12px;
+            background: rgba(10, 10, 10, 0.3);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            border-radius: 8px;
+        }
+
+        .chapter-row input {
+            background: rgba(10, 10, 10, 0.5);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 6px;
+            color: white;
+            padding: 8px 12px;
+            font-size: 13px;
+        }
+
+        .chapter-row input:focus {
+            outline: none;
+            border-color: rgba(212, 175, 55, 0.5);
+        }
+
+        .chapter-time-input {
+            width: 100px;
+            flex-shrink: 0;
+        }
+
+        .chapter-title-input {
+            flex: 1;
+        }
+
+        .remove-chapter-btn {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #EF4444;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .remove-chapter-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
+            border-color: rgba(239, 68, 68, 0.5);
+        }
+    </style>
+
+    <script>
+        // Initialize upload form with a default chapter hint
+        document.addEventListener('DOMContentLoaded', function() {
+            // Optional: Add a default chapter as a guide for new uploads
+            // Uncomment the line below if you want a default chapter when the page loads
+            // addUploadChapterRow(0, 'Introduction');
+        });
+
+        // Handle form submission
+        document.getElementById('upload-form').addEventListener('submit', function(e) {
+            const submitBtn = document.getElementById('upload-btn');
+            const fileInput = document.getElementById('video-file');
+
+            if (!fileInput.files || !fileInput.files[0]) {
+                e.preventDefault();
+                alert('Please select a video file to upload');
+                return false;
+            }
+
+            // Get chapters and add to hidden field
+            const chapters = getUploadChaptersFromForm();
+            document.getElementById('chapters-json').value = JSON.stringify(chapters);
+
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = 'Uploading... Please wait';
+            submitBtn.style.opacity = '0.6';
+        });
+
+        // Video file preview
+        document.getElementById('video-file').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const url = URL.createObjectURL(file);
+                const preview = document.getElementById('video-preview');
+                const player = document.getElementById('preview-player');
+                const uploadText = document.getElementById('upload-text');
+
+                player.src = url;
+                preview.style.display = 'block';
+                uploadText.innerHTML = `<strong style="color: #D4AF37;">${file.name}</strong><br><small>Click to change video</small>`;
+
+                // Auto-fill title if empty
+                const titleInput = document.getElementById('video-title');
+                if (!titleInput.value) {
+                    const autoTitle = file.name.replace(/\.(mp4|webm|ogg)$/i, '').replace(/[_-]/g, ' ').trim();
+                    titleInput.value = autoTitle.charAt(0).toUpperCase() + autoTitle.slice(1);
+                }
+            }
+        });
+
+        function removeVideoPreview() {
+            const preview = document.getElementById('video-preview');
+            const player = document.getElementById('preview-player');
+            const uploadText = document.getElementById('upload-text');
+
+            player.src = '';
+            preview.style.display = 'none';
+            uploadText.innerHTML = 'Click to upload video file<br><small>(MP4, WebM, OGG - Max 500MB)</small>';
+            document.getElementById('video-file').value = '';
+        }
+
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('select-all');
+            const checkboxes = document.querySelectorAll('.video-checkbox');
+            checkboxes.forEach(cb => cb.checked = selectAll.checked);
+        }
+
+        function searchVideos() {
+            const query = document.getElementById('video-search').value;
+            // Implement search functionality
+            console.log('Searching for:', query);
+        }
+
+        function applyBulkAction() {
+            const action = document.getElementById('bulk-action').value;
+            const selected = Array.from(document.querySelectorAll('.video-checkbox:checked')).map(cb => parseInt(cb.value));
+
+            if (!action) {
+                alert('Please select an action');
+                return;
+            }
+
+            if (selected.length === 0) {
+                alert('Please select at least one video');
+                return;
+            }
+
+            let confirmMessage = '';
+            if (action === 'delete') {
+                confirmMessage = `Are you sure you want to delete ${selected.length} video(s)? This cannot be undone.`;
+            } else if (action === 'publish') {
+                confirmMessage = `Publish ${selected.length} video(s)?`;
+            } else if (action === 'unpublish') {
+                confirmMessage = `Unpublish ${selected.length} video(s)?`;
+            }
+
+            // Bulk actions disabled - use Supabase dashboard
+            alert('Bulk actions are disabled. Please use the Supabase dashboard to manage videos.');
+            return;
+        }
+
+        function togglePremium(videoId, isPremium) {
+            const action = isPremium ? 'premium' : 'free';
+            const confirmMessage = `Set this video to ${action}?`;
+
+            if (!confirm(confirmMessage)) {
+                return;
+            }
+
+            fetch(`/admin/videos/${videoId}/toggle-premium`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ is_premium: isPremium })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to update video status');
+            });
+        }
+
+        function syncVideo(filename) {
+            if (!confirm(`Sync "${filename}" to database?`)) {
+                return;
+            }
+
+            fetch('/admin/videos/sync', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ filename: filename })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Video synced successfully! You can now set it as premium/free.');
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to sync video');
+            });
+        }
+
+        function editVideo(id, title, description, playlist, chaptersJson = '[]') {
+            // Populate edit modal with current video data
+            document.getElementById('edit-video-id').value = id;
+            document.getElementById('edit-video-title').value = title;
+            document.getElementById('edit-video-description').value = description || '';
+
+            // Set playlist dropdown
+            const playlistSelect = document.getElementById('edit-video-playlist');
+            if (playlist) {
+                playlistSelect.value = playlist;
+            }
+
+            // Load chapters if available
+            try {
+                const chapters = JSON.parse(chaptersJson || '[]');
+                loadChapters(chapters);
+            } catch (e) {
+                console.error('Error parsing chapters:', e);
+                loadChapters([]);
+            }
+
+            // Open modal
+            document.getElementById('edit-video-modal').classList.add('active');
+        }
+
+        function loadChapters(chapters) {
+            const chaptersList = document.getElementById('chapters-list');
+            chaptersList.innerHTML = '';
+
+            if (chapters.length === 0) {
+                // Add first chapter by default
+                addChapterRow(0, 'Introduction');
+            } else {
+                chapters.forEach(chapter => {
+                    addChapterRow(chapter.time, chapter.title);
+                });
+            }
+        }
+
+        function addChapterRow(time = '', title = '') {
+            const chaptersList = document.getElementById('chapters-list');
+            const chapterRow = document.createElement('div');
+            chapterRow.className = 'chapter-row';
+            chapterRow.innerHTML = `
+                <input type="text" class="chapter-time-input" placeholder="0:00" value="${formatTimeForInput(time)}"
+                       onchange="validateTimeFormat(this)">
+                <input type="text" class="chapter-title-input" placeholder="Chapter title" value="${title}">
+                <button type="button" class="remove-chapter-btn" onclick="removeChapterRow(this)">✕</button>
+            `;
+            chaptersList.appendChild(chapterRow);
+        }
+
+        function removeChapterRow(button) {
+            button.closest('.chapter-row').remove();
+        }
+
+        function formatTimeForInput(seconds) {
+            if (seconds === '' || seconds === 0) return '0:00';
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function validateTimeFormat(input) {
+            const value = input.value.trim();
+            // Accept formats like: 1:30, 0:45, 10:15, etc.
+            const timeRegex = /^(\d+):([0-5]\d)$/;
+            if (!timeRegex.test(value)) {
+                alert('Please enter time in format MM:SS (e.g., 1:30)');
+                input.value = '0:00';
+            }
+        }
+
+        function parseTimeToSeconds(timeStr) {
+            const parts = timeStr.split(':');
+            if (parts.length !== 2) return 0;
+            const mins = parseInt(parts[0]) || 0;
+            const secs = parseInt(parts[1]) || 0;
+            return mins * 60 + secs;
+        }
+
+        function getChaptersFromForm() {
+            const chapterRows = document.querySelectorAll('#chapters-list .chapter-row');
+            const chapters = [];
+
+            chapterRows.forEach(row => {
+                const timeInput = row.querySelector('.chapter-time-input');
+                const titleInput = row.querySelector('.chapter-title-input');
+                const time = parseTimeToSeconds(timeInput.value);
+                const title = titleInput.value.trim();
+
+                if (title) {
+                    chapters.push({ time, title });
+                }
+            });
+
+            // Sort chapters by time
+            chapters.sort((a, b) => a.time - b.time);
+
+            return chapters;
+        }
+
+        // ============= UPLOAD FORM CHAPTER FUNCTIONS =============
+
+        function addUploadChapterRow(time = '', title = '') {
+            const chaptersList = document.getElementById('upload-chapters-list');
+            const chapterRow = document.createElement('div');
+            chapterRow.className = 'chapter-row';
+            chapterRow.innerHTML = `
+                <input type="text" class="chapter-time-input" placeholder="0:00" value="${formatTimeForInput(time)}"
+                       onchange="validateTimeFormat(this)">
+                <input type="text" class="chapter-title-input" placeholder="Chapter title" value="${title}">
+                <button type="button" class="remove-chapter-btn" onclick="removeUploadChapterRow(this)">✕</button>
+            `;
+            chaptersList.appendChild(chapterRow);
+        }
+
+        function removeUploadChapterRow(button) {
+            button.closest('.chapter-row').remove();
+        }
+
+        function getUploadChaptersFromForm() {
+            const chapterRows = document.querySelectorAll('#upload-chapters-list .chapter-row');
+            const chapters = [];
+
+            chapterRows.forEach(row => {
+                const timeInput = row.querySelector('.chapter-time-input');
+                const titleInput = row.querySelector('.chapter-title-input');
+                const time = parseTimeToSeconds(timeInput.value);
+                const title = titleInput.value.trim();
+
+                if (title) {
+                    chapters.push({ time, title });
+                }
+            });
+
+            // Sort chapters by time
+            chapters.sort((a, b) => a.time - b.time);
+
+            return chapters;
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-video-modal').classList.remove('active');
+            document.getElementById('edit-video-form').reset();
+        }
+
+        function saveVideoEdit(event) {
+            event.preventDefault();
+
+            const videoId = document.getElementById('edit-video-id').value;
+            const title = document.getElementById('edit-video-title').value.trim();
+            const description = document.getElementById('edit-video-description').value.trim();
+            const playlist = document.getElementById('edit-video-playlist').value;
+            const chapters = getChaptersFromForm();
+
+            if (!title) {
+                alert('Please enter a title');
+                return;
+            }
+
+            // Send update to server
+            fetch(`/admin/videos/${videoId}/edit`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    title: title,
+                    description: description,
+                    playlist: playlist,
+                    chapters: chapters
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    closeEditModal();
+                    alert('Video updated successfully!');
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to update video');
+            });
+        }
+
+        // Close edit modal when clicking outside
+        document.getElementById('edit-video-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeEditModal();
+            }
+        });
+
+        function deleteVideo(id) {
+            if (!confirm('Are you sure you want to delete this video? This cannot be undone.')) {
+                return;
+            }
+
+            fetch(`/admin/videos/${id}/delete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Video deleted successfully');
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to delete video');
+            });
+        }
+
+        // Playlist Modal Functions
+        function openPlaylistModal() {
+            document.getElementById('playlist-modal').classList.add('active');
+        }
+
+        function closePlaylistModal() {
+            document.getElementById('playlist-modal').classList.remove('active');
+            document.getElementById('playlist-form').reset();
+        }
+
+        function addPlaylist(event) {
+            event.preventDefault();
+            const name = document.getElementById('playlist-name').value.trim();
+            const description = document.getElementById('playlist-description').value.trim();
+
+            if (!name) {
+                alert('Please enter a playlist name');
+                return;
+            }
+
+            // Send to server
+            fetch('/admin/playlists/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: name,
+                    description: description
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Add new option to select
+                    const select = document.getElementById('video-playlist');
+                    const option = document.createElement('option');
+                    option.value = data.playlist.name;
+                    option.textContent = data.playlist.name;
+                    option.selected = true;
+                    select.appendChild(option);
+
+                    closePlaylistModal();
+                    alert('Playlist created successfully!');
+                } else {
+                    alert('Error creating playlist: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to create playlist');
+            });
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('playlist-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePlaylistModal();
+            }
+        });
+
+        // ============= JSON IMPORT/EXPORT FUNCTIONS =============
+
+        let chaptersJsonData = null;
+
+        // Handle JSON file selection
+        document.getElementById('chapters-json-file').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    try {
+                        chaptersJsonData = JSON.parse(event.target.result);
+                        document.getElementById('json-upload-text').innerHTML =
+                            `<strong style="color: #D4AF37;">${file.name}</strong><br><small>Ready to import</small>`;
+                        document.getElementById('import-json-btn').disabled = false;
+                    } catch (error) {
+                        alert('Invalid JSON file. Please check the format.');
+                        console.error('JSON parse error:', error);
+                        chaptersJsonData = null;
+                        document.getElementById('import-json-btn').disabled = true;
+                    }
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        async function importChaptersFromJSON() {
+            if (!chaptersJsonData) {
+                alert('Please select a JSON file first');
+                return;
+            }
+
+            const importBtn = document.getElementById('import-json-btn');
+            importBtn.disabled = true;
+            importBtn.textContent = 'Importing...';
+
+            try {
+                const response = await fetch('/admin/videos/import-chapters', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(chaptersJsonData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert(`Success! Updated ${result.updated} video(s) with chapters.`);
+                    location.reload();
+                } else {
+                    alert('Error importing chapters: ' + (result.message || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Import error:', error);
+                alert('Failed to import chapters. Please try again.');
+            } finally {
+                importBtn.disabled = false;
+                importBtn.textContent = 'Import Chapters';
+            }
+        }
+
+        async function exportChaptersToJSON() {
+            const statusDiv = document.getElementById('export-status');
+            statusDiv.textContent = 'Exporting...';
+            statusDiv.style.color = '#D4AF37';
+
+            try {
+                const response = await fetch('/admin/videos/export-chapters');
+                const result = await response.json();
+
+                if (result.success) {
+                    // Create JSON blob and download
+                    const chaptersData = result.chapters;
+                    const jsonStr = JSON.stringify(chaptersData, null, 2);
+                    const blob = new Blob([jsonStr], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `video-chapters-${new Date().toISOString().split('T')[0]}.json`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+
+                    statusDiv.textContent = `✓ Exported ${result.count} video(s)`;
+                    statusDiv.style.color = '#4CAF50';
+
+                    setTimeout(() => {
+                        statusDiv.textContent = '';
+                    }, 3000);
+                } else {
+                    statusDiv.textContent = '✗ Export failed';
+                    statusDiv.style.color = '#EF4444';
+                }
+            } catch (error) {
+                console.error('Export error:', error);
+                statusDiv.textContent = '✗ Export failed';
+                statusDiv.style.color = '#EF4444';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,659 @@
+{
+  "version": "1.1.0",
+  "meta": {
+    "title": "PathForge Assessment",
+    "description": "Comprehensive personality and relationship assessment with attachment, archetype, shadow, and anti-seduction dimensions."
+  },
+  "steps": [
+    {
+      "id": "general",
+      "title": "About You",
+      "questions": [
+        {
+          "id": "name",
+          "text": "What's your first name?",
+          "type": "text"
+        },
+        {
+          "id": "age",
+          "text": "How old are you?",
+          "type": "number"
+        }
+      ]
+    },
+    {
+      "id": "attachment",
+      "title": "Attachment Style",
+      "answer_type": "likert5",
+      "scale_labels": [
+        "Strongly disagree",
+        "Disagree",
+        "Neutral",
+        "Agree",
+        "Strongly agree"
+      ],
+      "styles": [
+        "secure",
+        "anxious",
+        "avoidant",
+        "fearful"
+      ],
+      "style_descriptions": {
+        "secure": "You tend to be comfortable with intimacy and independence, finding it easy to form healthy relationships.",
+        "anxious": "You may seek high levels of intimacy and approval, sometimes worrying about your relationships.",
+        "avoidant": "You value independence and may feel uncomfortable with too much closeness in relationships.",
+        "fearful": "You may want close relationships but feel uncomfortable trusting or depending on others."
+      },
+      "questions": [
+        {
+          "id": "attachment_1",
+          "text": "I feel comfortable depending on others and having them depend on me.",
+          "item_weight": 1.0,
+          "targets": {
+            "secure": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "attachment_2",
+          "text": "I find it easy to communicate my needs and feelings in relationships.",
+          "item_weight": 1.0,
+          "targets": {
+            "secure": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "attachment_3",
+          "text": "I can be close to others without losing my sense of self.",
+          "item_weight": 1.0,
+          "targets": {
+            "secure": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "attachment_4",
+          "text": "I often expect relationships to work out and feel confident about that.",
+          "item_weight": 1.0,
+          "targets": {
+            "secure": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "attachment_5",
+          "text": "I worry that my partner doesn’t love me as much as I love them.",
+          "item_weight": 1.0,
+          "targets": {
+            "anxious": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "attachment_6",
+          "text": "I often need reassurance that others care about me.",
+          "item_weight": 1.0,
+          "targets": {
+            "anxious": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "attachment_7",
+          "text": "I get anxious if I don’t hear from someone I care about for a while.",
+          "item_weight": 1.0,
+          "targets": {
+            "anxious": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "attachment_8",
+          "text": "When people get close, I sometimes push them away without meaning to.",
+          "item_weight": 1.0,
+          "targets": {
+            "anxious": {
+              "weight": 1.0,
+              "direction": "negative"
+            }
+          }
+        },
+        {
+          "id": "attachment_9",
+          "text": "I feel uneasy when people expect too much emotional closeness.",
+          "item_weight": 1.0,
+          "targets": {
+            "avoidant": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "attachment_10",
+          "text": "I prefer not to rely too much on others or have them rely on me.",
+          "item_weight": 1.0,
+          "targets": {
+            "avoidant": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "attachment_11",
+          "text": "I value my independence so much that I sometimes distance myself emotionally.",
+          "item_weight": 1.0,
+          "targets": {
+            "avoidant": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "attachment_12",
+          "text": "Depending on someone makes me feel vulnerable or trapped.",
+          "item_weight": 1.0,
+          "targets": {
+            "avoidant": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "attachment_13",
+          "text": "I want close relationships but find it hard to trust others fully.",
+          "item_weight": 1.0,
+          "targets": {
+            "fearful": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "attachment_14",
+          "text": "I fear that if someone gets to know me deeply, they will reject me.",
+          "item_weight": 1.0,
+          "targets": {
+            "fearful": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "attachment_15",
+          "text": "I want connection but I struggle to feel safe when I get it.",
+          "item_weight": 1.0,
+          "targets": {
+            "fearful": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "attachment_16",
+          "text": "I often expect to be hurt or disappointed in relationships.",
+          "item_weight": 1.0,
+          "targets": {
+            "fearful": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "archetype",
+      "title": "Seduction Archetype",
+      "answer_type": "likert5",
+      "scale_labels": [
+        "Strongly disagree",
+        "Disagree",
+        "Neutral",
+        "Agree",
+        "Strongly agree"
+      ],
+      "styles": [
+        "siren",
+        "rake",
+        "ideal_lover",
+        "dandy",
+        "natural",
+        "coquette",
+        "charmer",
+        "charismatic"
+      ],
+      "style_descriptions": {
+        "siren": "You draw others in with mystery, allure, and an irresistible aura.",
+        "rake": "You pursue with intensity and passion, making others feel desired.",
+        "ideal_lover": "You adapt to fulfill others' deepest fantasies and longings.",
+        "dandy": "You stand out through unconventional style and bold uniqueness.",
+        "natural": "You charm with childlike playfulness and spontaneous joy.",
+        "coquette": "You create desire by giving affection then pulling back.",
+        "charmer": "You make others feel valued, seen, and comfortable in your presence.",
+        "charismatic": "You naturally attract attention and admiration without trying."
+      },
+      "questions": [
+        {
+          "id": "arch_1",
+          "text": "I enjoy drawing others in with mystery and allure.",
+          "item_weight": 1.1,
+          "targets": {
+            "siren": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "arch_2",
+          "text": "I pursue with intensity and passion when I want someone.",
+          "item_weight": 1.2,
+          "targets": {
+            "rake": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "arch_3",
+          "text": "I adapt myself to fulfill what others are secretly longing for.",
+          "item_weight": 1.1,
+          "targets": {
+            "ideal_lover": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "arch_4",
+          "text": "I often stand out by being unconventional or stylishly different.",
+          "item_weight": 1.2,
+          "targets": {
+            "dandy": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "arch_5",
+          "text": "I retain a sense of childlike playfulness that draws others in.",
+          "item_weight": 1.0,
+          "targets": {
+            "natural": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "arch_6",
+          "text": "I give affection, then suddenly pull back to keep people wanting more.",
+          "item_weight": 1.3,
+          "targets": {
+            "coquette": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "arch_7",
+          "text": "I make others feel seen, comfortable, and valued in my presence.",
+          "item_weight": 1.1,
+          "targets": {
+            "charmer": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "arch_8",
+          "text": "I naturally attract attention in social settings without trying hard.",
+          "item_weight": 1.0,
+          "targets": {
+            "charismatic": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "arch_9",
+          "text": "I use voice, appearance, or atmosphere to create an irresistible aura.",
+          "item_weight": 1.1,
+          "targets": {
+            "siren": {
+              "weight": 1.0,
+              "direction": "positive"
+            },
+            "charismatic": {
+              "weight": 0.5,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "arch_10",
+          "text": "I find joy in making others feel addicted to my attention.",
+          "item_weight": 1.2,
+          "targets": {
+            "rake": {
+              "weight": 1.0,
+              "direction": "positive"
+            },
+            "coquette": {
+              "weight": 0.5,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "arch_11",
+          "text": "I mirror people's fantasies and show them what they dream of.",
+          "item_weight": 1.2,
+          "targets": {
+            "ideal_lover": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "arch_12",
+          "text": "I deliberately break norms to highlight my uniqueness.",
+          "item_weight": 1.3,
+          "targets": {
+            "dandy": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "arch_13",
+          "text": "I tend to be playful, spontaneous, and make people laugh easily.",
+          "item_weight": 1.0,
+          "targets": {
+            "natural": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "arch_14",
+          "text": "I sometimes withhold warmth just to increase desire.",
+          "item_weight": 1.2,
+          "targets": {
+            "coquette": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "arch_15",
+          "text": "People often describe me as magnetic or captivating.",
+          "item_weight": 1.1,
+          "targets": {
+            "charmer": {
+              "weight": 1.0,
+              "direction": "positive"
+            },
+            "charismatic": {
+              "weight": 0.7,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "arch_16",
+          "text": "I enjoy being admired and thrive when attention is focused on me.",
+          "item_weight": 1.2,
+          "targets": {
+            "charismatic": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "shadow",
+      "title": "Shadow Patterns",
+      "answer_type": "likert5",
+      "scale_labels": [
+        "Strongly disagree",
+        "Disagree",
+        "Neutral",
+        "Agree",
+        "Strongly agree"
+      ],
+      "styles": [
+        "the_innocent",
+        "the_orphan",
+        "the_warrior",
+        "the_caregiver",
+        "the_seeker",
+        "the_destroyer",
+        "the_creator",
+        "the_magician"
+      ],
+      "style_descriptions": {
+        "the_innocent": "You seek simplicity and safety, sometimes avoiding harsh realities.",
+        "the_orphan": "You carry feelings of abandonment and struggle to trust fully.",
+        "the_warrior": "You prove yourself through battles and standing up strongly.",
+        "the_caregiver": "You prioritize others' needs, sometimes at your own expense.",
+        "the_seeker": "You crave freedom and new experiences, seeking fulfillment elsewhere.",
+        "the_destroyer": "You sometimes end things before they can hurt you.",
+        "the_creator": "You feel most alive when creating something new and original.",
+        "the_magician": "You transform situations but worry about misusing your power."
+      },
+      "questions": [
+        {
+          "id": "shadow_1",
+          "text": "I often avoid harsh realities and prefer to see the world as simple and safe.",
+          "item_weight": 1.0,
+          "targets": {
+            "the_innocent": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "shadow_2",
+          "text": "I sometimes feel abandoned or betrayed, and find it hard to trust others fully.",
+          "item_weight": 1.1,
+          "targets": {
+            "the_orphan": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "shadow_3",
+          "text": "I feel the need to prove myself by fighting battles or standing up strongly.",
+          "item_weight": 1.2,
+          "targets": {
+            "the_warrior": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "shadow_4",
+          "text": "I often prioritize others' needs over my own, even to my own detriment.",
+          "item_weight": 1.0,
+          "targets": {
+            "the_caregiver": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "shadow_5",
+          "text": "I crave freedom and new experiences, but struggle to feel content where I am.",
+          "item_weight": 1.2,
+          "targets": {
+            "the_seeker": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "shadow_6",
+          "text": "I sometimes destroy things in my life (relationships, projects) before they destroy me.",
+          "item_weight": 1.1,
+          "targets": {
+            "the_destroyer": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "shadow_7",
+          "text": "I feel most alive when I'm creating something new and original.",
+          "item_weight": 1.0,
+          "targets": {
+            "the_creator": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "shadow_8",
+          "text": "I'm drawn to transformation and guiding others, but sometimes I manipulate to get results.",
+          "item_weight": 1.2,
+          "targets": {
+            "the_magician": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "shadow_9",
+          "text": "I rely on hope that things will work out, even when evidence suggests otherwise.",
+          "item_weight": 1.0,
+          "targets": {
+            "the_innocent": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "shadow_10",
+          "text": "I often feel like life is unfair and I've been left behind compared to others.",
+          "item_weight": 1.1,
+          "targets": {
+            "the_orphan": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "shadow_11",
+          "text": "I push myself and others hard to achieve goals, even if it causes conflict.",
+          "item_weight": 1.2,
+          "targets": {
+            "the_warrior": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "shadow_12",
+          "text": "I feel guilty when I take time for myself instead of helping others.",
+          "item_weight": 1.0,
+          "targets": {
+            "the_caregiver": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "shadow_13",
+          "text": "I often feel restless and believe happiness lies somewhere else.",
+          "item_weight": 1.2,
+          "targets": {
+            "the_seeker": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "shadow_14",
+          "text": "Sometimes I burn bridges or end things abruptly as a way of regaining control.",
+          "item_weight": 1.1,
+          "targets": {
+            "the_destroyer": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "shadow_15",
+          "text": "I get frustrated if I can't express myself creatively or make something original.",
+          "item_weight": 1.0,
+          "targets": {
+            "the_creator": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        },
+        {
+          "id": "shadow_16",
+          "text": "I feel I have the ability to transform situations, but I worry about misusing my influence.",
+          "item_weight": 1.2,
+          "targets": {
+            "the_magician": {
+              "weight": 1.0,
+              "direction": "positive"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

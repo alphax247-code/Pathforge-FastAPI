@@ -1,0 +1,80 @@
+{
+  "title": "Cognitive Distortions Game",
+  "description": "Identify unhelpful thinking patterns",
+  "scenarios": [
+    {
+      "id": 1,
+      "situation": "You sent a text to a friend 2 hours ago and haven't received a response yet.",
+      "thought": "They must be mad at me. They're probably ignoring me on purpose.",
+      "distortion": "mind_reading",
+      "explanation": "You're assuming you know what someone else is thinking without evidence.",
+      "reframe": "There could be many reasons they haven't responded yet. They might be busy, or their phone could be off. I'll wait before jumping to conclusions."
+    },
+    {
+      "id": 2,
+      "situation": "You made a small mistake during a presentation at work.",
+      "thought": "I completely ruined the presentation. Everyone thinks I'm incompetent. I'll probably get fired.",
+      "distortion": "catastrophizing",
+      "explanation": "You're imagining the worst possible outcome and treating it as if it's inevitable.",
+      "reframe": "I made one small mistake in an otherwise solid presentation. Everyone makes mistakes, and this doesn't define my overall competence."
+    },
+    {
+      "id": 3,
+      "situation": "You didn't get invited to a social gathering.",
+      "thought": "Nobody likes me. I'm always left out.",
+      "distortion": "overgeneralization",
+      "explanation": "You're making a broad conclusion based on a single event.",
+      "reframe": "I wasn't invited to this one event. That doesn't mean I'm always left out or that nobody likes me. There could be many reasons I wasn't invited this time."
+    },
+    {
+      "id": 4,
+      "situation": "You received constructive criticism on a project.",
+      "thought": "They hated my work. I'm terrible at this.",
+      "distortion": "all_or_nothing",
+      "explanation": "You're seeing things in black-and-white categories with no middle ground.",
+      "reframe": "There were some areas for improvement, but also things that went well. Constructive feedback helps me grow and doesn't mean my work was all bad."
+    },
+    {
+      "id": 5,
+      "situation": "You're feeling anxious about an upcoming exam.",
+      "thought": "I feel anxious, so I must not be prepared. I'm going to fail.",
+      "distortion": "emotional_reasoning",
+      "explanation": "You're assuming that your emotions reflect reality.",
+      "reframe": "Feeling anxious doesn't mean I'm unprepared. Anxiety is normal before exams. I've studied and done the work."
+    }
+  ],
+  "distortions": {
+    "mind_reading": {
+      "name": "Mind Reading",
+      "description": "Assuming you know what others are thinking without sufficient evidence"
+    },
+    "catastrophizing": {
+      "name": "Catastrophizing",
+      "description": "Imagining and believing the worst possible outcome will occur"
+    },
+    "overgeneralization": {
+      "name": "Overgeneralization",
+      "description": "Drawing broad conclusions from a single event or piece of evidence"
+    },
+    "all_or_nothing": {
+      "name": "All-or-Nothing Thinking",
+      "description": "Seeing things in black-and-white categories with no middle ground"
+    },
+    "emotional_reasoning": {
+      "name": "Emotional Reasoning",
+      "description": "Assuming that negative emotions reflect reality"
+    },
+    "should_statements": {
+      "name": "Should Statements",
+      "description": "Criticizing yourself or others with 'should' or 'must' statements"
+    },
+    "labeling": {
+      "name": "Labeling",
+      "description": "Assigning global negative traits to yourself or others"
+    },
+    "personalization": {
+      "name": "Personalization",
+      "description": "Blaming yourself for things outside your control"
+    }
+  }
+}

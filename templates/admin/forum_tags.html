@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forum Tags - PathForge Admin</title>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pathforge-complete.css') }}">
+    <style>
+        body {
+            background: #000000;
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .admin-header h1 {
+            color: #D4AF37;
+            font-size: 32px;
+            margin: 0;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #D4AF37, #FFD700);
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #D4AF37;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(212, 175, 55, 0.2);
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+        }
+
+        .section-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        .section-title {
+            color: #D4AF37;
+            font-size: 20px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            color: #D4AF37;
+            font-size: 13px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #D4AF37;
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            min-height: 100px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: #D4AF37;
+        }
+
+        .color-picker-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .color-input {
+            width: 60px;
+            height: 40px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .color-preview {
+            flex: 1;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .tags-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .tag-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .tag-card:hover {
+            border-color: #D4AF37;
+            transform: translateY(-3px);
+        }
+
+        .tag-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .tag-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .tag-color-indicator {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .tag-description {
+            color: #9E9E9E;
+            font-size: 13px;
+            margin-bottom: 15px;
+            min-height: 40px;
+        }
+
+        .tag-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tag-post-count {
+            color: #D4AF37;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+
+        .flash-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .flash-message.success {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid rgba(76, 175, 80, 0.4);
+            color: #4CAF50;
+        }
+
+        .flash-message.error {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid rgba(244, 67, 54, 0.4);
+            color: #F44336;
+        }
+
+        .preset-colors {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .preset-color {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .preset-color:hover {
+            transform: scale(1.1);
+            border-color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9E9E9E;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    {% include 'admin/nav.html' %}
+
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>🏷️ Forum Tags Management</h1>
+            <a href="{{ url_for('admin_forum_posts') }}" class="btn btn-secondary">← Back to Posts</a>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="content-grid">
+            <!-- Tags List -->
+            <div class="section-card">
+                <h2 class="section-title">Existing Tags ({{ tags|length }})</h2>
+
+                {% if tags %}
+                    <div class="tags-list">
+                        {% for tag in tags %}
+                        <div class="tag-card">
+                            <div class="tag-header">
+                                <span class="tag-name">{{ tag.name }}</span>
+                                <div class="tag-color-indicator" style="background: {{ tag.color }};"></div>
+                            </div>
+                            <div class="tag-description">
+                                {{ tag.description or 'No description' }}
+                            </div>
+                            <div class="tag-stats">
+                                <span class="tag-post-count">{{ tag.posts|length }} posts</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🏷️</div>
+                        <h3>No tags yet</h3>
+                        <p>Create your first tag using the form</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Create Tag Form -->
+            <div class="section-card">
+                <h2 class="section-title">Create New Tag</h2>
+
+                <form method="POST" action="{{ url_for('admin_forum_tags') }}">
+                    <div class="form-group">
+                        <label class="form-label">Tag Name *</label>
+                        <input type="text" name="name" class="form-input" placeholder="e.g., Success Story" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Color *</label>
+                        <div class="color-picker-wrapper">
+                            <input type="color" id="colorPicker" name="color" class="color-input" value="#D4AF37">
+                            <div class="color-preview" id="colorPreview" style="background: #D4AF37;">
+                                Sample Tag
+                            </div>
+                        </div>
+                        <div class="preset-colors">
+                            <div class="preset-color" style="background: #4CAF50;" onclick="setColor('#4CAF50')" title="Green"></div>
+                            <div class="preset-color" style="background: #2196F3;" onclick="setColor('#2196F3')" title="Blue"></div>
+                            <div class="preset-color" style="background: #D4AF37;" onclick="setColor('#D4AF37')" title="Gold"></div>
+                            <div class="preset-color" style="background: #FF9800;" onclick="setColor('#FF9800')" title="Orange"></div>
+                            <div class="preset-color" style="background: #9C27B0;" onclick="setColor('#9C27B0')" title="Purple"></div>
+                            <div class="preset-color" style="background: #00BCD4;" onclick="setColor('#00BCD4')" title="Cyan"></div>
+                            <div class="preset-color" style="background: #F44336;" onclick="setColor('#F44336')" title="Red"></div>
+                            <div class="preset-color" style="background: #E91E63;" onclick="setColor('#E91E63')" title="Pink"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Description (Optional)</label>
+                        <textarea name="description" class="form-textarea" placeholder="What is this tag for?"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Create Tag</button>
+                </form>
+
+                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                    <h3 style="color: #9E9E9E; font-size: 14px; margin-bottom: 10px;">Tag Guidelines</h3>
+                    <ul style="color: #9E9E9E; font-size: 13px; line-height: 1.8;">
+                        <li>Keep tag names short and descriptive</li>
+                        <li>Use colors that reflect the tag's purpose</li>
+                        <li>Tags help users filter and organize posts</li>
+                        <li>Common tags: Success Story, Question, Discussion, Advice</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const colorPicker = document.getElementById('colorPicker');
+        const colorPreview = document.getElementById('colorPreview');
+
+        colorPicker.addEventListener('input', (e) => {
+            colorPreview.style.background = e.target.value;
+        });
+
+        function setColor(color) {
+            colorPicker.value = color;
+            colorPreview.style.background = color;
+        }
+    </script>
+</body>
+</html>

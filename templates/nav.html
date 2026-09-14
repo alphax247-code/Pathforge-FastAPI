@@ -1,0 +1,25 @@
+<!-- Standard Navigation Bar for PathForge -->
+<header>
+    <div class="header-left">
+        <div class="logo-icon">
+            <img src="{{ url_for('static', filename='assets/icons/main icon.svg') }}" alt="PathForge Logo" style="width: 60px; height: 60px;">
+        </div>
+        <div class="logo">PATHFORGE</div>
+    </div>
+    <nav>
+        <a href="{{ url_for('index') }}" {% if request.endpoint == 'index' %}class="active"{% endif %}>Dashboard</a>
+        <a href="{{ url_for('challenges') }}" {% if request.endpoint == 'challenges' %}class="active"{% endif %}>Challenges</a>
+        <a href="{{ url_for('lessons') }}" {% if request.endpoint == 'lessons' %}class="active"{% endif %}>Lessons</a>
+        <a href="{{ url_for('ai_menu') }}" {% if request.endpoint == 'practice_hub' or request.endpoint == 'ai_menu' or request.endpoint == 'text_practice' or request.endpoint == 'speech_practice' or request.endpoint == 'technique_practice' %}class="active"{% endif %}>Practice</a>
+        {# HIDDEN: Daily Tasks feature
+        <a href="{{ url_for('daily_directive') }}" {% if request.endpoint == 'daily_directive' %}class="active"{% endif %}>Daily Tasks</a>
+        #}
+        <a href="{{ url_for('community') }}" {% if request.endpoint == 'community' %}class="active"{% endif %}>Community</a>
+        {% if is_admin %}
+        <a href="{{ url_for('admin.dashboard') }}" {% if request.endpoint and request.endpoint.startswith('admin.') %}class="active admin-nav-link"{% else %}class="admin-nav-link"{% endif %}>⚙️ Admin</a>
+        {% endif %}
+    </nav>
+    <div class="header-right">
+        <a href="{{ url_for('profile') }}" class="profile-link" {% if request.endpoint == 'profile' %}style="color: #D4AF37;"{% endif %}>Profile</a>
+    </div>
+</header>

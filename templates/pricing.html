@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing - PathForge</title>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pathforge-complete.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+    <style>
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .pricing-page {
+            min-height: 100vh;
+            padding: 120px 20px 40px;
+        }
+
+        .pricing-header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .pricing-header h1 {
+            font-size: 48px;
+            color: #D4AF37;
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .pricing-header p {
+            font-size: 18px;
+            color: #9E9E9E;
+        }
+
+        .billing-toggle {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 50px;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .billing-toggle label {
+            font-size: 16px;
+            color: #D4AF37;
+            font-weight: bold;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: linear-gradient(135deg, #D4AF37, #FFD700);
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(30px);
+        }
+
+        .save-badge {
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .pricing-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 20px;
+            padding: 40px 30px;
+            position: relative;
+            transition: all 0.4s ease;
+            animation: fadeInUp 1s ease;
+            animation-fill-mode: backwards;
+            backdrop-filter: blur(10px);
+        }
+
+        .pricing-card:nth-child(1) { animation-delay: 0.2s; }
+        .pricing-card:nth-child(2) { animation-delay: 0.4s; }
+        .pricing-card:nth-child(3) { animation-delay: 0.6s; }
+
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            border-color: #D4AF37;
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.3);
+        }
+
+        .pricing-card.popular {
+            border-color: #D4AF37;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+            transform: scale(1.05);
+        }
+
+        .pricing-card.popular::before {
+            content: 'MOST POPULAR';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #D4AF37, #FFD700);
+            color: #000;
+            padding: 8px 25px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        .pricing-card.current {
+            border-color: #4CAF50;
+            box-shadow: 0 10px 30px rgba(76, 175, 80, 0.2);
+        }
+
+        .tier-name {
+            font-size: 28px;
+            color: #D4AF37;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .tier-description {
+            color: #9E9E9E;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        .tier-price {
+            font-size: 48px;
+            color: white;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .tier-price span {
+            font-size: 18px;
+            color: #9E9E9E;
+        }
+
+        .price-period {
+            color: #9E9E9E;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .features-list {
+            list-style: none;
+            margin: 30px 0;
+            padding: 0;
+        }
+
+        .features-list li {
+            padding: 12px 0;
+            color: #E0E0E0;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .features-list li .mdi {
+            color: #D4AF37;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .pricing-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #D4AF37, #FFD700);
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 20px;
+        }
+
+        .pricing-btn:hover:not(:disabled):not(.current-plan) {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.4);
+        }
+
+        .pricing-btn.current-plan {
+            background: #4CAF50;
+            color: white;
+            cursor: default;
+        }
+
+        .pricing-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Header Navigation */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 60px;
+            border-bottom: 1px solid #1a1a1a;
+            background: #000000;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: #D4AF37;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: white;
+            letter-spacing: 2px;
+        }
+
+        nav {
+            display: flex;
+            gap: 40px;
+        }
+
+        nav a {
+            color: #999;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover, nav a.active {
+            color: white;
+        }
+
+        .upgrade-btn {
+            background: transparent;
+            color: #D4AF37;
+            border: 2px solid #D4AF37;
+            padding: 10px 28px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .upgrade-btn:hover, .upgrade-btn.active {
+            background: rgba(212, 175, 55, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    {% include 'nav.html' %}
+
+    <div class="pricing-page">
+        <!-- Coming Soon Header -->
+        <div class="pricing-header">
+            <h1>Premium Plans</h1>
+            <p>Coming Soon</p>
+        </div>
+
+        <!-- Coming Soon Message -->
+        <div style="text-align: center; max-width: 600px; margin: 0 auto; padding: 60px 20px;">
+            <div style="font-size: 80px; margin-bottom: 30px;">🚀</div>
+            <h2 style="color: #D4AF37; font-size: 36px; margin-bottom: 20px;">Premium Features Coming Soon</h2>
+            <p style="color: #9E9E9E; font-size: 18px; line-height: 1.6; margin-bottom: 30px;">
+                We're working hard to bring you amazing premium features including exclusive video lessons,
+                advanced AI coaching, and much more. Stay tuned!
+            </p>
+            <p style="color: #D4AF37; font-size: 16px;">
+                For now, enjoy all the free features PathForge has to offer.
+            </p>
+            <a href="{{ url_for('dashboard') }}" class="pricing-btn" style="display: inline-block; margin-top: 30px; text-decoration: none;">
+                Back to Dashboard
+            </a>
+        </div>
+
+        <!-- Original pricing cards commented out - Coming Soon
+        <div class="billing-toggle">
+            <label>Monthly</label>
+            <div class="toggle-switch" id="billingToggle" onclick="toggleBilling()">
+                <div class="toggle-slider"></div>
+            </div>
+            <label>Yearly</label>
+            <span class="save-badge">Save 20%</span>
+        </div>
+
+        <div class="pricing-cards">
+            {% for tier in tiers %}
+            <div class="pricing-card {% if tier.is_popular %}popular{% endif %} {% if current_tier == tier.name %}current{% endif %}">
+                <h2 class="tier-name">{{ tier.display_name }}</h2>
+                <p class="tier-description">{{ tier.description }}</p>
+
+                <div class="tier-price">
+                    <span>$</span><span class="price-amount" data-monthly="{{ tier.price_monthly }}" data-yearly="{{ tier.price_yearly }}">{{ tier.price_monthly }}</span>
+                </div>
+                <p class="price-period">per <span class="period-text">month</span></p>
+
+                <ul class="features-list">
+                    {% if tier.features %}
+                        {% set feature_list = tier.features | from_json %}
+                        {% for feature in feature_list %}
+                        <li>
+                            <span class="mdi mdi-check-circle"></span>
+                            <span>{{ feature }}</span>
+                        </li>
+                        {% endfor %}
+                    {% endif %}
+                </ul>
+
+                {% if current_tier == tier.name %}
+                <button class="pricing-btn current-plan">Current Plan</button>
+                {% else %}
+                <button class="pricing-btn" onclick="selectPlan({{ tier.id }}, '{{ tier.display_name }}', {{ tier.price_monthly }}, {{ tier.price_yearly }})" data-tier-id="{{ tier.id }}">
+                    {% if tier.price_monthly == 0 %}
+                    Get Started Free
+                    {% else %}
+                    Upgrade Now
+                    {% endif %}
+                </button>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        -->
+    </div>
+
+    <script>
+        let isYearly = false;
+
+        function toggleBilling() {
+            const toggle = document.getElementById('billingToggle');
+            const priceAmounts = document.querySelectorAll('.price-amount');
+            const periodTexts = document.querySelectorAll('.period-text');
+
+            toggle.classList.toggle('active');
+            isYearly = toggle.classList.contains('active');
+
+            priceAmounts.forEach(amount => {
+                const monthly = parseFloat(amount.dataset.monthly);
+                const yearly = parseFloat(amount.dataset.yearly);
+                amount.textContent = isYearly ? yearly : monthly;
+            });
+
+            periodTexts.forEach(text => {
+                text.textContent = isYearly ? 'year' : 'month';
+            });
+        }
+
+        async function selectPlan(tierId, tierName, priceMonthly, priceYearly) {
+            const billingPeriod = isYearly ? 'yearly' : 'monthly';
+            const price = isYearly ? priceYearly : priceMonthly;
+
+            // If free tier, just create subscription
+            if (price === 0) {
+                try {
+                    const response = await fetch('/api/subscription/create', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            tier_id: tierId,
+                            billing_period: billingPeriod,
+                            payment_method: 'free',
+                            payment_id: 'FREE-TIER'
+                        })
+                    });
+
+                    const data = await response.json();
+                    if (data.success) {
+                        alert('Welcome to PathForge! Your account is ready.');
+                        window.location.href = '/dashboard';
+                    } else {
+                        alert('Error: ' + (data.error || 'Unknown error'));
+                    }
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                }
+                return;
+            }
+
+            // For paid tiers, create Stripe checkout session
+            try {
+                const response = await fetch('/api/payment/stripe/create-checkout-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        tier_id: tierId,
+                        billing_period: billingPeriod
+                    })
+                });
+
+                const data = await response.json();
+
+                // Payment integration coming soon
+                alert(
+                    `${tierName} - $${price}/${billingPeriod}\n\n` +
+                    `✅ Selected Plan: ${tierName}\n` +
+                    `💰 Price: $${price} per ${billingPeriod === 'yearly' ? 'year' : 'month'}\n\n` +
+                    `Payment integration will be added soon.\n\n` +
+                    `For now, contact admin to manually activate your subscription.`
+                );
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

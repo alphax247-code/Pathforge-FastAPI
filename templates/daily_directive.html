@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Directives - PathForge</title>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pathforge-complete.css') }}">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    {% include 'nav.html' %}
+
+    <!-- Main Content -->
+    <main>
+        <!-- Page Header -->
+        <section class="page-header">
+            <h1>Daily Directives</h1>
+            <p>Your daily confidence-building tasks - complete them to build momentum</p>
+        </section>
+
+        <!-- Today's Task Summary -->
+        <section class="missions-section" style="margin-bottom: 30px;">
+            <div id="todayTasksSummary" style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%);
+                                              border: 2px solid #D4AF3740; border-radius: 16px; padding: 30px;">
+                <h2 style="color: #D4AF37; margin-bottom: 15px;">📋 Today's Tasks</h2>
+
+                <!-- Bonus Points Banner -->
+                <div id="bonusBanner" style="display: none; background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+                                             padding: 15px 20px; border-radius: 12px; margin-bottom: 20px; text-align: center;
+                                             animation: pulse 2s ease-in-out infinite;">
+                    <div style="font-size: 20px; font-weight: bold; color: #000; margin-bottom: 5px;">
+                        🎉 ALL TASKS COMPLETE! 🎉
+                    </div>
+                    <div style="font-size: 14px; color: #000;">
+                        Earn +100 Bonus XP for completing all daily tasks!
+                    </div>
+                </div>
+
+                <div id="todayTasksContainer" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                    <!-- Today's tasks will be loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- All Directives Timeline -->
+        <section class="missions-section">
+            <h2 style="margin-bottom: 20px;">All Daily Directives</h2>
+            <div id="directivesTimeline">
+                <!-- Directives will be loaded here -->
+            </div>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/pathforge-complete.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadDailyDirectives();
+        });
+
+        async function loadDailyDirectives() {
+            try {
+                const response = await fetch('/api/challenges');
+                const data = await response.json();
+
+                if (data.success) {
+                    displayTodayTasks(data.daily_progress);
+                    displayDirectivesTimeline(data.daily_progress);
+                }
+            } catch (error) {
+                console.error('Error loading daily directives:', error);
+            }
+        }
+
+        function displayTodayTasks(dp) {
+            const container = document.getElementById('todayTasksContainer');
+            if (!container) return;
+
+            const today = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+            // Define icon URLs outside of the task objects
+            const iconUrls = {
+                challenge: "{{ url_for('static', filename='assets/icons/challenge.svg') }}",
+                practice: "{{ url_for('static', filename='assets/icons/practice.svg') }}",
+                lesson: "{{ url_for('static', filename='assets/icons/lesson.svg') }}",
+                innerGame: "{{ url_for('static', filename='assets/icons/inner game..svg') }}"
+            };
+
+            const tasks = [
+                {
+                    icon: `<img src="${iconUrls.challenge}" style="width: 40px; height: 40px;">`,
+                    name: 'Challenges',
+                    count: dp.challenges.completed,
+                    required: dp.challenges.required,
+                    link: '/challenges',
+                    color: '#D4AF37'
+                },
+                {
+                    icon: `<img src="${iconUrls.practice}" style="width: 40px; height: 40px;">`,
+                    name: 'AI Practice',
+                    count: dp.ai.completed,
+                    required: dp.ai.required,
+                    link: '/text-practice',
+                    color: '#4CAF50'
+                },
+                {
+                    icon: `<img src="${iconUrls.lesson}" style="width: 40px; height: 40px;">`,
+                    name: 'Video Lessons',
+                    count: dp.videos.completed,
+                    required: dp.videos.required,
+                    link: '/lessons',
+                    color: '#2196F3'
+                },
+                {
+                    icon: `<img src="${iconUrls.innerGame}" style="width: 40px; height: 40px;">`,
+                    name: 'Inner Game',
+                    count: dp.innergame.completed,
+                    required: dp.innergame.required,
+                    link: '/inner-game',
+                    color: '#9C27B0'
+                }
+            ];
+
+            container.innerHTML = tasks.map(task => {
+                const isComplete = task.count >= task.required;
+                return `
+                    <a href="${task.link}" style="text-decoration: none;">
+                        <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid ${task.color}30;
+                                    border-radius: 12px; padding: 20px; text-align: center;
+                                    transition: all 0.3s ease; cursor: pointer;"
+                             onmouseover="this.style.transform='translateY(-5px)'; this.style.borderColor='${task.color}';"
+                             onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='${task.color}30';">
+                            <div style="font-size: 40px; margin-bottom: 10px;">${task.icon}</div>
+                            <div style="font-weight: bold; color: ${task.color}; margin-bottom: 5px;">${task.name}</div>
+                            <div style="font-size: 24px; color: ${isComplete ? '#4CAF50' : task.color}; font-weight: bold; margin-bottom: 5px;">
+                                ${task.count}/${task.required}
+                            </div>
+                            ${isComplete
+                                ? `<div style="color: #4CAF50; font-size: 12px; font-weight: bold;">✓ COMPLETE</div>`
+                                : `<div style="color: #FF9800; font-size: 12px;">Incomplete</div>`
+                            }
+                        </div>
+                    </a>
+                `;
+            }).join('');
+
+            // Check if all tasks are complete and show bonus banner
+            const allTasksComplete = tasks.every(task => task.count >= task.required);
+            const bonusBanner = document.getElementById('bonusBanner');
+            if (bonusBanner) {
+                bonusBanner.style.display = allTasksComplete ? 'block' : 'none';
+            }
+        }
+
+        function displayDirectivesTimeline(dp) {
+            const container = document.getElementById('directivesTimeline');
+            if (!container) return;
+
+            // Define icon URLs outside of the directive objects
+            const iconUrls = {
+                challenge: "{{ url_for('static', filename='assets/icons/challenge.svg') }}",
+                practice: "{{ url_for('static', filename='assets/icons/practice.svg') }}",
+                lesson: "{{ url_for('static', filename='assets/icons/lesson.svg') }}",
+                innerGame: "{{ url_for('static', filename='assets/icons/inner game..svg') }}"
+            };
+
+            // Define all directive types
+            const allDirectives = [
+                {
+                    category: 'Challenges',
+                    icon: `<img src="${iconUrls.challenge}" style="width: 48px; height: 48px;">`,
+                    color: '#D4AF37',
+                    description: 'Complete real-world social challenges',
+                    tasks: [
+                        'Start a conversation with a stranger',
+                        'Approach someone you find attractive',
+                        'Give a genuine compliment',
+                        'Hold eye contact for 3 seconds',
+                        'Ask for a phone number',
+                        'Make plans with someone new',
+                        'Tell a personal story to a group'
+                    ],
+                    link: '/missions',
+                    completed: dp.challenges.completed,
+                    required: dp.challenges.required
+                },
+                {
+                    category: 'AI Practice',
+                    icon: `<img src="${iconUrls.practice}" style="width: 48px; height: 48px;">`,
+                    color: '#4CAF50',
+                    description: 'Practice conversations with AI',
+                    tasks: [
+                        'Complete a text practice session',
+                        'Complete a speech practice session',
+                        'Practice handling rejection',
+                        'Practice flirting techniques',
+                        'Practice storytelling',
+                        'Practice asking questions',
+                        'Practice active listening'
+                    ],
+                    link: '/text-practice',
+                    completed: dp.ai.completed,
+                    required: dp.ai.required
+                },
+                {
+                    category: 'Video Lessons',
+                    icon: `<img src="${iconUrls.lesson}" style="width: 48px; height: 48px;">`,
+                    color: '#2196F3',
+                    description: 'Watch educational content',
+                    tasks: [
+                        'Watch a lesson on body language',
+                        'Watch a lesson on conversation skills',
+                        'Watch a lesson on attraction',
+                        'Watch a lesson on confidence',
+                        'Watch a lesson on dating',
+                        'Watch a lesson on relationships',
+                        'Watch a lesson on social dynamics'
+                    ],
+                    link: '/lessons',
+                    completed: dp.videos.completed,
+                    required: dp.videos.required
+                },
+                {
+                    category: 'Inner Game',
+                    icon: `<img src="${iconUrls.innerGame}" style="width: 48px; height: 48px;">`,
+                    color: '#9C27B0',
+                    description: 'Work on mindset and confidence',
+                    tasks: [
+                        'Complete a meditation session',
+                        'Practice positive affirmations',
+                        'Journal about your progress',
+                        'Visualize success',
+                        'Practice gratitude',
+                        'Work on limiting beliefs',
+                        'Practice self-compassion'
+                    ],
+                    link: '/inner-game',
+                    completed: dp.innergame.completed,
+                    required: dp.innergame.required
+                }
+            ];
+
+            container.innerHTML = allDirectives.map(directive => {
+                const isComplete = directive.completed >= directive.required;
+                const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+
+                return `
+                    <div style="background: rgba(255, 255, 255, 0.03); border-left: 4px solid ${directive.color};
+                                border-radius: 12px; padding: 25px; margin-bottom: 20px;
+                                transition: all 0.3s ease;"
+                         onmouseover="this.style.background='rgba(255, 255, 255, 0.05)';"
+                         onmouseout="this.style.background='rgba(255, 255, 255, 0.03)';">
+
+                        <!-- Header -->
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <div style="font-size: 48px;">${directive.icon}</div>
+                                <div>
+                                    <h3 style="color: ${directive.color}; margin: 0 0 5px 0;">${directive.category}</h3>
+                                    <p style="color: #9E9E9E; margin: 0; font-size: 14px;">${directive.description}</p>
+                                </div>
+                            </div>
+                            ${isComplete
+                                ? `<div style="background: #4CAF50; color: #000; padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: bold;">
+                                    ✓ ${directive.completed}/${directive.required} COMPLETE
+                                   </div>`
+                                : `<div style="background: ${directive.color}30; color: ${directive.color}; padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: bold; border: 1px solid ${directive.color};">
+                                    ${directive.completed}/${directive.required} TODAY
+                                   </div>`
+                            }
+                        </div>
+
+                        <!-- Tasks List -->
+                        <div style="margin-bottom: 15px;">
+                            <h4 style="color: #E0E0E0; font-size: 14px; margin-bottom: 10px;">Example Tasks:</h4>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px;">
+                                ${directive.tasks.slice(0, 4).map(task => `
+                                    <div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 8px; font-size: 13px; color: #B0B0B0;">
+                                        • ${task}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <!-- Action Button -->
+                        <a href="${directive.link}" style="text-decoration: none;">
+                            <button style="width: 100%; padding: 12px; background: ${isComplete ? '#4CAF50' : directive.color};
+                                           color: #000; border: none; border-radius: 8px; font-size: 14px; font-weight: bold;
+                                           cursor: pointer; transition: all 0.2s ease;"
+                                    onmouseover="this.style.opacity='0.8';"
+                                    onmouseout="this.style.opacity='1';">
+                                ${isComplete ? '✓ COMPLETED - VIEW MORE' : 'START NOW'}
+                            </button>
+                        </a>
+                    </div>
+                `;
+            }).join('');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1602 @@
+[
+  {
+    "Code": "L1-01",
+    "Level": 1,
+    "Challenge Name": "Eye Contact Foundation",
+    "Description": "Maintain steady, relaxed eye contact with every person you talk to today. Hold for three seconds and add a soft smile before looking away.",
+    "Focus": "Presence & Awareness",
+    "Points": 10
+  },
+  {
+    "Code": "L1-02",
+    "Level": 1,
+    "Challenge Name": "Mystery Hint",
+    "Description": "Casually mention something interesting about yourself, then change the subject without elaborating.",
+    "Focus": "Curiosity & Mystery",
+    "Points": 10
+  },
+  {
+    "Code": "L1-03",
+    "Level": 1,
+    "Challenge Name": "Voice Gravity",
+    "Description": "Practice speaking 20% slower and slightly deeper during all conversations today.",
+    "Focus": "Presence & Awareness",
+    "Points": 10
+  },
+  {
+    "Code": "L1-04",
+    "Level": 1,
+    "Challenge Name": "Controlled Attention",
+    "Description": "When you notice attraction, acknowledge it mentally but stay calm and don\u2019t act impulsively.",
+    "Focus": "Emotional Control",
+    "Points": 10
+  },
+  {
+    "Code": "L1-05",
+    "Level": 1,
+    "Challenge Name": "Posture Reset",
+    "Description": "Keep your shoulders back, spine straight, and movements deliberate whenever standing or walking.",
+    "Focus": "Presence & Awareness",
+    "Points": 10
+  },
+  {
+    "Code": "L1-06",
+    "Level": 1,
+    "Challenge Name": "Smile Timing",
+    "Description": "Pause one second before smiling when greeting people. Let your smile feel earned.",
+    "Focus": "Emotional Polarity",
+    "Points": 10
+  },
+  {
+    "Code": "L1-07",
+    "Level": 1,
+    "Challenge Name": "Playful Observation",
+    "Description": "Make one light, funny observation about your surroundings to someone nearby.",
+    "Focus": "Social Ease",
+    "Points": 10
+  },
+  {
+    "Code": "L1-08",
+    "Level": 1,
+    "Challenge Name": "Compliment Energy",
+    "Description": "Compliment someone on their energy or mood instead of looks.",
+    "Focus": "Connection & Awareness",
+    "Points": 10
+  },
+  {
+    "Code": "L1-09",
+    "Level": 1,
+    "Challenge Name": "Slow Down",
+    "Description": "Take an extra moment to respond in conversation. Let silence do some of the work.",
+    "Focus": "Presence & Awareness",
+    "Points": 10
+  },
+  {
+    "Code": "L1-10",
+    "Level": 1,
+    "Challenge Name": "Non-Reactivity Drill",
+    "Description": "When something mildly uncomfortable happens, breathe instead of reacting.",
+    "Focus": "Emotional Control",
+    "Points": 10
+  },
+  {
+    "Code": "L1-11",
+    "Level": 1,
+    "Challenge Name": "Playful Tease",
+    "Description": "Joke gently with someone about something small (\u2018You seem like the serious type\u2019).",
+    "Focus": "Emotional Polarity",
+    "Points": 10
+  },
+  {
+    "Code": "L1-12",
+    "Level": 1,
+    "Challenge Name": "Grounded Movement",
+    "Description": "Move slower and smoother in social settings\u2014less fidgeting, more control.",
+    "Focus": "Presence & Awareness",
+    "Points": 10
+  },
+  {
+    "Code": "L1-13",
+    "Level": 1,
+    "Challenge Name": "Story Teaser",
+    "Description": "Tell half of a fun story, stop mid-sentence with a grin, and say \u2018I\u2019ll tell you later.\u2019",
+    "Focus": "Curiosity & Mystery",
+    "Points": 10
+  },
+  {
+    "Code": "L1-14",
+    "Level": 1,
+    "Challenge Name": "Spatial Awareness",
+    "Description": "Notice your body language and personal space\u2014don\u2019t lean in first.",
+    "Focus": "Frame Control",
+    "Points": 10
+  },
+  {
+    "Code": "L1-15",
+    "Level": 1,
+    "Challenge Name": "Micro-Challenge",
+    "Description": "Ask for something small (a favor, direction, opinion) with confident tone.",
+    "Focus": "Assertiveness",
+    "Points": 10
+  },
+  {
+    "Code": "L1-16",
+    "Level": 1,
+    "Challenge Name": "Smile Exchange",
+    "Description": "Hold eye contact and initiate a warm smile exchange with a stranger.",
+    "Focus": "Presence & Awareness",
+    "Points": 10
+  },
+  {
+    "Code": "L1-17",
+    "Level": 1,
+    "Challenge Name": "Calm Walk",
+    "Description": "Walk slower in public places while keeping your head level and movements relaxed.",
+    "Focus": "Presence & Awareness",
+    "Points": 10
+  },
+  {
+    "Code": "L1-18",
+    "Level": 1,
+    "Challenge Name": "\u201cI Noticed\u201d Opener",
+    "Description": "Start a light conversation by saying, \u2018I noticed something about you\u2026\u2019 and point out something neutral or fun.",
+    "Focus": "Connection & Awareness",
+    "Points": 10
+  },
+  {
+    "Code": "L1-19",
+    "Level": 1,
+    "Challenge Name": "Low Investment Flirt",
+    "Description": "Give one playful compliment, then shift to a new topic as if it meant nothing.",
+    "Focus": "Emotional Polarity",
+    "Points": 10
+  },
+  {
+    "Code": "L1-20",
+    "Level": 1,
+    "Challenge Name": "Controlled Laugh",
+    "Description": "Laugh softly and briefly, not loudly or nervously, during conversations.",
+    "Focus": "Emotional Control",
+    "Points": 10
+  },
+  {
+    "Code": "L1-21",
+    "Level": 1,
+    "Challenge Name": "Body Language Mirror",
+    "Description": "Subtly match someone\u2019s posture or gestures for one minute, then slow yours down until they mirror you.",
+    "Focus": "Social Synchrony",
+    "Points": 10
+  },
+  {
+    "Code": "L1-22",
+    "Level": 1,
+    "Challenge Name": "Observation Game",
+    "Description": "In any social setting, quietly identify who seems confident and who doesn\u2019t\u2014and why.",
+    "Focus": "Awareness Training",
+    "Points": 10
+  },
+  {
+    "Code": "L1-23",
+    "Level": 1,
+    "Challenge Name": "Genuine Curiosity",
+    "Description": "Ask one open-ended question and truly listen without planning your next line.",
+    "Focus": "Connection & Awareness",
+    "Points": 10
+  },
+  {
+    "Code": "L1-24",
+    "Level": 1,
+    "Challenge Name": "Flirt Through Humor",
+    "Description": "Make someone laugh without relying on sarcasm or self-deprecation.",
+    "Focus": "Emotional Polarity",
+    "Points": 10
+  },
+  {
+    "Code": "L1-25",
+    "Level": 1,
+    "Challenge Name": "The Calm Pause",
+    "Description": "Before entering a room, take one deep breath and exhale slowly to reset your energy.",
+    "Focus": "Presence & Awareness",
+    "Points": 10
+  },
+  {
+    "Code": "L1-26",
+    "Level": 1,
+    "Challenge Name": "Grounded Exit",
+    "Description": "When ending conversations, leave first, calmly and politely, even if it feels early.",
+    "Focus": "Frame Control",
+    "Points": 10
+  },
+  {
+    "Code": "L1-27",
+    "Level": 1,
+    "Challenge Name": "Compliment Deflection",
+    "Description": "When complimented, say \u2018Thanks,\u2019 hold eye contact, and don\u2019t overexplain.",
+    "Focus": "Frame Control",
+    "Points": 10
+  },
+  {
+    "Code": "L1-28",
+    "Level": 1,
+    "Challenge Name": "Name Connection",
+    "Description": "Use someone\u2019s name naturally in conversation and observe how it changes rapport.",
+    "Focus": "Connection & Awareness",
+    "Points": 10
+  },
+  {
+    "Code": "L1-29",
+    "Level": 1,
+    "Challenge Name": "Self-Amusement",
+    "Description": "Spend five minutes making yourself smile about your own thoughts before socializing.",
+    "Focus": "Emotional Self-Regulation",
+    "Points": 10
+  },
+  {
+    "Code": "L1-30",
+    "Level": 1,
+    "Challenge Name": "Small Win Reflection",
+    "Description": "Write down one moment today where you felt composed or confident in conversation.",
+    "Focus": "Awareness & Reflection",
+    "Points": 10
+  },
+  {
+    "Code": "L2-01",
+    "Level": 2,
+    "Challenge Name": "Push\u2013Pull Conversation",
+    "Description": "Alternate between warmth and teasing in dialogue. Compliment her one moment, then playfully contradict or tease her the next. Keep tone relaxed and confident.",
+    "Focus": "Emotional Polarity",
+    "Points": 10
+  },
+  {
+    "Code": "L2-02",
+    "Level": 2,
+    "Challenge Name": "Controlled Silence",
+    "Description": "Pause 2\u20133 seconds before answering any personal or emotional question. Breathe slowly and let the silence create weight before you reply.",
+    "Focus": "Composure and Timing",
+    "Points": 10
+  },
+  {
+    "Code": "L2-03",
+    "Level": 2,
+    "Challenge Name": "Flirt & Withdraw",
+    "Description": "Show mild interest, then switch topics or lean back when she starts to engage more. Practice ending moments of tension on your terms.",
+    "Focus": "Curiosity and Emotional Control",
+    "Points": 10
+  },
+  {
+    "Code": "L2-04",
+    "Level": 2,
+    "Challenge Name": "Frame-Flip Response",
+    "Description": "When teased or challenged, smile and reply as though she is flirting\u2014'Careful, you\u2019re getting attached already.'",
+    "Focus": "Frame Control",
+    "Points": 10
+  },
+  {
+    "Code": "L2-05",
+    "Level": 2,
+    "Challenge Name": "Playful Challenge",
+    "Description": "Say something mischievous like 'You look like trouble in disguise.' Observe her reaction and hold eye contact calmly.",
+    "Focus": "Confidence and Polarity",
+    "Points": 10
+  },
+  {
+    "Code": "L2-06",
+    "Level": 2,
+    "Challenge Name": "Qualify Her",
+    "Description": "Ask 'What do you actually find attractive in someone?' and listen closely. Respond with curiosity, not approval, to make her invest.",
+    "Focus": "Reversing the Chase",
+    "Points": 10
+  },
+  {
+    "Code": "L2-07",
+    "Level": 2,
+    "Challenge Name": "Energy Mirror",
+    "Description": "Match her gestures or rhythm briefly, then slow your tempo until she follows yours. Notice when the power shifts.",
+    "Focus": "Social Synchrony",
+    "Points": 10
+  },
+  {
+    "Code": "L2-08",
+    "Level": 2,
+    "Challenge Name": "Flirt Through Curiosity",
+    "Description": "Replace direct compliments with interest: 'You have a mysterious way of thinking\u2014what goes on in that head?'",
+    "Focus": "Curiosity and Presence",
+    "Points": 10
+  },
+  {
+    "Code": "L2-09",
+    "Level": 2,
+    "Challenge Name": "Humor Timing",
+    "Description": "Tell a short story or joke and add a small pause before the punchline. Train yourself to control rhythm and tension release.",
+    "Focus": "Conversational Timing",
+    "Points": 10
+  },
+  {
+    "Code": "L2-10",
+    "Level": 2,
+    "Challenge Name": "Group Flow",
+    "Description": "Take light leadership in a small group. Redirect topics smoothly, maintain eye contact, and keep the energy fun for two minutes.",
+    "Focus": "Social Leadership",
+    "Points": 10
+  },
+  {
+    "Code": "L2-11",
+    "Level": 2,
+    "Challenge Name": "Push Back Softly",
+    "Description": "When someone disagrees, respond with humor instead of defensiveness. Example: 'Wow, I didn\u2019t realize we were taking notes.'",
+    "Focus": "Frame Control",
+    "Points": 10
+  },
+  {
+    "Code": "L2-12",
+    "Level": 2,
+    "Challenge Name": "Subtle Compliment",
+    "Description": "Compliment a small detail that shows you notice personality, not looks\u2014like style, tone, or humor.",
+    "Focus": "Connection Building",
+    "Points": 10
+  },
+  {
+    "Code": "L2-13",
+    "Level": 2,
+    "Challenge Name": "Playful Comparison",
+    "Description": "Compare her to something amusing\u2014'You remind me of the kid in class who always got away with everything.'",
+    "Focus": "Emotional Polarity",
+    "Points": 10
+  },
+  {
+    "Code": "L2-14",
+    "Level": 2,
+    "Challenge Name": "Non-Chase Rule",
+    "Description": "If she goes quiet mid-conversation, stay silent. Let her reopen the dialogue when ready.",
+    "Focus": "Emotional Detachment",
+    "Points": 10
+  },
+  {
+    "Code": "L2-15",
+    "Level": 2,
+    "Challenge Name": "Voice Command",
+    "Description": "Maintain a slower speaking rhythm for an entire interaction. Use pacing to project calm confidence.",
+    "Focus": "Presence & Vocal Authority",
+    "Points": 10
+  },
+  {
+    "Code": "L2-16",
+    "Level": 2,
+    "Challenge Name": "Tease the Obvious",
+    "Description": "Comment humorously on something everyone notices but no one mentions\u2014'This coffee shop has like seven first dates going on right now.'",
+    "Focus": "Social Awareness and Humor",
+    "Points": 10
+  },
+  {
+    "Code": "L2-17",
+    "Level": 2,
+    "Challenge Name": "Story With Emotion",
+    "Description": "Tell a brief story from your life that shows vulnerability, then switch to humor. Contrast deep and light emotions.",
+    "Focus": "Emotional Polarity",
+    "Points": 10
+  },
+  {
+    "Code": "L2-18",
+    "Level": 2,
+    "Challenge Name": "Exit First",
+    "Description": "When conversation peaks, end it politely. Leave her feeling the energy drop when you walk away.",
+    "Focus": "Scarcity and Control",
+    "Points": 10
+  },
+  {
+    "Code": "L2-19",
+    "Level": 2,
+    "Challenge Name": "Confidence Posture",
+    "Description": "Stand tall, shoulders relaxed, head level during every social encounter today. Adjust posture before speaking.",
+    "Focus": "Presence and Confidence",
+    "Points": 10
+  },
+  {
+    "Code": "L2-20",
+    "Level": 2,
+    "Challenge Name": "Micro-Flirt",
+    "Description": "Hold eye contact half a second longer than usual and pair it with a half-smile before looking away.",
+    "Focus": "Subtle Attraction",
+    "Points": 10
+  },
+  {
+    "Code": "L2-21",
+    "Level": 2,
+    "Challenge Name": "Controlled Touch Awareness",
+    "Description": "During a light moment, use a brief, socially acceptable touch\u2014like a handshake or a touch on the shoulder\u2014then withdraw first. Observe the effect it has on connection.",
+    "Focus": "Calibration and Physical Awareness",
+    "Points": 10
+  },
+  {
+    "Code": "L2-22",
+    "Level": 2,
+    "Challenge Name": "Frame Ownership",
+    "Description": "If someone tries to lead the topic or tempo, calmly redirect back to your frame. Example: \u2018Hold on, we\u2019ll get there\u2014finish this first.\u2019",
+    "Focus": "Leadership & Frame Control",
+    "Points": 10
+  },
+  {
+    "Code": "L2-23",
+    "Level": 2,
+    "Challenge Name": "Story Switch-Up",
+    "Description": "Tell a story that starts serious and end it playfully. This emotional switch keeps energy unpredictable and engaging.",
+    "Focus": "Emotional Polarity",
+    "Points": 10
+  },
+  {
+    "Code": "L2-24",
+    "Level": 2,
+    "Challenge Name": "Curiosity Anchor",
+    "Description": "Ask an open question that invites imagination: \u2018If you could live anywhere for one year, where would it be and why?\u2019",
+    "Focus": "Curiosity & Engagement",
+    "Points": 10
+  },
+  {
+    "Code": "L2-25",
+    "Level": 2,
+    "Challenge Name": "Boundary Practice",
+    "Description": "Say \u2018no\u2019 or express a preference at least once today without apology. Example: \u2018Actually, I\u2019d rather do X.\u2019",
+    "Focus": "Confidence and Assertiveness",
+    "Points": 10
+  },
+  {
+    "Code": "L2-26",
+    "Level": 2,
+    "Challenge Name": "The Compliment Game",
+    "Description": "Give a compliment that sounds accidental\u2014\u2018I just noticed, you have a great laugh\u2019\u2014then immediately change topics.",
+    "Focus": "Light Flirtation",
+    "Points": 10
+  },
+  {
+    "Code": "L2-27",
+    "Level": 2,
+    "Challenge Name": "Observe Group Dynamics",
+    "Description": "Watch a mixed group and notice who leads conversations, who follows, and who gains attention. Study how attraction flows socially.",
+    "Focus": "Social Awareness",
+    "Points": 10
+  },
+  {
+    "Code": "L2-28",
+    "Level": 2,
+    "Challenge Name": "Playful Disagreement",
+    "Description": "Disagree about something trivial with a smile. Example: \u2018Pineapple on pizza? That\u2019s a crime.\u2019",
+    "Focus": "Tension & Comfort Balance",
+    "Points": 10
+  },
+  {
+    "Code": "L2-29",
+    "Level": 2,
+    "Challenge Name": "Reframe Boredom",
+    "Description": "If conversation feels dull, change energy by joking: \u2018Okay, we\u2019re officially boring. What should we talk about instead?\u2019",
+    "Focus": "Conversation Leadership",
+    "Points": 10
+  },
+  {
+    "Code": "L2-30",
+    "Level": 2,
+    "Challenge Name": "Eye Contact Break Timing",
+    "Description": "End eye contact slowly, not suddenly. Leave a trace of connection by looking away calmly instead of darting your eyes.",
+    "Focus": "Nonverbal Communication",
+    "Points": 10
+  },
+  {
+    "Code": "L2-31",
+    "Level": 2,
+    "Challenge Name": "Misdirection Compliment",
+    "Description": "Say something that sounds like a tease but is secretly flattering\u2014\u2018You\u2019re dangerous; people probably fall for you too easily.\u2019",
+    "Focus": "Playful Polarity",
+    "Points": 10
+  },
+  {
+    "Code": "L2-32",
+    "Level": 2,
+    "Challenge Name": "Grounded Breathing",
+    "Description": "Before social interactions, take one deep breath and exhale slowly. Enter the space on your rhythm, not theirs.",
+    "Focus": "Presence and Calm Entry",
+    "Points": 10
+  },
+  {
+    "Code": "L2-33",
+    "Level": 2,
+    "Challenge Name": "Mini-Story Hook",
+    "Description": "Share a short anecdote with a twist ending. Deliver it with pauses and expression control.",
+    "Focus": "Storytelling & Engagement",
+    "Points": 10
+  },
+  {
+    "Code": "L2-34",
+    "Level": 2,
+    "Challenge Name": "Mirror Compliment",
+    "Description": "Return a compliment in a fun way: \u2018You\u2019re just saying that because you like me.\u2019",
+    "Focus": "Playful Reciprocity",
+    "Points": 10
+  },
+  {
+    "Code": "L2-35",
+    "Level": 2,
+    "Challenge Name": "Micro Challenge",
+    "Description": "Ask: \u2018What makes you interesting?\u2019 then hold eye contact and wait for her answer.",
+    "Focus": "Qualification & Engagement",
+    "Points": 10
+  },
+  {
+    "Code": "L2-36",
+    "Level": 2,
+    "Challenge Name": "Contrast Conversation",
+    "Description": "Shift between two opposite topics\u2014funny then serious\u2014to create emotional movement.",
+    "Focus": "Emotional Range",
+    "Points": 10
+  },
+  {
+    "Code": "L2-37",
+    "Level": 2,
+    "Challenge Name": "Social Risk",
+    "Description": "Say something slightly bold that\u2019s still respectful. Example: \u2018You\u2019re too confident to be innocent.\u2019",
+    "Focus": "Courage & Flirtation",
+    "Points": 10
+  },
+  {
+    "Code": "L2-38",
+    "Level": 2,
+    "Challenge Name": "Voice Drop",
+    "Description": "Lower your volume slightly at the end of sentences instead of fading out. This anchors your words with confidence.",
+    "Focus": "Vocal Authority",
+    "Points": 10
+  },
+  {
+    "Code": "L2-39",
+    "Level": 2,
+    "Challenge Name": "Curiosity Pause",
+    "Description": "When she asks about you, answer briefly then ask a deeper question about her. Shift attention back to her world.",
+    "Focus": "Curiosity & Listening",
+    "Points": 10
+  },
+  {
+    "Code": "L2-40",
+    "Level": 2,
+    "Challenge Name": "Playful Reversal",
+    "Description": "Respond to teasing with a grin: \u2018You\u2019re kind of obsessed with me already, huh?\u2019",
+    "Focus": "Confidence Under Pressure",
+    "Points": 10
+  },
+  {
+    "Code": "L2-41",
+    "Level": 2,
+    "Challenge Name": "Lead the Logistics",
+    "Description": "When making plans with friends or someone new, take initiative. Offer a specific time and place instead of saying 'whatever works.'",
+    "Focus": "Leadership and Initiative",
+    "Points": 10
+  },
+  {
+    "Code": "L2-42",
+    "Level": 2,
+    "Challenge Name": "Escalate Playfulness",
+    "Description": "Build a teasing moment and slightly exaggerate it for humor, then soften with a grin or compliment.",
+    "Focus": "Tension and Release",
+    "Points": 10
+  },
+  {
+    "Code": "L2-43",
+    "Level": 2,
+    "Challenge Name": "Opinion Bait",
+    "Description": "Ask for an opinion on something fun or polarizing\u2014\u2018Which city has better food?\u2019\u2014to spark energy.",
+    "Focus": "Engagement through Curiosity",
+    "Points": 10
+  },
+  {
+    "Code": "L2-44",
+    "Level": 2,
+    "Challenge Name": "Compliment Withdrawal",
+    "Description": "Give a compliment then act indifferent, as if it was just an afterthought. Do not wait for validation.",
+    "Focus": "Confidence and Detachment",
+    "Points": 10
+  },
+  {
+    "Code": "L2-45",
+    "Level": 2,
+    "Challenge Name": "Eye Contact Hold in Groups",
+    "Description": "During group talk, hold eye contact with one person while finishing your sentence. Observe how attention shifts toward you.",
+    "Focus": "Presence and Command",
+    "Points": 10
+  },
+  {
+    "Code": "L2-46",
+    "Level": 2,
+    "Challenge Name": "Playful Misinterpretation",
+    "Description": "Twist something ordinary into flirtation\u2014'Oh, so you\u2019re inviting me then?'\u2014then laugh lightly.",
+    "Focus": "Humor and Polarity",
+    "Points": 10
+  },
+  {
+    "Code": "L2-47",
+    "Level": 2,
+    "Challenge Name": "Stay Unfazed",
+    "Description": "If someone teases you harshly, shrug or smile without verbal defense. Let calm energy speak for you.",
+    "Focus": "Frame Control",
+    "Points": 10
+  },
+  {
+    "Code": "L2-48",
+    "Level": 2,
+    "Challenge Name": "Scarcity Message",
+    "Description": "Keep one text reply short but warm, then delay your next message. Notice how interest reacts to scarcity.",
+    "Focus": "Timing and Value",
+    "Points": 10
+  },
+  {
+    "Code": "L2-49",
+    "Level": 2,
+    "Challenge Name": "Story with Mystery",
+    "Description": "Tell a story that leaves out one important detail intentionally. If asked, smile and say 'Maybe later.'",
+    "Focus": "Creating Intrigue",
+    "Points": 10
+  },
+  {
+    "Code": "L2-50",
+    "Level": 2,
+    "Challenge Name": "Warm Tease Recovery",
+    "Description": "After teasing, add a small kindness\u2014'I\u2019m kidding, you\u2019re actually great.' This keeps tension playful, not mean.",
+    "Focus": "Balance of Edge and Warmth",
+    "Points": 10
+  },
+  {
+    "Code": "L2-51",
+    "Level": 2,
+    "Challenge Name": "Reverse Compliment",
+    "Description": "Say something that sounds like a tease but is charming underneath\u2014'You look way too proud of that outfit.'",
+    "Focus": "Playful Ambiguity",
+    "Points": 10
+  },
+  {
+    "Code": "L2-52",
+    "Level": 2,
+    "Challenge Name": "Direct Honesty Moment",
+    "Description": "Drop one sincere statement mid-banter: 'I actually like people who can keep up.' Then continue the joke.",
+    "Focus": "Authenticity and Polarity",
+    "Points": 10
+  },
+  {
+    "Code": "L2-53",
+    "Level": 2,
+    "Challenge Name": "Humor Through Pauses",
+    "Description": "Use small pauses before delivering witty remarks. Silence adds gravity and timing to humor.",
+    "Focus": "Conversational Timing",
+    "Points": 10
+  },
+  {
+    "Code": "L2-54",
+    "Level": 2,
+    "Challenge Name": "Playful Overconfidence",
+    "Description": "Make an exaggerated confident joke: 'I try to stay humble, but it\u2019s hard being this amazing.'",
+    "Focus": "Self-Amusement",
+    "Points": 10
+  },
+  {
+    "Code": "L2-55",
+    "Level": 2,
+    "Challenge Name": "Light Emotional Share",
+    "Description": "Mention a personal hobby or setback quickly, then pivot to a positive note. Vulnerability followed by resilience draws interest.",
+    "Focus": "Emotional Balance",
+    "Points": 10
+  },
+  {
+    "Code": "L2-56",
+    "Level": 2,
+    "Challenge Name": "Shared Secret Frame",
+    "Description": "Lean in slightly and say something small in a lower voice, as if sharing a secret\u2014even if it\u2019s playful nonsense. Then pull back and smile.",
+    "Focus": "Intimacy & Mystery",
+    "Points": 10
+  },
+  {
+    "Code": "L2-57",
+    "Level": 2,
+    "Challenge Name": "Positive Labeling",
+    "Description": "Assign a fun, flattering label like 'troublemaker' or 'heartbreaker' when teasing. It adds identity-level intrigue.",
+    "Focus": "Playful Polarity",
+    "Points": 10
+  },
+  {
+    "Code": "L2-58",
+    "Level": 2,
+    "Challenge Name": "Calm Interruption",
+    "Description": "When interrupted, wait, then resume your story from where you left off without apologizing.",
+    "Focus": "Authority & Poise",
+    "Points": 10
+  },
+  {
+    "Code": "L2-59",
+    "Level": 2,
+    "Challenge Name": "Lead the Transition",
+    "Description": "When a moment feels stuck, suggest a new activity or topic decisively: 'Let\u2019s walk while we talk.'",
+    "Focus": "Leadership & Flow",
+    "Points": 10
+  },
+  {
+    "Code": "L2-60",
+    "Level": 2,
+    "Challenge Name": "Reverse Qualification",
+    "Description": "Playfully ask, 'So why should I keep talking to you?' and smile while saying it.",
+    "Focus": "Power Dynamics",
+    "Points": 10
+  },
+  {
+    "Code": "L2-61",
+    "Level": 2,
+    "Challenge Name": "Controlled Compliment",
+    "Description": "Say something appreciative once, then change subject instantly to show your validation is rare.",
+    "Focus": "Scarcity & High Value",
+    "Points": 10
+  },
+  {
+    "Code": "L2-62",
+    "Level": 2,
+    "Challenge Name": "Playful Roleplay",
+    "Description": "Pretend for 30 seconds that you and she are an old married couple arguing over something trivial.",
+    "Focus": "Humor & Chemistry",
+    "Points": 10
+  },
+  {
+    "Code": "L2-63",
+    "Level": 2,
+    "Challenge Name": "Interest Switch",
+    "Description": "Switch from light teasing to an earnest compliment mid-conversation, then back to humor.",
+    "Focus": "Emotional Rhythm",
+    "Points": 10
+  },
+  {
+    "Code": "L2-64",
+    "Level": 2,
+    "Challenge Name": "Flirty Eye Contact Game",
+    "Description": "Hold eye contact during a laugh or story, let it linger one beat too long, then look away slowly.",
+    "Focus": "Nonverbal Seduction",
+    "Points": 10
+  },
+  {
+    "Code": "L2-65",
+    "Level": 2,
+    "Challenge Name": "Assertive Suggestion",
+    "Description": "When deciding plans, suggest something confidently instead of asking permission: 'Let\u2019s grab a coffee over there.'",
+    "Focus": "Assertiveness & Direction",
+    "Points": 10
+  },
+  {
+    "Code": "L2-66",
+    "Level": 2,
+    "Challenge Name": "Handle Awkward Silence",
+    "Description": "When silence hits, smile and stay comfortable. Let her be the first to speak.",
+    "Focus": "Composure Under Pressure",
+    "Points": 10
+  },
+  {
+    "Code": "L2-67",
+    "Level": 2,
+    "Challenge Name": "Story Callback",
+    "Description": "Bring up something funny or emotional from earlier in conversation later on. It signals attentiveness and memory.",
+    "Focus": "Connection & Continuity",
+    "Points": 10
+  },
+  {
+    "Code": "L2-68",
+    "Level": 2,
+    "Challenge Name": "Playful Accusation",
+    "Description": "Say in a joking tone: 'You\u2019re flirting with me right now, aren\u2019t you?' Then change topic without waiting for an answer.",
+    "Focus": "Confidence & Teasing",
+    "Points": 10
+  },
+  {
+    "Code": "L2-69",
+    "Level": 2,
+    "Challenge Name": "Social Warm-Up",
+    "Description": "Before approaching anyone attractive, start three light conversations with strangers to build momentum.",
+    "Focus": "Social Flow & Ease",
+    "Points": 10
+  },
+  {
+    "Code": "L2-70",
+    "Level": 2,
+    "Challenge Name": "Playful Exit Line",
+    "Description": "When ending a chat, say something light like 'Don\u2019t miss me too much,' and walk away smiling.",
+    "Focus": "Closing with Confidence",
+    "Points": 10
+  },
+  {
+    "Code": "L3-01",
+    "Level": 3,
+    "Challenge Name": "Deep Question Drop",
+    "Description": "Ask a thought-provoking question like 'What\u2019s something people misunderstand about you?' Hold her gaze while listening, then change topics before she expects it. The emotional cliff leaves a lasting impression.",
+    "Focus": "Emotional Imprinting",
+    "Points": 10
+  },
+  {
+    "Code": "L3-02",
+    "Level": 3,
+    "Challenge Name": "Re-Engage Playfully",
+    "Description": "Reconnect with someone you haven\u2019t spoken to in weeks by referencing an old joke or story instead of small talk. It reactivates positive emotional memory immediately.",
+    "Focus": "Re-Attraction and Recall",
+    "Points": 10
+  },
+  {
+    "Code": "L3-03",
+    "Level": 3,
+    "Challenge Name": "Controlled Silence",
+    "Description": "During deep or tense conversation, let silence linger naturally. Breathe and observe how others react before you speak again.",
+    "Focus": "Frame Control and Composure",
+    "Points": 10
+  },
+  {
+    "Code": "L3-04",
+    "Level": 3,
+    "Challenge Name": "Cold Tease",
+    "Description": "Deliver a tease with a straight face, then smirk subtly after a pause. The contrast amplifies your emotional range.",
+    "Focus": "Tension Mastery",
+    "Points": 10
+  },
+  {
+    "Code": "L3-05",
+    "Level": 3,
+    "Challenge Name": "Emotional Cliff",
+    "Description": "Share a personal truth in a calm tone, then stop mid-thought. Let curiosity and emotional suspense build naturally.",
+    "Focus": "Emotional Depth and Mystery",
+    "Points": 10
+  },
+  {
+    "Code": "L3-06",
+    "Level": 3,
+    "Challenge Name": "Frame Test Parry",
+    "Description": "When tested, avoid defending yourself. Instead, smirk and say, 'That\u2019s one way to look at it.' Stay relaxed and non-reactive.",
+    "Focus": "Frame Control",
+    "Points": 10
+  },
+  {
+    "Code": "L3-07",
+    "Level": 3,
+    "Challenge Name": "Grounded Presence",
+    "Description": "Focus on your breathing and stillness during a heated or emotional interaction. Speak slower and lower as energy rises around you.",
+    "Focus": "Calm Dominance",
+    "Points": 10
+  },
+  {
+    "Code": "L3-08",
+    "Level": 3,
+    "Challenge Name": "Story of Change",
+    "Description": "Tell a personal story about how you overcame something difficult. Let vulnerability show, then pivot to confidence or humor.",
+    "Focus": "Vulnerability with Power",
+    "Points": 10
+  },
+  {
+    "Code": "L3-09",
+    "Level": 3,
+    "Challenge Name": "Rejection Reframe",
+    "Description": "When turned down or brushed off, respond playfully\u2014'Good, I like earning things.' Turn potential embarrassment into charm.",
+    "Focus": "Emotional Resilience",
+    "Points": 10
+  },
+  {
+    "Code": "L3-10",
+    "Level": 3,
+    "Challenge Name": "Controlled Distance",
+    "Description": "When things feel too comfortable, take a small step back physically or emotionally. Let her reach to reclose the gap.",
+    "Focus": "Tension and Value",
+    "Points": 10
+  },
+  {
+    "Code": "L3-11",
+    "Level": 3,
+    "Challenge Name": "Story Timing",
+    "Description": "Tell a short story, using strategic pauses and lowered tone to emphasize key emotional beats. Control the rhythm deliberately.",
+    "Focus": "Storytelling and Emotional Control",
+    "Points": 10
+  },
+  {
+    "Code": "L3-12",
+    "Level": 3,
+    "Challenge Name": "Subtle Challenge",
+    "Description": "When she compliments you, respond with humor\u2014'Thanks, you\u2019ve got good taste.' Playful confidence beats over-acceptance.",
+    "Focus": "Playful Authority",
+    "Points": 10
+  },
+  {
+    "Code": "L3-13",
+    "Level": 3,
+    "Challenge Name": "Presence Hold",
+    "Description": "Say nothing for five seconds while maintaining calm eye contact and breathing evenly. Train your nervous system to stay still under tension.",
+    "Focus": "Non-Reactivity Training",
+    "Points": 10
+  },
+  {
+    "Code": "L3-14",
+    "Level": 3,
+    "Challenge Name": "Dual Energy Control",
+    "Description": "Alternate between calm, grounded tone and sudden bursts of enthusiasm in storytelling. Learn to control emotional pacing deliberately.",
+    "Focus": "Energy Leadership",
+    "Points": 10
+  },
+  {
+    "Code": "L3-15",
+    "Level": 3,
+    "Challenge Name": "Refuse to Explain",
+    "Description": "If someone questions your intentions, reply calmly: 'You'll figure it out.' This creates intrigue and emotional confidence.",
+    "Focus": "Mystery and Frame Authority",
+    "Points": 10
+  },
+  {
+    "Code": "L3-16",
+    "Level": 3,
+    "Challenge Name": "Mirror Emotion",
+    "Description": "Notice others\u2019 moods and subtly mirror their tone before guiding it toward calm or humor. Emotional leadership begins with empathy.",
+    "Focus": "Emotional Intelligence",
+    "Points": 10
+  },
+  {
+    "Code": "L3-17",
+    "Level": 3,
+    "Challenge Name": "Delayed Validation",
+    "Description": "When given attention or praise, pause before acknowledging it. Make your appreciation measured and grounded.",
+    "Focus": "Power Through Patience",
+    "Points": 10
+  },
+  {
+    "Code": "L3-18",
+    "Level": 3,
+    "Challenge Name": "Unexpected Depth",
+    "Description": "In a playful conversation, switch tone and say something sincere or profound, then return to humor. This contrast imprints deeply.",
+    "Focus": "Emotional Polarity",
+    "Points": 10
+  },
+  {
+    "Code": "L3-19",
+    "Level": 3,
+    "Challenge Name": "Direct Flirt Challenge",
+    "Description": "Say something bold like 'You\u2019re interesting, but I\u2019m not sure if you\u2019re trouble yet.' Smile calmly and let her wonder.",
+    "Focus": "Confidence and Control",
+    "Points": 10
+  },
+  {
+    "Code": "L3-20",
+    "Level": 3,
+    "Challenge Name": "Comfort in Chaos",
+    "Description": "Spend time in a noisy or high-energy environment while keeping your breathing slow and your body language still.",
+    "Focus": "Nervous System Control",
+    "Points": 10
+  },
+  {
+    "Code": "L3-21",
+    "Level": 3,
+    "Challenge Name": "Re-Attraction Frame",
+    "Description": "Reach out to someone who drifted away. Act as if no time has passed and speak with warmth and calm confidence. Show zero anxiety or need to explain the gap.",
+    "Focus": "Re-Attraction & Emotional Consistency",
+    "Points": 10
+  },
+  {
+    "Code": "L3-22",
+    "Level": 3,
+    "Challenge Name": "Humor in Pressure",
+    "Description": "When someone\u2019s energy turns serious or negative, respond with humor that lightens the room instead of matching their tension.",
+    "Focus": "Emotional Leadership",
+    "Points": 10
+  },
+  {
+    "Code": "L3-23",
+    "Level": 3,
+    "Challenge Name": "Low Reaction Drill",
+    "Description": "If something surprises or annoys you, respond with a half-smile and slow breathing. Let your composure speak louder than words.",
+    "Focus": "Frame Control and Stillness",
+    "Points": 10
+  },
+  {
+    "Code": "L3-24",
+    "Level": 3,
+    "Challenge Name": "Delayed Interest",
+    "Description": "When meeting someone attractive, act friendly but neutral. Reveal your interest only after 10\u201315 minutes of genuine conversation.",
+    "Focus": "Pacing and Scarcity",
+    "Points": 10
+  },
+  {
+    "Code": "L3-25",
+    "Level": 3,
+    "Challenge Name": "Emotional Checkpoint",
+    "Description": "In the middle of an intense discussion, take one slow breath and observe your body. Calm your energy before replying.",
+    "Focus": "Self-Regulation",
+    "Points": 10
+  },
+  {
+    "Code": "L3-26",
+    "Level": 3,
+    "Challenge Name": "Reframe Negativity",
+    "Description": "If someone complains or vents, agree with empathy once, then spin the perspective into something empowering or funny.",
+    "Focus": "Emotional Influence",
+    "Points": 10
+  },
+  {
+    "Code": "L3-27",
+    "Level": 3,
+    "Challenge Name": "Hold Eye Contact Under Silence",
+    "Description": "Let silence hang naturally during conversation. Breathe and maintain eye contact without awkwardness.",
+    "Focus": "Dominance Through Calm",
+    "Points": 10
+  },
+  {
+    "Code": "L3-28",
+    "Level": 3,
+    "Challenge Name": "Mini-Vulnerability Test",
+    "Description": "Share a mild insecurity or fear in a casual tone, then move forward confidently. Vulnerability without victimhood builds trust.",
+    "Focus": "Authentic Connection",
+    "Points": 10
+  },
+  {
+    "Code": "L3-29",
+    "Level": 3,
+    "Challenge Name": "Curiosity Pivot",
+    "Description": "When asked a personal question, answer briefly and redirect: 'That\u2019s a story for another time\u2014what about you?'",
+    "Focus": "Mystery and Control",
+    "Points": 10
+  },
+  {
+    "Code": "L3-30",
+    "Level": 3,
+    "Challenge Name": "Anchor Emotional State",
+    "Description": "Before every social interaction, consciously choose how you want to feel (calm, playful, curious) and maintain that emotion regardless of reactions.",
+    "Focus": "Emotional Anchoring",
+    "Points": 10
+  },
+  {
+    "Code": "L3-31",
+    "Level": 3,
+    "Challenge Name": "High Stakes Calm",
+    "Description": "During an important meeting or date, deliberately slow your movements and speech when adrenaline spikes.",
+    "Focus": "Composure Under Stress",
+    "Points": 10
+  },
+  {
+    "Code": "L3-32",
+    "Level": 3,
+    "Challenge Name": "Lead Emotional Tone",
+    "Description": "Walk into a social space and consciously raise or lower the group\u2019s energy through your tone, humor, and pace.",
+    "Focus": "Leadership by Energy",
+    "Points": 10
+  },
+  {
+    "Code": "L3-33",
+    "Level": 3,
+    "Challenge Name": "Rejection Practice",
+    "Description": "Ask a small favor or question expecting a 'no.' Smile genuinely when declined. Train emotional neutrality around rejection.",
+    "Focus": "Desensitization & Confidence",
+    "Points": 10
+  },
+  {
+    "Code": "L3-34",
+    "Level": 3,
+    "Challenge Name": "Emotional Reset",
+    "Description": "After an intense or negative conversation, take 60 seconds of silence, roll your shoulders back, and reset your breathing before speaking again.",
+    "Focus": "Nervous System Regulation",
+    "Points": 10
+  },
+  {
+    "Code": "L3-35",
+    "Level": 3,
+    "Challenge Name": "The Pause of Power",
+    "Description": "During deep rapport, add a two-second pause before responding to emotional statements. It signals strength and awareness.",
+    "Focus": "Emotional Timing",
+    "Points": 10
+  },
+  {
+    "Code": "L3-36",
+    "Level": 3,
+    "Challenge Name": "Reinterpret a Test",
+    "Description": "If someone mocks or teases you, laugh and say, 'You test people you like, don\u2019t you?'",
+    "Focus": "Reframing & Confidence",
+    "Points": 10
+  },
+  {
+    "Code": "L3-37",
+    "Level": 3,
+    "Challenge Name": "Grounding Through Stillness",
+    "Description": "Spend 5 minutes a day in public standing perfectly still and relaxed. Train your body to project confidence in quiet presence.",
+    "Focus": "Physical Command",
+    "Points": 10
+  },
+  {
+    "Code": "L3-38",
+    "Level": 3,
+    "Challenge Name": "Soft Lead",
+    "Description": "In conversation, suggest subtle direction\u2014'Let\u2019s sit over there,' or 'Tell me that story again.' Lead with warmth, not force.",
+    "Focus": "Gentle Authority",
+    "Points": 10
+  },
+  {
+    "Code": "L3-39",
+    "Level": 3,
+    "Challenge Name": "Detach from Outcome",
+    "Description": "During any interaction, mentally repeat: 'I\u2019m here to enjoy, not to win.' Let go of expectation while staying present.",
+    "Focus": "Detachment and Freedom",
+    "Points": 10
+  },
+  {
+    "Code": "L3-40",
+    "Level": 3,
+    "Challenge Name": "Narrative Ownership",
+    "Description": "Tell a story where you are the calm protagonist while chaos happens around you. Reinforce the identity of composure.",
+    "Focus": "Identity Framing",
+    "Points": 10
+  },
+  {
+    "Code": "L3-41",
+    "Level": 3,
+    "Challenge Name": "Reveal Then Retreat",
+    "Description": "Share a meaningful belief or lesson from your life, then switch to humor or a neutral topic before she can analyze it. Let her imagination replay the moment later.",
+    "Focus": "Emotional Imprinting",
+    "Points": 10
+  },
+  {
+    "Code": "L3-42",
+    "Level": 3,
+    "Challenge Name": "Handle Interruptions Gracefully",
+    "Description": "When interrupted, smile and allow the person to finish. Once they\u2019re done, resume exactly where you left off, unfazed.",
+    "Focus": "Social Dominance through Composure",
+    "Points": 10
+  },
+  {
+    "Code": "L3-43",
+    "Level": 3,
+    "Challenge Name": "Challenge Acceptance",
+    "Description": "When someone challenges your opinion, say 'Interesting,' smile, and carry on with your perspective calmly.",
+    "Focus": "Confidence under Fire",
+    "Points": 10
+  },
+  {
+    "Code": "L3-44",
+    "Level": 3,
+    "Challenge Name": "Emotional Cliffhanger",
+    "Description": "Tell an unfinished story that stops at an emotional or exciting moment. When she asks for more, smile and say, 'Another time.'",
+    "Focus": "Curiosity and Intrigue",
+    "Points": 10
+  },
+  {
+    "Code": "L3-45",
+    "Level": 3,
+    "Challenge Name": "Pause Before Praise",
+    "Description": "When complimenting someone, wait a full second before saying it. It makes your words feel intentional and controlled.",
+    "Focus": "Composure and Precision",
+    "Points": 10
+  },
+  {
+    "Code": "L3-46",
+    "Level": 3,
+    "Challenge Name": "Frame Reset",
+    "Description": "If an interaction becomes reactive or messy, slow down, take a deep breath, smile, and shift to a new topic. Lead the emotional reset.",
+    "Focus": "Frame Recovery",
+    "Points": 10
+  },
+  {
+    "Code": "L3-47",
+    "Level": 3,
+    "Challenge Name": "Non-Response Power",
+    "Description": "If provoked, simply hold eye contact and stay silent. Non-response projects strength more than defense ever can.",
+    "Focus": "Unshakeable Frame",
+    "Points": 10
+  },
+  {
+    "Code": "L3-48",
+    "Level": 3,
+    "Challenge Name": "The Emotional Mirror",
+    "Description": "When someone shares excitement or pain, briefly match their tone, then guide them to calm. You\u2019re learning to lead emotion, not absorb it.",
+    "Focus": "Emotional Leadership",
+    "Points": 10
+  },
+  {
+    "Code": "L3-49",
+    "Level": 3,
+    "Challenge Name": "Charm in Disagreement",
+    "Description": "When disagreeing, maintain warmth\u2014smile and make it playful. Example: 'You\u2019re wrong, but adorably so.'",
+    "Focus": "Polarity through Humor",
+    "Points": 10
+  },
+  {
+    "Code": "L3-50",
+    "Level": 3,
+    "Challenge Name": "Emotional Precision",
+    "Description": "Describe a feeling from your past experience with specific detail\u2014tone, texture, or color\u2014to make your emotions vivid and controlled.",
+    "Focus": "Emotional Expression",
+    "Points": 10
+  },
+  {
+    "Code": "L3-51",
+    "Level": 3,
+    "Challenge Name": "Turn a Compliment into Tease",
+    "Description": "When she compliments you, smirk and say, 'You\u2019re just trying to impress me now.'",
+    "Focus": "Frame Control and Humor",
+    "Points": 10
+  },
+  {
+    "Code": "L3-52",
+    "Level": 3,
+    "Challenge Name": "Escalate Through Subtext",
+    "Description": "Instead of direct compliments, use implied ones like 'You seem like the kind of person who gets away with things.'",
+    "Focus": "Subtle Seduction",
+    "Points": 10
+  },
+  {
+    "Code": "L3-53",
+    "Level": 3,
+    "Challenge Name": "Ambiguous Statement",
+    "Description": "Say something that could be playful or serious\u2014'I can\u2019t decide if you\u2019re dangerous or fascinating.' Leave it unexplained.",
+    "Focus": "Mystery and Polarity",
+    "Points": 10
+  },
+  {
+    "Code": "L3-54",
+    "Level": 3,
+    "Challenge Name": "Grounded Storytelling",
+    "Description": "Tell a personal story slowly, letting emotion rise and fall naturally. Practice emotional pacing instead of rushing.",
+    "Focus": "Emotional Regulation & Presence",
+    "Points": 10
+  },
+  {
+    "Code": "L3-55",
+    "Level": 3,
+    "Challenge Name": "Tease with a Compliment",
+    "Description": "Wrap a tease inside a compliment\u2014'You\u2019d be dangerous if you knew how charming you are.'",
+    "Focus": "Flirtation and Emotional Duality",
+    "Points": 10
+  },
+  {
+    "Code": "L3-56",
+    "Level": 3,
+    "Challenge Name": "The Withdrawal Test",
+    "Description": "End a powerful moment or conversation first. Walk away or change focus when the energy peaks. Let her feel your absence before returning later.",
+    "Focus": "Timing and Psychological Pull",
+    "Points": 10
+  },
+  {
+    "Code": "L3-57",
+    "Level": 3,
+    "Challenge Name": "Emotional Reversal",
+    "Description": "In a tense conversation, deliberately switch from serious to playful energy with one comment. This contrast resets emotional tone.",
+    "Focus": "Emotional Leadership",
+    "Points": 10
+  },
+  {
+    "Code": "L3-58",
+    "Level": 3,
+    "Challenge Name": "Controlled Compliment Delay",
+    "Description": "Think of a compliment but wait 10 seconds before delivering it. Watch how delayed validation amplifies impact.",
+    "Focus": "Scarcity & Control",
+    "Points": 10
+  },
+  {
+    "Code": "L3-59",
+    "Level": 3,
+    "Challenge Name": "Create a Shared Moment",
+    "Description": "Point out something happening around you and react together with humor or emotion. Shared experiences build emotional memory.",
+    "Focus": "Connection through Environment",
+    "Points": 10
+  },
+  {
+    "Code": "L3-60",
+    "Level": 3,
+    "Challenge Name": "Low Intensity Eye Contact",
+    "Description": "Hold soft, curious eye contact while listening. Avoid intensity; focus on calm curiosity instead.",
+    "Focus": "Subtle Connection",
+    "Points": 10
+  },
+  {
+    "Code": "L3-61",
+    "Level": 3,
+    "Challenge Name": "Emotional Distance Game",
+    "Description": "Pull back slightly during moments of comfort to create space. Watch if she leans back in emotionally.",
+    "Focus": "Polarity & Value Control",
+    "Points": 10
+  },
+  {
+    "Code": "L3-62",
+    "Level": 3,
+    "Challenge Name": "Playful Rejection",
+    "Description": "Lightly reject a playful offer\u2014'Tempting, but I\u2019d get in trouble.' Smirk to keep tone flirtatious.",
+    "Focus": "Power and Charm",
+    "Points": 10
+  },
+  {
+    "Code": "L3-63",
+    "Level": 3,
+    "Challenge Name": "Mirror Test",
+    "Description": "During conversation, subtly adjust posture and see if she mirrors you within 10 seconds. Mirroring shows subconscious attraction.",
+    "Focus": "Nonverbal Awareness",
+    "Points": 10
+  },
+  {
+    "Code": "L3-64",
+    "Level": 3,
+    "Challenge Name": "Reframe Jealousy",
+    "Description": "If someone mentions competition or attention, respond calmly: 'I don\u2019t compete, I just show up.'",
+    "Focus": "Confidence & Detachment",
+    "Points": 10
+  },
+  {
+    "Code": "L3-65",
+    "Level": 3,
+    "Challenge Name": "Time Dilation",
+    "Description": "Slow down speech, gestures, and breathing during key interactions. Make time feel slower and moments feel heavier.",
+    "Focus": "Presence Control",
+    "Points": 10
+  },
+  {
+    "Code": "L3-66",
+    "Level": 3,
+    "Challenge Name": "Playful Mystery Line",
+    "Description": "Say, 'You\u2019d be fun to get in trouble with,' then change the subject immediately. This embeds a suggestive visual anchor.",
+    "Focus": "Emotional Imprint & Suggestion",
+    "Points": 10
+  },
+  {
+    "Code": "L3-67",
+    "Level": 3,
+    "Challenge Name": "Reset the Frame with Humor",
+    "Description": "If conversation turns dull, tease lightly or add exaggeration to restore flow. Example: 'That\u2019s it, we\u2019ve peaked too early!'",
+    "Focus": "Social Awareness & Leadership",
+    "Points": 10
+  },
+  {
+    "Code": "L3-68",
+    "Level": 3,
+    "Challenge Name": "Delayed Response Drill",
+    "Description": "Take one deep breath before answering any question today. This develops measured communication habits.",
+    "Focus": "Pacing & Patience",
+    "Points": 10
+  },
+  {
+    "Code": "L3-69",
+    "Level": 3,
+    "Challenge Name": "Micro-Expression Control",
+    "Description": "In front of a mirror, practice smiling with your eyes only. Learn subtle expression control to communicate calm interest.",
+    "Focus": "Nonverbal Mastery",
+    "Points": 10
+  },
+  {
+    "Code": "L3-70",
+    "Level": 3,
+    "Challenge Name": "End with a Hook",
+    "Description": "When leaving a conversation, end with an open loop\u2014'Remind me to tell you about the time I almost got arrested.'",
+    "Focus": "Open Loop Creation",
+    "Points": 10
+  },
+  {
+    "Code": "L4-01",
+    "Level": 4,
+    "Challenge Name": "Disappear at the Peak",
+    "Description": "When an interaction feels most alive\u2014laughter, shared eye contact, or tension\u2014end it first. Leave with calm confidence so the peak moment replays in her mind.",
+    "Focus": "Timing and Psychological Pull",
+    "Points": 10
+  },
+  {
+    "Code": "L4-02",
+    "Level": 4,
+    "Challenge Name": "Emotional Debt Loop",
+    "Description": "Reveal something emotionally charged and genuine, then change topics as if it meant nothing. The unfinished moment creates a loop of curiosity and craving.",
+    "Focus": "Emotional Imprinting & Mystery",
+    "Points": 10
+  },
+  {
+    "Code": "L4-03",
+    "Level": 4,
+    "Challenge Name": "Silent Seduction",
+    "Description": "Spend an entire conversation using tone, pace, and body language to build attraction without saying anything directly flirtatious.",
+    "Focus": "Energy-Based Attraction",
+    "Points": 10
+  },
+  {
+    "Code": "L4-04",
+    "Level": 4,
+    "Challenge Name": "Re-Attraction Frame",
+    "Description": "Reconnect with someone from the past as if no time has passed. Stay fully centered and lead the tone immediately.",
+    "Focus": "Re-Attraction & Presence",
+    "Points": 10
+  },
+  {
+    "Code": "L4-05",
+    "Level": 4,
+    "Challenge Name": "High-Polarity Roleplay",
+    "Description": "Playfully pretend you and she are ex-lovers or future partners for 30 seconds, keeping tone light but charged.",
+    "Focus": "Tension & Emotional Simulation",
+    "Points": 10
+  },
+  {
+    "Code": "L4-06",
+    "Level": 4,
+    "Challenge Name": "Strategic Absence",
+    "Description": "After an intense connection, go silent for a short period without explanation. Let the absence amplify her reflection of you.",
+    "Focus": "Psychological Distance",
+    "Points": 10
+  },
+  {
+    "Code": "L4-07",
+    "Level": 4,
+    "Challenge Name": "Dual State Presence",
+    "Description": "Practice switching between calm stillness and playful spontaneity in conversation. Command both masculine gravity and light energy.",
+    "Focus": "Energy Mastery",
+    "Points": 10
+  },
+  {
+    "Code": "L4-08",
+    "Level": 4,
+    "Challenge Name": "Frame Collapse Recovery",
+    "Description": "If you lose composure or get reactive, pause, smile, and reset your posture. Demonstrating recovery re-establishes dominance.",
+    "Focus": "Frame Resilience",
+    "Points": 10
+  },
+  {
+    "Code": "L4-09",
+    "Level": 4,
+    "Challenge Name": "Controlled Vulnerability",
+    "Description": "Share a real emotion or story, then end with humor or insight. You open up but never stay exposed.",
+    "Focus": "Authenticity with Control",
+    "Points": 10
+  },
+  {
+    "Code": "L4-10",
+    "Level": 4,
+    "Challenge Name": "Presence Override",
+    "Description": "Enter a room silently and hold stillness until others feel your energy shift the atmosphere. You speak first only when ready.",
+    "Focus": "Nonverbal Leadership",
+    "Points": 10
+  },
+  {
+    "Code": "L4-11",
+    "Level": 4,
+    "Challenge Name": "Reverse Chase Dynamic",
+    "Description": "During a moment of her curiosity or investment, pull back slightly\u2014change the subject or lean away. Allow her to fill the silence with pursuit.",
+    "Focus": "Chase Reversal & Emotional Gravity",
+    "Points": 10
+  },
+  {
+    "Code": "L4-12",
+    "Level": 4,
+    "Challenge Name": "Slow Motion Control",
+    "Description": "Intentionally move slower than everyone else in a social setting. Each gesture and expression becomes deliberate, signaling power and self-command.",
+    "Focus": "Tempo & Psychological Dominance",
+    "Points": 10
+  },
+  {
+    "Code": "L4-13",
+    "Level": 4,
+    "Challenge Name": "The Whisper Effect",
+    "Description": "Lower your voice slightly when saying something meaningful. Force her to lean in, giving you physical and psychological pull.",
+    "Focus": "Vocal Seduction & Attention Control",
+    "Points": 10
+  },
+  {
+    "Code": "L4-14",
+    "Level": 4,
+    "Challenge Name": "Mystery Reappearance",
+    "Description": "Reappear after a brief disappearance as if nothing happened. Keep your tone light and act as though the emotional connection never faded.",
+    "Focus": "Re-Attraction & Familiarity",
+    "Points": 10
+  },
+  {
+    "Code": "L4-15",
+    "Level": 4,
+    "Challenge Name": "Playful Refusal",
+    "Description": "When offered something (a drink, invitation), decline with humor\u2014'You\u2019re trouble; I\u2019m not falling for it today.'",
+    "Focus": "Boundaries & Flirtation",
+    "Points": 10
+  },
+  {
+    "Code": "L4-16",
+    "Level": 4,
+    "Challenge Name": "Emotional Ambiguity",
+    "Description": "Speak with mixed signals\u2014combine warm eyes with a teasing tone or smile while saying something serious. Keep her guessing your emotional state.",
+    "Focus": "Polarity & Intrigue",
+    "Points": 10
+  },
+  {
+    "Code": "L4-17",
+    "Level": 4,
+    "Challenge Name": "Silence as Reward",
+    "Description": "After a deep emotional or flirtatious exchange, respond only with eye contact and a faint smile. Make your silence the compliment.",
+    "Focus": "Subtext & Energy Communication",
+    "Points": 10
+  },
+  {
+    "Code": "L4-18",
+    "Level": 4,
+    "Challenge Name": "Calm Under Seduction",
+    "Description": "When someone flirts boldly or tests you, keep relaxed posture and steady breathing. Smile slowly instead of reacting fast.",
+    "Focus": "Self-Control & Frame Strength",
+    "Points": 10
+  },
+  {
+    "Code": "L4-19",
+    "Level": 4,
+    "Challenge Name": "Story with Hidden Desire",
+    "Description": "Tell a story about passion or risk in a way that mirrors romantic tension, without making it overtly sexual. Let the subtext carry the charge.",
+    "Focus": "Emotional Suggestion & Subtle Seduction",
+    "Points": 10
+  },
+  {
+    "Code": "L4-20",
+    "Level": 4,
+    "Challenge Name": "Reversal Compliment",
+    "Description": "When complimented, respond: 'I was going to say the same about you,' then change the subject. Keep it unpredictable and cool.",
+    "Focus": "Confidence & Playful Control",
+    "Points": 10
+  },
+  {
+    "Code": "L4-21",
+    "Level": 4,
+    "Challenge Name": "The Power Pause",
+    "Description": "Before saying anything meaningful or flirtatious, pause for two full seconds. Let silence frame your words as deliberate and confident.",
+    "Focus": "Timing and Psychological Weight",
+    "Points": 10
+  },
+  {
+    "Code": "L4-22",
+    "Level": 4,
+    "Challenge Name": "Absence Amplifier",
+    "Description": "After a date or deep conversation, disappear for 48 hours without explanation. Return calm and unbothered, allowing memory to deepen attraction.",
+    "Focus": "Emotional Craving & Scarcity",
+    "Points": 10
+  },
+  {
+    "Code": "L4-23",
+    "Level": 4,
+    "Challenge Name": "Echo Emotion",
+    "Description": "Mirror someone\u2019s enthusiasm or calm, then subtly guide it higher or lower. Master tuning into emotional frequency before leading it.",
+    "Focus": "Empathic Leadership",
+    "Points": 10
+  },
+  {
+    "Code": "L4-24",
+    "Level": 4,
+    "Challenge Name": "Eye Contact Freeze",
+    "Description": "Hold slow, unbroken eye contact while listening to a personal story. Communicate safety and power without a single word.",
+    "Focus": "Presence & Emotional Depth",
+    "Points": 10
+  },
+  {
+    "Code": "L4-25",
+    "Level": 4,
+    "Challenge Name": "Detached Flirt",
+    "Description": "Flirt openly, then lean back or change topic as if it meant nothing. Practice turning chemistry on and off effortlessly.",
+    "Focus": "Control of Emotional Intensity",
+    "Points": 10
+  },
+  {
+    "Code": "L4-26",
+    "Level": 4,
+    "Challenge Name": "The Shadow Compliment",
+    "Description": "Give a compliment that carries both darkness and light\u2014'You\u2019ve got that dangerous calm about you.'",
+    "Focus": "Polarity & Mystery",
+    "Points": 10
+  },
+  {
+    "Code": "L4-27",
+    "Level": 4,
+    "Challenge Name": "Time Distortion",
+    "Description": "During conversation, lower your tone, slow movements, and speak rhythmically to make time feel slower. Notice her breathing sync with yours.",
+    "Focus": "Energy Synchronization",
+    "Points": 10
+  },
+  {
+    "Code": "L4-28",
+    "Level": 4,
+    "Challenge Name": "Unspoken Intention",
+    "Description": "Let desire be present but never voiced. Speak normally while your eyes and tone reveal the rest.",
+    "Focus": "Subtextual Seduction",
+    "Points": 10
+  },
+  {
+    "Code": "L4-29",
+    "Level": 4,
+    "Challenge Name": "Frame Isolation",
+    "Description": "In group settings, hold one person\u2019s attention entirely for a few seconds with voice and gaze, even while others talk.",
+    "Focus": "Focus Command",
+    "Points": 10
+  },
+  {
+    "Code": "L4-30",
+    "Level": 4,
+    "Challenge Name": "Emotional Echo Close",
+    "Description": "End a conversation by repeating a phrase or feeling she expressed earlier\u2014creating emotional symmetry and closure.",
+    "Focus": "Connection & Imprint",
+    "Points": 10
+  }
+]

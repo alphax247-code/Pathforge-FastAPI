@@ -1,0 +1,166 @@
+<!-- Reusable Collapsible Section Component -->
+<style>
+    .collapsible-section {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        margin-bottom: 20px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .collapsible-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 25px;
+        cursor: pointer;
+        user-select: none;
+        transition: all 0.3s;
+        background: rgba(255, 255, 255, 0.02);
+    }
+
+    .collapsible-header:hover {
+        background: rgba(212, 175, 55, 0.05);
+    }
+
+    .collapsible-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: #D4AF37;
+        font-size: 20px;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .collapsible-subtitle {
+        color: #9E9E9E;
+        font-size: 14px;
+        margin-left: 35px;
+        margin-top: 5px;
+    }
+
+    .collapsible-toggle {
+        background: rgba(212, 175, 55, 0.15);
+        border: 1px solid rgba(212, 175, 55, 0.3);
+        border-radius: 6px;
+        padding: 8px 12px;
+        color: #D4AF37;
+        font-size: 16px;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 40px;
+    }
+
+    .collapsible-toggle:hover {
+        background: rgba(212, 175, 55, 0.25);
+        transform: scale(1.05);
+    }
+
+    .collapsible-content {
+        max-height: 5000px;
+        overflow: hidden;
+        transition: max-height 0.4s ease, padding 0.4s ease;
+        padding: 0 25px 25px 25px;
+    }
+
+    .collapsible-section.collapsed .collapsible-content {
+        max-height: 0;
+        padding: 0 25px;
+    }
+
+    .collapsible-badge {
+        background: rgba(212, 175, 55, 0.2);
+        color: #D4AF37;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-left: 10px;
+    }
+
+    /* Nested collapsible sections */
+    .collapsible-section .collapsible-section {
+        background: rgba(255, 255, 255, 0.02);
+        border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .collapsible-section .collapsible-section .collapsible-header {
+        padding: 15px 20px;
+        background: rgba(0, 0, 0, 0.2);
+    }
+
+    .collapsible-section .collapsible-section .collapsible-title {
+        font-size: 18px;
+    }
+</style>
+
+<script>
+    function toggleCollapsible(element) {
+        const section = element.closest('.collapsible-section');
+        const toggle = section.querySelector('.collapsible-toggle');
+        const isCollapsed = section.classList.contains('collapsed');
+
+        section.classList.toggle('collapsed');
+
+        // Update toggle icon
+        if (isCollapsed) {
+            toggle.textContent = '▼';
+        } else {
+            toggle.textContent = '►';
+        }
+
+        // Save state to localStorage
+        const sectionId = section.id;
+        if (sectionId) {
+            localStorage.setItem('collapsible_' + sectionId, !isCollapsed);
+        }
+    }
+
+    // Restore collapsed states on page load (default to collapsed)
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.collapsible-section[id]').forEach(section => {
+            const sectionId = section.id;
+            const savedState = localStorage.getItem('collapsible_' + sectionId);
+            const toggle = section.querySelector('.collapsible-toggle');
+
+            // Default to collapsed if no saved state
+            if (savedState === null || savedState === 'true') {
+                section.classList.add('collapsed');
+                if (toggle) toggle.textContent = '►';
+            } else {
+                if (toggle) toggle.textContent = '▼';
+            }
+        });
+    });
+
+    // Collapse/Expand All functionality
+    function collapseAll() {
+        document.querySelectorAll('.collapsible-section').forEach(section => {
+            section.classList.add('collapsed');
+            const toggle = section.querySelector('.collapsible-toggle');
+            if (toggle) toggle.textContent = '►';
+
+            const sectionId = section.id;
+            if (sectionId) {
+                localStorage.setItem('collapsible_' + sectionId, true);
+            }
+        });
+    }
+
+    function expandAll() {
+        document.querySelectorAll('.collapsible-section').forEach(section => {
+            section.classList.remove('collapsed');
+            const toggle = section.querySelector('.collapsible-toggle');
+            if (toggle) toggle.textContent = '▼';
+
+            const sectionId = section.id;
+            if (sectionId) {
+                localStorage.setItem('collapsible_' + sectionId, false);
+            }
+        });
+    }
+</script>

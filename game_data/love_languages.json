@@ -1,0 +1,212 @@
+{
+  "title": "Love Languages Assessment",
+  "description": "Discover how you prefer to give and receive love",
+  "questions": [
+    {
+      "id": 1,
+      "question": "You feel most loved when someone:",
+      "options": [
+        {
+          "text": "Tells you they appreciate you or says 'I love you'",
+          "language": "words_of_affirmation",
+          "points": 3
+        },
+        {
+          "text": "Spends quality one-on-one time with you",
+          "language": "quality_time",
+          "points": 3
+        },
+        {
+          "text": "Gives you a thoughtful gift or surprise",
+          "language": "receiving_gifts",
+          "points": 3
+        },
+        {
+          "text": "Does something helpful for you without being asked",
+          "language": "acts_of_service",
+          "points": 3
+        },
+        {
+          "text": "Gives you a hug, holds your hand, or shows physical affection",
+          "language": "physical_touch",
+          "points": 3
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "question": "You show love by:",
+      "options": [
+        {
+          "text": "Complimenting others and expressing appreciation verbally",
+          "language": "words_of_affirmation",
+          "points": 3
+        },
+        {
+          "text": "Planning activities or dates to spend time together",
+          "language": "quality_time",
+          "points": 3
+        },
+        {
+          "text": "Giving thoughtful presents for special occasions",
+          "language": "receiving_gifts",
+          "points": 3
+        },
+        {
+          "text": "Doing tasks or chores to help someone out",
+          "language": "acts_of_service",
+          "points": 3
+        },
+        {
+          "text": "Hugging, touching, or being physically close",
+          "language": "physical_touch",
+          "points": 3
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "question": "What hurts you most in a relationship?",
+      "options": [
+        {
+          "text": "Harsh words or lack of verbal appreciation",
+          "language": "words_of_affirmation",
+          "points": 3
+        },
+        {
+          "text": "When someone is distracted or doesn't make time for you",
+          "language": "quality_time",
+          "points": 3
+        },
+        {
+          "text": "Forgotten birthdays or special occasions",
+          "language": "receiving_gifts",
+          "points": 3
+        },
+        {
+          "text": "When someone won't help you or is lazy about responsibilities",
+          "language": "acts_of_service",
+          "points": 3
+        },
+        {
+          "text": "Lack of physical affection or intimacy",
+          "language": "physical_touch",
+          "points": 3
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "question": "In a conflict, you value when someone:",
+      "options": [
+        {
+          "text": "Apologizes sincerely and expresses their feelings",
+          "language": "words_of_affirmation",
+          "points": 3
+        },
+        {
+          "text": "Sets aside time to talk things through",
+          "language": "quality_time",
+          "points": 3
+        },
+        {
+          "text": "Makes a peace offering or symbolic gesture",
+          "language": "receiving_gifts",
+          "points": 3
+        },
+        {
+          "text": "Takes action to fix the problem or situation",
+          "language": "acts_of_service",
+          "points": 3
+        },
+        {
+          "text": "Gives you a comforting hug or physical reassurance",
+          "language": "physical_touch",
+          "points": 3
+        }
+      ]
+    }
+  ],
+  "results": {
+    "words_of_affirmation": {
+      "title": "Words of Affirmation",
+      "description": "Your primary love language is Words of Affirmation. You feel most loved through verbal expressions of appreciation, encouragement, and affection.",
+      "traits": [
+        "Value verbal compliments and praise",
+        "Appreciate written notes and messages",
+        "Need to hear 'I love you' regularly",
+        "Hurt deeply by criticism or harsh words"
+      ],
+      "tips": [
+        "Express to partners that verbal affirmation is important to you",
+        "Share specific things you'd like to hear",
+        "Remember others may show love differently",
+        "Practice giving verbal affirmation to others"
+      ]
+    },
+    "quality_time": {
+      "title": "Quality Time",
+      "description": "Your primary love language is Quality Time. You feel most loved when someone gives you their undivided attention and shares meaningful experiences with you.",
+      "traits": [
+        "Value one-on-one time and full attention",
+        "Appreciate planned dates and activities",
+        "Hurt by distractions during conversations",
+        "Need regular dedicated time together"
+      ],
+      "tips": [
+        "Schedule regular quality time with loved ones",
+        "Put away phones and eliminate distractions",
+        "Communicate your need for focused attention",
+        "Plan activities you both enjoy"
+      ]
+    },
+    "receiving_gifts": {
+      "title": "Receiving Gifts",
+      "description": "Your primary love language is Receiving Gifts. You feel most loved through thoughtful presents and symbolic gestures that show someone was thinking of you.",
+      "traits": [
+        "Value thoughtful gifts and surprises",
+        "Treasure sentimental items",
+        "Hurt by forgotten special occasions",
+        "See gifts as symbols of love and thoughtfulness"
+      ],
+      "tips": [
+        "Remember it's the thought that counts, not the price",
+        "Communicate which occasions are important to you",
+        "Keep and cherish meaningful gifts",
+        "Show appreciation when you receive gifts"
+      ]
+    },
+    "acts_of_service": {
+      "title": "Acts of Service",
+      "description": "Your primary love language is Acts of Service. You feel most loved when someone does helpful things for you or lightens your load.",
+      "traits": [
+        "Value practical help and support",
+        "Appreciate when someone anticipates your needs",
+        "Hurt by laziness or broken commitments",
+        "Show love by doing things for others"
+      ],
+      "tips": [
+        "Communicate specific ways others can help you",
+        "Express appreciation when someone serves you",
+        "Remember actions speak louder than words for you",
+        "Be clear about your needs and expectations"
+      ]
+    },
+    "physical_touch": {
+      "title": "Physical Touch",
+      "description": "Your primary love language is Physical Touch. You feel most loved through physical affection, intimacy, and reassuring touches.",
+      "traits": [
+        "Value hugs, kisses, and physical closeness",
+        "Feel connected through touch",
+        "Hurt by physical distance or lack of affection",
+        "Need regular physical contact"
+      ],
+      "tips": [
+        "Communicate your need for physical affection",
+        "Respect others' boundaries around touch",
+        "Find non-romantic ways to connect through touch",
+        "Be mindful that not everyone shares this love language"
+      ]
+    }
+  }
+}

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Your Plan - PathForge</title>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="stylesheet" href="pathforge-complete.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-left">
+            <div class="logo-icon">⚡</div>
+            <div class="logo">PATHFORGE</div>
+        </div>
+        <nav>
+            <a href="index.html">Dashboard</a>
+            <a href="profile.html">Profile</a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Page Header -->
+        <section class="page-header">
+            <h1>Choose Your Plan</h1>
+            <p>Unlock your full potential with PathForge Premium</p>
+        </section>
+
+        <!-- Pricing Cards -->
+        <div class="pricing-grid">
+            <!-- Free Plan -->
+            <div class="pricing-card">
+                <div class="plan-header">
+                    <h2>Free</h2>
+                    <div class="price">
+                        <span class="amount">$0</span>
+                        <span class="period">/month</span>
+                    </div>
+                </div>
+                <div class="plan-features">
+                    <div class="feature-item">
+                        <span class="check">✓</span>
+                        <span>5 lessons per month</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="check">✓</span>
+                        <span>Basic AI practice</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="check">✓</span>
+                        <span>3 missions per week</span>
+                    </div>
+                    <div class="feature-item disabled">
+                        <span class="cross">×</span>
+                        <span>Unlimited lessons</span>
+                    </div>
+                    <div class="feature-item disabled">
+                        <span class="cross">×</span>
+                        <span>Advanced AI practice</span>
+                    </div>
+                    <div class="feature-item disabled">
+                        <span class="cross">×</span>
+                        <span>All missions unlocked</span>
+                    </div>
+                </div>
+                <button class="plan-button secondary" disabled>Current Plan</button>
+            </div>
+
+            <!-- Premium Plan -->
+            <div class="pricing-card featured">
+                <div class="popular-badge">Most Popular</div>
+                <div class="plan-header">
+                    <h2>Premium</h2>
+                    <div class="price">
+                        <span class="amount">$29.99</span>
+                        <span class="period">/month</span>
+                    </div>
+                </div>
+                <div class="plan-features">
+                    <div class="feature-item">
+                        <span class="check">✓</span>
+                        <span>Unlimited lessons</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="check">✓</span>
+                        <span>Unlimited AI practice</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="check">✓</span>
+                        <span>All missions unlocked</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="check">✓</span>
+                        <span>Priority support</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="check">✓</span>
+                        <span>Weekly group coaching</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="check">✓</span>
+                        <span>Advanced analytics</span>
+                    </div>
+                </div>
+                <button class="plan-button" onclick="window.location.href='checkout_page.html'">
+                    Upgrade Now
+                </button>
+            </div>
+
+            <!-- Lifetime Plan -->
+            <div class="pricing-card">
+                <div class="plan-header">
+                    <h2>Lifetime</h2>
+                    <div class="price">
+                        <span class="amount">$299</span>
+                        <span class="period">one-time</span>
+                    </div>
+                </div>
+                <div class="plan-features">
+                    <div class="feature-item">
+                        <span class="check">✓</span>
+                        <span>Everything in Premium</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="check">✓</span>
+                        <span>Lifetime access</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="check">✓</span>
+                        <span>Future updates included</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="check">✓</span>
+                        <span>1-on-1 coaching session</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="check">✓</span>
+                        <span>Exclusive community access</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="check">✓</span>
+                        <span>VIP support</span>
+                    </div>
+                </div>
+                <button class="plan-button" onclick="window.location.href='checkout_page.html'">
+                    Get Lifetime Access
+                </button>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <section class="faq-section">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <h3>Can I cancel anytime?</h3>
+                    <p>Yes, you can cancel your subscription at any time. No questions asked.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>Is there a money-back guarantee?</h3>
+                    <p>Yes, we offer a 30-day money-back guarantee if you're not satisfied.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>What payment methods do you accept?</h3>
+                    <p>We accept all major credit cards through Stripe's secure payment processing.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>Will I be charged automatically?</h3>
+                    <p>Yes, your subscription will renew automatically unless cancelled.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="pathforge-complete.js"></script>
+</body>
+</html>

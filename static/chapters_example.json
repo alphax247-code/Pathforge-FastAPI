@@ -1,0 +1,35 @@
+{
+  "_README": "PathForge Video Chapters Template - Delete this section before importing",
+  "_FORMAT": {
+    "key": "Video filename (must match exactly what's in database)",
+    "value": "Array of chapter objects",
+    "time": "Integer in seconds (90 = 1:30, 300 = 5:00, 600 = 10:00)",
+    "title": "Chapter name (string)"
+  },
+
+  "intro_video.mp4": [
+    {"time": 0, "title": "Welcome & Course Overview"},
+    {"time": 90, "title": "What You'll Learn"},
+    {"time": 180, "title": "Course Structure"},
+    {"time": 300, "title": "Getting Started"}
+  ],
+
+  "social_skills_101.mp4": [
+    {"time": 0, "title": "Introduction"},
+    {"time": 60, "title": "Why Social Skills Matter"},
+    {"time": 180, "title": "Body Language Basics"},
+    {"time": 420, "title": "Eye Contact Techniques"},
+    {"time": 720, "title": "Conversation Starters"},
+    {"time": 1080, "title": "Practice Exercises"},
+    {"time": 1320, "title": "Summary & Next Steps"}
+  ],
+
+  "advanced_communication.mp4": [
+    {"time": 0, "title": "Recap from Previous Lesson"},
+    {"time": 120, "title": "Advanced Techniques Introduction"},
+    {"time": 300, "title": "Reading Body Language"},
+    {"time": 540, "title": "Mirroring & Rapport"},
+    {"time": 900, "title": "Handling Difficult Conversations"},
+    {"time": 1200, "title": "Real-World Applications"}
+  ]
+}

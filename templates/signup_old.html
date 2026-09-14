@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - PathForge</title>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pathforge-complete.css') }}">
+</head>
+<body class="welcome-page">
+    <button class="back-button" onclick="goBack()">←</button>
+
+    <!-- ============================================================================ -->
+    <!-- DEV MODE DEBUG PANEL - REMOVE IN PRODUCTION -->
+    <!-- ============================================================================ -->
+    <div style="position: fixed; top: 10px; right: 10px; max-width: 400px; background: rgba(0,0,0,0.95); border: 2px solid #D4AF37; border-radius: 10px; padding: 15px; z-index: 9999; max-height: 80vh; overflow-y: auto; font-family: monospace; font-size: 11px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h3 style="color: #D4AF37; margin: 0; font-size: 14px;">🔧 DEV MODE DEBUG</h3>
+            <button onclick="this.parentElement.parentElement.style.display='none'" style="background: #D4AF37; border: none; color: black; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 10px;">Hide</button>
+        </div>
+
+        <!-- Configuration Status -->
+        <div style="margin-bottom: 10px; padding: 10px; background: rgba(212,175,55,0.1); border-radius: 5px;">
+            <div style="color: #D4AF37; font-weight: bold; margin-bottom: 5px;">📋 Configuration:</div>
+            <div id="debugConfig" style="color: #fff; font-size: 10px; line-height: 1.6;">
+                <div>Auth Type: <span style="color: #4CAF50;">Local SQLite ✓</span></div>
+                <div>Database: <span style="color: #4CAF50;">pathforge.db ✓</span></div>
+                <div>Status: <span style="color: #4CAF50;">Ready ✓</span></div>
+            </div>
+        </div>
+
+        <!-- Error Log -->
+        <div style="margin-bottom: 10px; padding: 10px; background: rgba(255,0,0,0.1); border-radius: 5px; max-height: 150px; overflow-y: auto;">
+            <div style="color: #ff6b6b; font-weight: bold; margin-bottom: 5px;">❌ Errors:</div>
+            <div id="debugErrors" style="color: #ff6b6b; font-size: 10px; line-height: 1.6;">No errors yet</div>
+        </div>
+
+        <!-- Activity Log -->
+        <div style="padding: 10px; background: rgba(76,175,80,0.1); border-radius: 5px; max-height: 200px; overflow-y: auto;">
+            <div style="color: #4CAF50; font-weight: bold; margin-bottom: 5px;">📝 Activity Log:</div>
+            <div id="debugLog" style="color: #4CAF50; font-size: 10px; line-height: 1.6;">Waiting for activity...</div>
+        </div>
+    </div>
+    <!-- ============================================================================ -->
+
+    <div class="container">
+        <!-- Logo -->
+        <div class="logo-container">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='assets/icons/main icon.svg') }}" alt="PathForge Logo" style="width: 120px; height: 120px;">
+            </div>
+        </div>
+
+        <!-- Title -->
+        <h1 class="title">PATHFORGE</h1>
+
+        <!-- Welcome Image -->
+        <div class="portrait-container">
+            <div class="portrait">
+                <img src="{{ url_for('static', filename='assets/images/welcome.png') }}" alt="Welcome Character" style="width: auto; height: auto; max-width: 100%; max-height: 100%; object-fit: contain;">
+            </div>
+        </div>
+
+        <p class="subtitle">Begin your transformation</p>
+
+        <!-- Sign Up Form -->
+        <div class="form-container">
+            <form id="signupForm" method="POST" action="{{ url_for('auth.signup') }}">
+                <!-- CSRF Token -->
+                <input type="hidden" name="csrf_token" id="csrfToken" value="{{ csrf_token }}">
+
+                <!-- Email -->
+                <div class="input-group">
+                    <label class="input-label" for="emailInput">Email</label>
+                    <input
+                        type="email"
+                        id="emailInput"
+                        name="email"
+                        class="input-field"
+                        placeholder="Enter your email"
+                        required
+                    >
+                </div>
+
+                <!-- Password -->
+                <div class="input-group">
+                    <label class="input-label" for="passwordInput">Password</label>
+                    <input
+                        type="password"
+                        id="passwordInput"
+                        name="password"
+                        class="input-field"
+                        placeholder="Create a password (min 6 characters)"
+                        required
+                        minlength="6"
+                    >
+                </div>
+
+                <!-- Sign Up Button -->
+                <button type="submit" id="signupBtn" class="signup-button">
+                    CREATE ACCOUNT
+                </button>
+            </form>
+
+            <!-- Login Link -->
+            <div class="login-link">
+                Already have an account? <a href="{{ url_for('auth.login') }}">Log in</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/pathforge-complete.js') }}"></script>
+
+    <script>
+        // ============================================================================
+        // DEV MODE DEBUG FUNCTIONS - REMOVE IN PRODUCTION
+        // ============================================================================
+        const debugLogs = [];
+        const debugErrors = [];
+
+        function debugLog(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logMessage = `[${timestamp}] ${message}`;
+            console.log(`[DEBUG ${type.toUpperCase()}]`, message);
+
+            if (type === 'error') {
+                debugErrors.push(logMessage);
+                const errDiv = document.getElementById('debugErrors');
+                if (errDiv) errDiv.innerHTML = debugErrors.map(e => `<div style="margin-bottom: 3px;">⚠️ ${e}</div>`).join('');
+            } else {
+                debugLogs.push(logMessage);
+                const logDiv = document.getElementById('debugLog');
+                if (logDiv) {
+                    logDiv.innerHTML = debugLogs.slice(-10).map(l => `<div style="margin-bottom: 3px;">✓ ${l}</div>`).join('');
+                    logDiv.scrollTop = logDiv.scrollHeight;
+                }
+            }
+        }
+
+        function updateDebugConfig(key, value, status = 'success') {
+            const colors = { success: '#4CAF50', error: '#ff6b6b', warning: '#FF9800' };
+            const element = document.getElementById(key);
+            if (element) {
+                element.textContent = value;
+                element.style.color = colors[status];
+            }
+        }
+
+        // ============================================================================
+        // Initialize Local Authentication
+        // ============================================================================
+        debugLog('Using local SQLite authentication');
+        debugLog('No external API keys required');
+        debugLog('Database: pathforge.db');
+
+        // Prevent double-submission of signup form
+        const signupForm = document.getElementById('signupForm');
+        const signupButton = document.getElementById('signupBtn');
+        let isSubmitting = false;
+
+        signupForm.addEventListener('submit', function(e) {
+            debugLog('🔵 SIGNUP: Form submitted');
+            const email = document.getElementById('emailInput').value;
+            debugLog(`🔵 SIGNUP: Email = ${email}`);
+            debugLog('🔵 SIGNUP: Submitting to server...');
+
+            // Prevent double-submission
+            if (isSubmitting) {
+                debugLog('⚠️ SIGNUP: Already submitting, preventing duplicate');
+                e.preventDefault();
+                return false;
+            }
+
+            isSubmitting = true;
+            signupButton.disabled = true;
+            signupButton.style.opacity = '0.6';
+            signupButton.style.cursor = 'not-allowed';
+            signupButton.textContent = 'CREATING ACCOUNT...';
+
+            // Re-enable after 5 seconds as fallback (in case of error)
+            setTimeout(() => {
+                if (isSubmitting) {
+                    debugLog('⚠️ SIGNUP: Re-enabling button after timeout');
+                    isSubmitting = false;
+                    signupButton.disabled = false;
+                    signupButton.style.opacity = '1';
+                    signupButton.style.cursor = 'pointer';
+                    signupButton.textContent = 'CREATE ACCOUNT';
+                }
+            }, 5000);
+        });
+    </script>
+</body>
+</html>

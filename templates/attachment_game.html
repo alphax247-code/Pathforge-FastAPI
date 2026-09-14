@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attachment Style Game - PathForge</title>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pathforge-complete.css') }}">
+    <style>
+        .game-container {
+            max-width: 1200px;
+            margin: 15px auto;
+            padding: 0 20px;
+        }
+
+        .game-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .game-header h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #D4AF37 0%, #FFD700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .game-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .difficulty-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 8px;
+            padding: 10px 20px;
+            color: #E0E0E0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .difficulty-btn:hover, .difficulty-btn.active {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: #D4AF37;
+            color: #D4AF37;
+        }
+
+        .game-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            padding: 15px 30px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #D4AF37;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #9E9E9E;
+            margin-top: 5px;
+        }
+
+        .game-board {
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            min-height: 400px;
+            position: relative;
+        }
+
+        .question-container {
+            text-align: center;
+        }
+
+        .question-label {
+            font-size: 18px;
+            color: #D4AF37;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .npc-story {
+            font-size: 20px;
+            line-height: 1.8;
+            color: #E0E0E0;
+            margin-bottom: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 4px solid #D4AF37;
+            font-style: italic;
+        }
+
+        .question-prompt {
+            font-size: 22px;
+            color: #D4AF37;
+            margin-bottom: 25px;
+        }
+
+        .choices {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .choice-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            color: #E0E0E0;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .choice-btn:hover {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: #D4AF37;
+            transform: translateY(-3px);
+        }
+
+        .choice-btn.correct {
+            background: rgba(76, 175, 80, 0.2);
+            border-color: #4CAF50;
+            animation: pulse-green 0.5s ease;
+        }
+
+        .choice-btn.incorrect {
+            background: rgba(244, 67, 54, 0.2);
+            border-color: #F44336;
+            animation: shake 0.5s ease;
+        }
+
+        .choice-btn.show-correct {
+            background: rgba(76, 175, 80, 0.1);
+            border-color: #4CAF50;
+        }
+
+        @keyframes pulse-green {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .feedback {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(212, 175, 55, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .feedback h3 {
+            color: #D4AF37;
+            margin-bottom: 10px;
+        }
+
+        .hint-text {
+            color: #9E9E9E;
+            font-size: 14px;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        .xp-notification {
+            color: #4CAF50;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .next-btn {
+            background: linear-gradient(135deg, #D4AF37 0%, #FFD700 100%);
+            color: #000;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .next-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .game-complete {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+
+        .game-complete.show {
+            display: block;
+        }
+
+        .completion-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .xp-earned {
+            font-size: 48px;
+            color: #4CAF50;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .restart-btn {
+            background: rgba(212, 175, 55, 0.2);
+            border: 2px solid #D4AF37;
+            color: #D4AF37;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .restart-btn:hover {
+            background: #D4AF37;
+            color: #000;
+        }
+
+        .loading {
+            text-align: center;
+            color: #9E9E9E;
+            font-size: 18px;
+            padding: 40px;
+        }
+
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-left">
+            <div class="logo-icon">
+                <img src="{{ url_for('static', filename='assets/icons/main icon.svg') }}" alt="PathForge Logo" style="width: 60px; height: 60px;">
+            </div>
+            <div class="logo">PATHFORGE</div>
+        </div>
+        <nav>
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('challenges') }}">Challenges</a>
+            <a href="{{ url_for('lessons') }}">Lessons</a>
+            <a href="{{ url_for('text_practice') }}">Practice</a>
+            <a href="{{ url_for('psychology_games') }}">Game</a>
+        </nav>
+        <div class="header-right">
+            <a href="{{ url_for('profile') }}" class="profile-btn-header">Profile</a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="game-container">
+            <div class="game-header">
+                <h1>Attachment Style Game</h1>
+                <p style="color: #9E9E9E;">Identify attachment patterns from real-world responses</p>
+            </div>
+
+            <!-- Game Stats -->
+            <div class="game-stats">
+                <div class="stat-box">
+                    <div class="stat-value" id="roundValue">1/10</div>
+                    <div class="stat-label">Round</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="correctValue">0</div>
+                    <div class="stat-label">Correct</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="xpValue">0</div>
+                    <div class="stat-label">XP Earned</div>
+                </div>
+            </div>
+
+            <!-- Game Board -->
+            <div class="game-board">
+                <div class="question-container" id="questionContainer">
+                    <div class="loading" id="loadingIndicator">Loading question</div>
+                    <div id="questionContent" style="display: none;">
+                        <div class="question-label">NPC Story</div>
+                        <div class="npc-story" id="npcStory"></div>
+                        <div class="question-prompt">Which attachment style is this?</div>
+                        <div class="choices" id="choicesContainer"></div>
+                    </div>
+                    <div class="feedback" id="feedback">
+                        <h3 id="feedbackTitle"></h3>
+                        <p id="feedbackText"></p>
+                        <div class="hint-text" id="hintText"></div>
+                        <div class="xp-notification" id="xpNotification"></div>
+                        <button class="next-btn" onclick="loadNextQuestion()">Next Question</button>
+                    </div>
+                </div>
+
+                <div class="game-complete" id="gameComplete">
+                    <div class="completion-icon">🧠</div>
+                    <h2 style="color: #D4AF37; font-size: 36px;">Round Complete!</h2>
+                    <div class="xp-earned">+<span id="totalXP">0</span> XP</div>
+                    <p style="color: #9E9E9E; margin-bottom: 10px;">Score: <span id="finalScore" style="color: #D4AF37; font-weight: bold;">0/10</span></p>
+                    <p style="color: #9E9E9E; margin-bottom: 5px;">Total Game XP: <span id="totalGameXP" style="color: #4CAF50;">0</span></p>
+                    <p style="color: #9E9E9E; margin-bottom: 15px;">Recommended Difficulty: <span id="recommendedDifficulty" style="color: #FF9800; font-weight: bold;">Normal</span></p>
+                    <p style="color: #9E9E9E;" id="difficultyMessage"></p>
+                    <button class="next-btn" onclick="window.location.href='{{ url_for('dashboard') }}'">Back to Dashboard</button>
+                    <button class="restart-btn" onclick="restartGame()">Play Again</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let currentQuestion = null;
+        let correctCount = 0;
+        let totalCount = 0;
+        let totalXP = 0;
+        let currentDifficulty = 'easy';  // Default to easy difficulty
+        let recommendedDifficulty = 'easy';
+        const maxQuestions = 10;
+
+        async function loadGameStats() {
+            // Skip loading stats for faster initial load
+            return;
+            try {
+                const response = await fetch('/api/games/stats');
+                const data = await response.json();
+                if (data.success) {
+                    recommendedDifficulty = data.recommended_difficulty;
+                    // Auto-set to recommended difficulty
+                    if (recommendedDifficulty === 'hard') {
+                        currentDifficulty = 'hard';
+                        updateDifficultyButtons('hard');
+                    } else if (recommendedDifficulty === 'mixed') {
+                        currentDifficulty = null; // mixed = all levels
+                        updateDifficultyButtons(null);
+                    } else {
+                        currentDifficulty = 'normal';
+                        updateDifficultyButtons('normal');
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to load game stats:', error);
+            }
+        }
+
+        function updateDifficultyButtons(difficulty) {
+            document.querySelectorAll('.difficulty-btn').forEach(btn => btn.classList.remove('active'));
+            if (difficulty === null) {
+                document.querySelector('.difficulty-btn:first-child').classList.add('active');
+            } else if (difficulty === 'normal') {
+                document.querySelectorAll('.difficulty-btn')[1].classList.add('active');
+            } else if (difficulty === 'hard') {
+                document.querySelectorAll('.difficulty-btn')[2].classList.add('active');
+            }
+        }
+
+        function setDifficulty(difficulty) {
+            currentDifficulty = difficulty;
+            document.querySelectorAll('.difficulty-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            restartGame();
+        }
+
+        async function loadQuestion() {
+            document.getElementById('loadingIndicator').style.display = 'block';
+            document.getElementById('questionContent').style.display = 'none';
+            document.getElementById('feedback').classList.remove('show');
+
+            try {
+                let url = '/api/attachment-game/question';
+                if (currentDifficulty) {
+                    url += `?difficulty=${currentDifficulty}`;
+                }
+
+                const response = await fetch(url);
+                const data = await response.json();
+
+                // Check for premium access error
+                if (response.status === 403) {
+                    document.getElementById('loadingIndicator').style.display = 'none';
+                    showPaywall('upgrade', data.message || 'Subscribe to access psychology games');
+                    return;
+                }
+
+                if (data.error || !data.success) {
+                    console.error('Error loading question:', data.error);
+                    document.getElementById('loadingIndicator').textContent = data.error || 'No questions available. Please add questions to the database.';
+                    return;
+                }
+
+                currentQuestion = data.question;
+                displayQuestion(data.question);
+            } catch (error) {
+                console.error('Failed to load question:', error);
+                document.getElementById('loadingIndicator').style.display = 'block';
+                document.getElementById('loadingIndicator').textContent = 'Error loading question: ' + error.message + '. Check console for details.';
+            }
+        }
+
+        function displayQuestion(question) {
+            document.getElementById('npcStory').textContent = question.question_text;
+
+            const choicesContainer = document.getElementById('choicesContainer');
+            choicesContainer.innerHTML = '';
+
+            question.options.forEach((option) => {
+                const btn = document.createElement('button');
+                btn.className = 'choice-btn';
+                btn.textContent = option;
+                btn.onclick = () => selectAnswer(option, btn);
+                choicesContainer.appendChild(btn);
+            });
+
+            document.getElementById('loadingIndicator').style.display = 'none';
+            document.getElementById('questionContent').style.display = 'block';
+        }
+
+        async function selectAnswer(answer, buttonElement) {
+            if (!currentQuestion) return;
+
+            const buttons = document.querySelectorAll('.choice-btn');
+            buttons.forEach(btn => btn.style.pointerEvents = 'none');
+
+            try {
+                const response = await fetch('/api/attachment-game/answer', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        question_id: currentQuestion.id,
+                        answer: answer
+                    })
+                });
+
+                const result = await response.json();
+                totalCount++;
+
+                if (result.is_correct) {
+                    correctCount++;
+                    buttonElement.classList.add('correct');
+                    document.getElementById('feedbackTitle').textContent = 'Correct!';
+                    document.getElementById('feedbackTitle').style.color = '#4CAF50';
+                    document.getElementById('feedbackText').textContent = result.explanation || 'Great job!';
+
+                    if (result.xp_earned) {
+                        totalXP += result.xp_earned;
+                        document.getElementById('xpNotification').textContent = `+${result.xp_earned} XP`;
+                    }
+                } else {
+                    buttonElement.classList.add('incorrect');
+                    buttons.forEach(btn => {
+                        if (btn.textContent === result.correct_answer) {
+                            btn.classList.add('show-correct');
+                        }
+                    });
+                    document.getElementById('feedbackTitle').textContent = 'Not Quite';
+                    document.getElementById('feedbackTitle').style.color = '#F44336';
+                    document.getElementById('feedbackText').textContent = result.explanation || `The correct answer was ${result.correct_answer}.`;
+                    document.getElementById('xpNotification').textContent = '';
+                }
+
+                document.getElementById('hintText').textContent = result.explanation || '';
+                document.getElementById('feedback').classList.add('show');
+                updateStats();
+            } catch (error) {
+                console.error('Failed to check answer:', error);
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('roundValue').textContent = `${totalCount}/${maxQuestions}`;
+            document.getElementById('correctValue').textContent = correctCount;
+            document.getElementById('xpValue').textContent = totalXP;
+        }
+
+        function loadNextQuestion() {
+            if (totalCount >= maxQuestions) {
+                completeSession();
+                return;
+            }
+
+            const buttons = document.querySelectorAll('.choice-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('correct', 'incorrect', 'show-correct');
+                btn.style.pointerEvents = 'auto';
+            });
+            loadQuestion();
+        }
+
+        async function completeSession() {
+            try {
+                const response = await fetch('/api/games/complete-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        correct_answers: correctCount,
+                        total_questions: maxQuestions,
+                        xp_earned: totalXP
+                    })
+                });
+
+                const result = await response.json();
+
+                document.getElementById('questionContainer').style.display = 'none';
+                document.getElementById('gameComplete').classList.add('show');
+                document.getElementById('finalScore').textContent = `${correctCount}/${maxQuestions}`;
+                document.getElementById('totalXP').textContent = totalXP;
+
+                if (result.success) {
+                    document.getElementById('totalGameXP').textContent = result.total_game_xp;
+                    const newDifficulty = result.recommended_difficulty;
+                    document.getElementById('recommendedDifficulty').textContent =
+                        newDifficulty === 'hard' ? 'Hard' : newDifficulty === 'mixed' ? 'Mixed' : 'Normal';
+
+                    if (newDifficulty !== recommendedDifficulty) {
+                        document.getElementById('difficultyMessage').textContent =
+                            'You\'ve unlocked harder questions! Keep it up!';
+                        document.getElementById('difficultyMessage').style.color = '#4CAF50';
+                    }
+                    recommendedDifficulty = newDifficulty;
+
+                    if (result.leveled_up) {
+                        document.getElementById('difficultyMessage').textContent =
+                            `Level Up! You're now Level ${result.new_level}!`;
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to complete session:', error);
+                showGameComplete();
+            }
+        }
+
+        function showGameComplete() {
+            document.getElementById('questionContainer').style.display = 'none';
+            document.getElementById('gameComplete').classList.add('show');
+            document.getElementById('finalScore').textContent = `${correctCount}/${maxQuestions}`;
+            document.getElementById('totalXP').textContent = totalXP;
+        }
+
+        function restartGame() {
+            correctCount = 0;
+            totalCount = 0;
+            totalXP = 0;
+            document.getElementById('questionContainer').style.display = 'block';
+            document.getElementById('gameComplete').classList.remove('show');
+            updateStats();
+            loadQuestion();
+        }
+
+        // Load game stats and first question on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load question immediately (stats not needed)
+            loadQuestion();
+        });
+    </script>
+
+    <!-- Include Paywall Modal -->
+    {% include 'paywall_modal.html' %}
+</body>
+</html>

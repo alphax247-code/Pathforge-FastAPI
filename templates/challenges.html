@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Challenges - PathForge</title>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pathforge-complete.css') }}">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    {% include 'nav.html' %}
+
+    <!-- Main Content -->
+    <main>
+        <!-- Page Header -->
+        <section class="page-header">
+            <h1><img src="{{ url_for('static', filename='assets/icons/challenge.svg') }}" class="feature-icon" class="feature-icon" style="width: 36px; height: 36px;"> Daily Challenges</h1>
+            <p>Complete real-world challenges to level up your confidence and social skills</p>
+        </section>
+
+        <!-- All Challenges -->
+        <section class="missions-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2>Your Challenges</h2>
+                <div style="color: #D4AF37; font-size: 14px;">
+                    <span id="challengeStats">Loading...</span>
+                </div>
+            </div>
+            <div class="missions-grid" id="allChallengesGrid">
+                <!-- All challenges will be loaded from database API -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Mission Detail Popup Modal -->
+    <div id="missionModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeMissionModal()">&times;</span>
+            <div id="modalBody">
+                <!-- Content will be loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/pathforge-complete.js') }}"></script>
+    <script>
+        // Global variables
+        let allChallenges = [];
+        let currentDay = 1;
+        let completedDays = [];
+
+        // Load and display challenges from database API
+        async function loadChallenges() {
+            console.log('Starting to load challenges from database...');
+            try {
+                const response = await fetch('/api/challenges');
+                console.log('Response status:', response.status);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('Loaded challenges from API:', data);
+
+                if (!data.success) {
+                    throw new Error('API returned error');
+                }
+
+                // Transform API response to match our format
+                allChallenges = data.challenges.map(c => ({
+                    Day: c.day_number,
+                    Category: c.category,
+                    Task: c.task,
+                    Difficulty: c.difficulty,
+                    'Interaction Type': c.interaction_type,
+                    Points: c.points,
+                    'Why This Matters': c.why_matters,
+                    'Reflection Prompt': c.reflection_prompt,
+                    id: c.id,
+                    status: c.status,
+                    is_unlocked: c.is_unlocked,
+                    is_current: c.is_current
+                }));
+
+                currentDay = data.current_day;
+                completedDays = allChallenges
+                    .filter(c => c.status === 'completed')
+                    .map(c => c.Day);
+
+                console.log('Loaded challenges:', allChallenges.length);
+                console.log('Current day:', currentDay);
+                console.log('Completed days:', completedDays);
+                console.log('User level:', data.user_level);
+
+                // Show all unlocked challenges (based on user level)
+                const unlockedChallenges = allChallenges.filter(c => c.is_unlocked);
+                console.log('Unlocked challenges:', unlockedChallenges.length);
+
+                // Update stats with daily progress - Multiple task types
+                const dp = data.daily_progress;
+                const allComplete =
+                    dp.challenges.completed >= dp.challenges.required &&
+                    dp.ai.completed >= dp.ai.required &&
+                    dp.videos.completed >= dp.videos.required &&
+                    dp.innergame.completed >= dp.innergame.required;
+
+                const dailyBadge = allComplete
+                    ? `<span style="color: #4CAF50; font-weight: bold;">✓ All Daily Goals Complete!</span>`
+                    : `<span style="color: #FF9800;">
+                        Challenges: ${dp.challenges.completed}/${dp.challenges.required} •
+                        AI: ${dp.ai.completed}/${dp.ai.required} •
+                        Videos: ${dp.videos.completed}/${dp.videos.required} •
+                        InnerGame: ${dp.innergame.completed}/${dp.innergame.required}
+                      </span>`;
+
+                document.getElementById('challengeStats').innerHTML =
+                    `Level ${data.user_level} • ${unlockedChallenges.length} Unlocked<br>${dailyBadge}`;
+
+                // Show all unlocked challenges
+                populateAllChallenges(unlockedChallenges);
+
+                console.log('Challenges loaded successfully!');
+            } catch (error) {
+                console.error('Error loading challenges:', error);
+                // Show error message to user
+                document.querySelector('.missions-section:nth-of-type(1) .missions-grid').innerHTML =
+                    '<p style="color: red;">Error loading challenges. Please check console for details.</p>';
+            }
+        }
+
+        function populateAllChallenges(challenges) {
+            console.log('Populating all challenges:', challenges.length);
+            const grid = document.getElementById('allChallengesGrid');
+            if (!grid) {
+                console.error('Challenges grid not found!');
+                return;
+            }
+
+            if (!challenges || challenges.length === 0) {
+                grid.innerHTML = `
+                    <div style="text-align: center; padding: 60px; color: #9E9E9E; grid-column: 1 / -1;">
+                        <p style="font-size: 24px; margin-bottom: 10px;">🔒 No challenges unlocked yet</p>
+                        <p style="font-size: 14px;">Complete challenges to level up and unlock more!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Define icon URL for challenge icon
+            const challengeIconUrl = "{{ url_for('static', filename='assets/icons/challenge.svg') }}";
+
+            grid.innerHTML = challenges.map((challenge) => {
+                const isCompleted = challenge.status === 'completed';
+                const challengeIcon = `<img src="${challengeIconUrl}" style="width: 48px; height: 48px;">`;
+
+                return `
+                    <div class="mission-card ${isCompleted ? 'completed' : 'active'}" onclick="viewMission(${challenge.Day})">
+                        ${isCompleted ? '<div class="mission-badge completed">✓ COMPLETED</div>' : ''}
+                        <div class="mission-icon">${isCompleted ? '✓' : challengeIcon}</div>
+                        <h3>${challenge.Category}</h3>
+                        <p class="challenge-description">${challenge.Task}</p>
+                        <div class="mission-stats">
+                            <span class="difficulty-badge ${challenge.Difficulty.toLowerCase()}">${challenge.Difficulty}</span>
+                            <span>💎 ${challenge.Points} XP</span>
+                        </div>
+                        <button class="mission-btn" onclick="event.stopPropagation(); viewMission(${challenge.Day})">
+                            ${isCompleted ? 'View Again' : 'Start Challenge'}
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function viewMission(day) {
+            // Find the challenge by day
+            const challenge = allChallenges.find(c => c.Day == day);
+            if (!challenge) {
+                console.error('Challenge not found for day:', day);
+                return;
+            }
+
+            showMissionModal(challenge, 'view');
+        }
+
+        function acceptMission(day) {
+            // Find the challenge by day
+            const challenge = allChallenges.find(c => c.Day == day);
+            if (!challenge) {
+                console.error('Challenge not found for day:', day);
+                return;
+            }
+
+            showMissionModal(challenge, 'accept');
+        }
+
+        function showMissionModal(challenge, mode) {
+            const modal = document.getElementById('missionModal');
+            const modalBody = document.getElementById('modalBody');
+
+            // Define icon URLs outside of template literal
+            const iconUrls = {
+                challenge: "{{ url_for('static', filename='assets/icons/challenge.svg') }}",
+                lesson: "{{ url_for('static', filename='assets/icons/lesson.svg') }}",
+                innerGame: "{{ url_for('static', filename='assets/icons/inner game..svg') }}"
+            };
+
+            // Get difficulty badge color
+            const difficultyColors = {
+                'Easy': '#4CAF50',
+                'Medium': '#FF9800',
+                'Hard': '#f44336'
+            };
+            const difficultyColor = difficultyColors[challenge.Difficulty] || '#888';
+
+            // Build modal content
+            modalBody.innerHTML = `
+                <div class="mission-detail">
+                    <div class="mission-header">
+                        <h2>Day ${challenge.Day}: ${challenge.Category}</h2>
+                        <span class="difficulty-badge" style="background-color: ${difficultyColor};">
+                            ${challenge.Difficulty}
+                        </span>
+                    </div>
+
+                    <div class="mission-section">
+                        <h3><img src="${iconUrls.challenge}" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"> Challenge</h3>
+                        <p class="mission-task">${challenge.Task}</p>
+                    </div>
+
+                    <div class="mission-section">
+                        <h3><img src="${iconUrls.lesson}" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"> Why This Matters</h3>
+                        <p class="mission-why">${challenge['Why This Matters']}</p>
+                    </div>
+
+                    <div class="mission-section">
+                        <h3><img src="${iconUrls.innerGame}" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"> Reflection Prompt</h3>
+                        <p class="mission-reflection">${challenge['Reflection Prompt']}</p>
+                    </div>
+
+                    <div class="mission-meta">
+                        <div class="meta-item">
+                            <strong>Interaction Type:</strong> ${challenge['Interaction Type']}
+                        </div>
+                        <div class="meta-item">
+                            <strong>Points:</strong> ${challenge.Points} XP
+                        </div>
+                    </div>
+
+                    <div class="mission-actions">
+                        ${mode === 'accept'
+                            ? `<button class="mission-btn primary" onclick="confirmAcceptMission('${challenge.Day}')">
+                                Accept Challenge
+                               </button>`
+                            : `<button class="mission-btn primary" onclick="markMissionComplete('${challenge.Day}')">
+                                Mark as Complete
+                               </button>`
+                        }
+                        <button class="mission-btn secondary" onclick="closeMissionModal()">Close</button>
+                    </div>
+                </div>
+            `;
+
+            modal.style.display = 'flex';
+        }
+
+        function closeMissionModal() {
+            const modal = document.getElementById('missionModal');
+            modal.style.display = 'none';
+        }
+
+        async function confirmAcceptMission(day) {
+            const challenge = allChallenges.find(c => c.Day == day);
+            if (!challenge) return;
+
+            console.log('Accepting mission for day:', day);
+
+            try {
+                // Send start request to API
+                const response = await fetch(`/api/challenges/${challenge.id}/start`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                if (!data.success) {
+                    alert('Error accepting challenge. Please try again.');
+                    return;
+                }
+            } catch (error) {
+                console.error('Error accepting challenge:', error);
+                alert('Error accepting challenge. Please try again.');
+                return;
+            }
+
+            // Show success message and update modal to show complete button
+
+            const modalBody = document.getElementById('modalBody');
+
+            // Define icon URLs outside of template literal
+            const iconUrls = {
+                challenge: "{{ url_for('static', filename='assets/icons/challenge.svg') }}",
+                lesson: "{{ url_for('static', filename='assets/icons/lesson.svg') }}",
+                innerGame: "{{ url_for('static', filename='assets/icons/inner game..svg') }}"
+            };
+
+            const difficultyColors = {
+                'Easy': '#4CAF50',
+                'Medium': '#FF9800',
+                'Hard': '#f44336'
+            };
+            const difficultyColor = difficultyColors[challenge.Difficulty] || '#888';
+
+            // Update modal to show accepted state with complete button
+            modalBody.innerHTML = `
+                <div class="mission-detail">
+                    <div class="mission-header">
+                        <h2>Day ${challenge.Day}: ${challenge.Category}</h2>
+                        <span class="difficulty-badge" style="background-color: ${difficultyColor};">
+                            ${challenge.Difficulty}
+                        </span>
+                    </div>
+
+                    <div class="success-message">
+                        <div class="success-icon">✓</div>
+                        <h3>Challenge Accepted!</h3>
+                        <p>This mission has been added to your active challenges.</p>
+                    </div>
+
+                    <div class="mission-section">
+                        <h3><img src="${iconUrls.challenge}" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"> Challenge</h3>
+                        <p class="mission-task">${challenge.Task}</p>
+                    </div>
+
+                    <div class="mission-section">
+                        <h3><img src="${iconUrls.lesson}" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"> Why This Matters</h3>
+                        <p class="mission-why">${challenge['Why This Matters']}</p>
+                    </div>
+
+                    <div class="mission-section">
+                        <h3><img src="${iconUrls.innerGame}" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"> Reflection Prompt</h3>
+                        <p class="mission-reflection">${challenge['Reflection Prompt']}</p>
+                    </div>
+
+                    <div class="mission-meta">
+                        <div class="meta-item">
+                            <strong>Interaction Type:</strong> ${challenge['Interaction Type']}
+                        </div>
+                        <div class="meta-item">
+                            <strong>Points:</strong> ${challenge.Points} XP
+                        </div>
+                    </div>
+
+                    <div class="mission-actions">
+                        <button class="mission-btn primary" onclick="markMissionComplete('${challenge.Day}')">
+                            Mark as Complete
+                        </button>
+                        <button class="mission-btn secondary" onclick="closeMissionModal()">Close</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function markMissionComplete(day) {
+            console.log('Marking mission complete for day:', day);
+
+            // Find the challenge
+            const challenge = allChallenges.find(c => c.Day == day);
+            if (!challenge) return;
+
+            // Start the challenge if not started (for API tracking)
+            try {
+                await fetch(`/api/challenges/${challenge.id}/start`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+            } catch (error) {
+                console.error('Error starting challenge:', error);
+            }
+
+            // Show completion success message
+
+            const modalBody = document.getElementById('modalBody');
+            const difficultyColors = {
+                'Easy': '#4CAF50',
+                'Medium': '#FF9800',
+                'Hard': '#f44336'
+            };
+            const difficultyColor = difficultyColors[challenge.Difficulty] || '#888';
+
+            // Update modal to show completion success
+            modalBody.innerHTML = `
+                <div class="mission-detail">
+                    <div class="completion-celebration">
+                        <div class="celebration-icon">🎉</div>
+                        <h2>Mission Complete!</h2>
+                        <p class="celebration-subtitle">Congratulations! You've completed Day ${challenge.Day}</p>
+                    </div>
+
+                    <div class="mission-header" style="border-bottom: none; margin-bottom: 20px;">
+                        <h3 style="margin: 0; font-size: 20px;">${challenge.Category}</h3>
+                        <span class="difficulty-badge" style="background-color: ${difficultyColor};">
+                            ${challenge.Difficulty}
+                        </span>
+                    </div>
+
+                    <div class="completion-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">+${challenge.Points}</div>
+                            <div class="stat-label">XP Earned</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">Day ${challenge.Day}</div>
+                            <div class="stat-label">Challenge</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">✓</div>
+                            <div class="stat-label">Completed</div>
+                        </div>
+                    </div>
+
+                    <div class="mission-section">
+                        <h3>📝 Completed Task</h3>
+                        <p class="mission-task">${challenge.Task}</p>
+                    </div>
+
+                    <div class="mission-section">
+                        <h3>🤔 Reflection</h3>
+                        <p>${challenge['Reflection Prompt']}</p>
+                        <textarea class="reflection-input" placeholder="Write your reflection here..." rows="4"></textarea>
+                    </div>
+
+                    <div class="mission-actions">
+                        <button class="mission-btn primary" onclick="saveReflectionAndClose('${challenge.Day}')">
+                            Save Reflection
+                        </button>
+                        <button class="mission-btn secondary" onclick="closeMissionModal()">Skip</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function saveReflectionAndClose(day) {
+            const reflection = document.querySelector('.reflection-input').value;
+            const challenge = allChallenges.find(c => c.Day == day);
+
+            if (!challenge) {
+                console.error('Challenge not found for day:', day);
+                return;
+            }
+
+            console.log('Saving reflection for day:', day, 'Reflection:', reflection);
+
+            try {
+                // Send completion to API
+                const response = await fetch(`/api/challenges/${challenge.id}/complete`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        reflection: reflection
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const dp = data.daily_progress;
+                    let message = `Reflection saved! You've earned ${data.xp_awarded} XP!\n\n`;
+
+                    // Show daily progress for all task types
+                    message += `📊 Today's Progress:\n`;
+                    message += `• Challenges: ${dp.challenges.completed}/${dp.challenges.required}`;
+                    if (dp.challenges.completed >= dp.challenges.required) message += ` ✓`;
+                    message += `\n• AI Practice: ${dp.ai.completed}/${dp.ai.required}`;
+                    if (dp.ai.completed >= dp.ai.required) message += ` ✓`;
+                    message += `\n• Video Lessons: ${dp.videos.completed}/${dp.videos.required}`;
+                    if (dp.videos.completed >= dp.videos.required) message += ` ✓`;
+                    message += `\n• Inner Game: ${dp.innergame.completed}/${dp.innergame.required}`;
+                    if (dp.innergame.completed >= dp.innergame.required) message += ` ✓`;
+
+                    // Check if all goals complete
+                    const allComplete =
+                        dp.challenges.completed >= dp.challenges.required &&
+                        dp.ai.completed >= dp.ai.required &&
+                        dp.videos.completed >= dp.videos.required &&
+                        dp.innergame.completed >= dp.innergame.required;
+
+                    if (allComplete) {
+                        message += `\n\n🎉 All daily goals achieved!`;
+                    }
+
+                    // Show level up
+                    if (data.leveled_up) {
+                        message += `\n\n🎊 Congratulations! You've reached Level ${data.new_level}!`;
+                    }
+
+                    alert(message);
+                    closeMissionModal();
+                    location.reload(); // Reload to show updated progress
+                } else {
+                    alert('Error saving progress. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error completing challenge:', error);
+                alert('Error saving progress. Please try again.');
+            }
+        }
+
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('missionModal');
+            if (event.target === modal) {
+                closeMissionModal();
+            }
+        }
+
+        // Load challenges when page loads
+        document.addEventListener('DOMContentLoaded', loadChallenges);
+    </script>
+
+    <style>
+        /* Modal Styles - PathForge Theme */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(10, 10, 10, 0.98) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            padding: 35px;
+            border-radius: 15px;
+            max-width: 650px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(212, 175, 55, 0.1);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #9E9E9E;
+            cursor: pointer;
+            transition: color 0.3s;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: #D4AF37;
+        }
+
+        .mission-detail {
+            color: #fff;
+        }
+
+        .success-message {
+            text-align: center;
+            padding: 25px;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.15) 0%, rgba(10, 10, 10, 0.3) 100%);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            border-radius: 12px;
+            animation: successPulse 0.6s ease;
+        }
+
+        @keyframes successPulse {
+            0% {
+                transform: scale(0.95);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.02);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .success-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 15px;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        .success-message h3 {
+            color: #4CAF50;
+            font-size: 22px;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .success-message p {
+            color: #CCCCCC;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .completion-celebration {
+            text-align: center;
+            padding: 30px 20px;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(10, 10, 10, 0.5) 100%);
+            border: 2px solid rgba(212, 175, 55, 0.4);
+            border-radius: 15px;
+            animation: celebrationPulse 0.8s ease;
+        }
+
+        @keyframes celebrationPulse {
+            0% {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .celebration-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+            animation: bounce 1s ease infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .completion-celebration h2 {
+            color: #D4AF37;
+            font-size: 32px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .celebration-subtitle {
+            color: #CCCCCC;
+            font-size: 16px;
+            margin: 0;
+        }
+
+        .completion-stats {
+            display: flex;
+            justify-content: space-around;
+            gap: 20px;
+            padding: 25px 15px;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.6) 0%, rgba(10, 10, 10, 0.8) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+        }
+
+        .stat-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .stat-value {
+            color: #D4AF37;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #9E9E9E;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .reflection-input {
+            width: 100%;
+            padding: 15px;
+            margin-top: 15px;
+            background: rgba(26, 26, 26, 0.6);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 8px;
+            color: #FFFFFF;
+            font-size: 14px;
+            font-family: inherit;
+            line-height: 1.6;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        .reflection-input:focus {
+            outline: none;
+            border-color: #D4AF37;
+            background: rgba(26, 26, 26, 0.8);
+        }
+
+        .reflection-input::placeholder {
+            color: #666;
+        }
+
+        .mission-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .mission-header h2 {
+            margin: 0;
+            font-size: 26px;
+            color: #D4AF37;
+            font-weight: 600;
+        }
+
+        .difficulty-badge {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            color: #000;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .mission-section {
+            margin-bottom: 28px;
+        }
+
+        .mission-section h3 {
+            color: #D4AF37;
+            font-size: 18px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .mission-section p {
+            line-height: 1.7;
+            color: #CCCCCC;
+            font-size: 15px;
+        }
+
+        .mission-task {
+            font-size: 17px;
+            font-weight: 500;
+            color: #FFFFFF;
+            line-height: 1.6;
+        }
+
+        .mission-meta {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 25px;
+            padding: 18px;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(10, 10, 10, 0.5) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 10px;
+        }
+
+        .meta-item {
+            color: #CCCCCC;
+            font-size: 14px;
+        }
+
+        .meta-item strong {
+            color: #D4AF37;
+            font-weight: 600;
+        }
+
+        .mission-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .mission-btn.primary {
+            flex: 1;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #FFD700 0%, #D4AF37 100%);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .mission-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+            background: linear-gradient(135deg, #FFE55C 0%, #FFD700 100%);
+        }
+
+        .mission-btn.secondary {
+            flex: 1;
+            padding: 14px 28px;
+            background-color: transparent;
+            color: #D4AF37;
+            border: 2px solid #D4AF37;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .mission-btn.secondary:hover {
+            background-color: rgba(212, 175, 55, 0.1);
+            border-color: #FFD700;
+            color: #FFD700;
+        }
+
+        /* Scrollbar styling for modal - Gold theme */
+        .modal-content::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .modal-content::-webkit-scrollbar-track {
+            background: rgba(10, 10, 10, 0.5);
+            border-radius: 10px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%);
+            border-radius: 10px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #FFD700 0%, #D4AF37 100%);
+        }
+
+        /* Lock overlay styles */
+        .lock-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(3px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: 12px;
+        }
+
+        .lock-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+
+        .lock-text {
+            color: #D4AF37;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .lock-overlay-small {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 5;
+        }
+
+        .lock-icon-small {
+            font-size: 24px;
+            opacity: 0.6;
+        }
+
+        .mission-card.locked {
+            opacity: 0.6;
+            position: relative;
+            filter: grayscale(50%);
+        }
+
+        .mission-card.completed {
+            opacity: 0.8;
+            border-color: rgba(76, 175, 80, 0.3);
+        }
+
+        .mission-badge.completed {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 10;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* View All Button */
+        .view-all-btn {
+            padding: 10px 20px;
+            background: transparent;
+            border: 2px solid #D4AF37;
+            color: #D4AF37;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .view-all-btn:hover {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: #FFD700;
+            color: #FFD700;
+        }
+
+        /* All Challenges List */
+        .all-challenges-list {
+            max-height: 60vh;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .challenge-list-item {
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.6) 0%, rgba(10, 10, 10, 0.8) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+
+        .challenge-list-item:hover {
+            border-color: rgba(212, 175, 55, 0.4);
+            transform: translateX(5px);
+        }
+
+        .challenge-list-item.completed {
+            border-color: rgba(76, 175, 80, 0.3);
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.05) 0%, rgba(10, 10, 10, 0.8) 100%);
+        }
+
+        .challenge-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .challenge-list-header h3 {
+            color: #D4AF37;
+            font-size: 18px;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .mini-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .mini-badge.completed {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .mini-badge.current {
+            background: #D4AF37;
+            color: #000;
+        }
+
+        .challenge-list-desc {
+            color: #CCCCCC;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .challenge-list-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .challenge-list-meta span {
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: rgba(26, 26, 26, 0.6);
+            color: #CCCCCC;
+        }
+
+        .meta-difficulty.easy {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .meta-difficulty.medium {
+            background: rgba(255, 152, 0, 0.2);
+            color: #FF9800;
+            border: 1px solid rgba(255, 152, 0, 0.3);
+        }
+
+        .meta-difficulty.hard {
+            background: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+            border: 1px solid rgba(244, 67, 54, 0.3);
+        }
+
+        .meta-points {
+            color: #D4AF37;
+        }
+
+        .challenge-list-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #FFD700 0%, #D4AF37 100%);
+            color: #000;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .challenge-list-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+            background: linear-gradient(135deg, #FFE55C 0%, #FFD700 100%);
+        }
+
+        .all-challenges-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .all-challenges-list::-webkit-scrollbar-track {
+            background: rgba(10, 10, 10, 0.5);
+            border-radius: 10px;
+        }
+
+        .all-challenges-list::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #D4AF37 0%, #B8860B 100%);
+            border-radius: 10px;
+        }
+
+        .all-challenges-list::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #FFD700 0%, #D4AF37 100%);
+        }
+
+        /* Challenge Card Improvements */
+        .mission-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .mission-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
+        }
+
+        .mission-card .mission-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .challenge-description {
+            min-height: 60px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+
+        .difficulty-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .difficulty-badge.easy {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .difficulty-badge.medium {
+            background: rgba(255, 152, 0, 0.2);
+            color: #FF9800;
+            border: 1px solid rgba(255, 152, 0, 0.3);
+        }
+
+        .difficulty-badge.hard {
+            background: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+            border: 1px solid rgba(244, 67, 54, 0.3);
+        }
+    </style>
+</body>
+</html>

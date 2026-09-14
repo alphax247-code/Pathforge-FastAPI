@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psychology Games - PathForge</title>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pathforge-complete.css') }}">
+    <style>
+        .games-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .games-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .games-header h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #D4AF37 0%, #FFD700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .game-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .game-card:hover {
+            border-color: #D4AF37;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+        }
+
+        .game-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .game-title {
+            font-size: 24px;
+            color: #D4AF37;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .game-description {
+            color: #9E9E9E;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .game-stats {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stat {
+            background: rgba(212, 175, 55, 0.1);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #D4AF37;
+        }
+
+        .play-btn {
+            background: linear-gradient(135deg, #D4AF37 0%, #FFD700 100%);
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .play-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .skills-learned {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .skills-label {
+            font-size: 12px;
+            color: #9E9E9E;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .skill-tag {
+            background: rgba(76, 175, 80, 0.1);
+            color: #4CAF50;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    {% include 'nav.html' %}
+
+    <!-- Main Content -->
+    <main>
+        <div class="games-container">
+            <div class="games-header">
+                <h1>Psychology Games</h1>
+                <p style="color: #9E9E9E;">Master social intelligence through pattern recognition</p>
+            </div>
+
+            <div class="games-grid">
+                <!-- Attachment Styles Game -->
+                <a href="{{ url_for('attachment_game') }}" class="game-card">
+                    <div class="game-icon">🔗</div>
+                    <div class="game-title">Attachment Styles</div>
+                    <div class="game-description">
+                        Learn to identify Secure, Anxious, Avoidant, and Fearful attachment patterns from how people describe their relationships.
+                    </div>
+                    <div class="game-stats">
+                        <div class="stat">24 Scenarios</div>
+                        <div class="stat">10-15 XP/answer</div>
+                    </div>
+                    <div class="skills-learned">
+                        <div class="skills-label">Skills You'll Build</div>
+                        <div class="skills-list">
+                            <span class="skill-tag">Relationship Awareness</span>
+                            <span class="skill-tag">Empathy</span>
+                            <span class="skill-tag">Pattern Recognition</span>
+                        </div>
+                    </div>
+                    <button class="play-btn">Play Now</button>
+                </a>
+
+                <!-- Cognitive Distortions Game -->
+                <a href="{{ url_for('cognitive_distortions_game') }}" class="game-card">
+                    <div class="game-icon">🧠</div>
+                    <div class="game-title">Cognitive Distortions</div>
+                    <div class="game-description">
+                        Spot thinking errors like Catastrophizing, Mind Reading, and All-or-Nothing Thinking in everyday thoughts.
+                    </div>
+                    <div class="game-stats">
+                        <div class="stat">16 Scenarios</div>
+                        <div class="stat">10-15 XP/answer</div>
+                    </div>
+                    <div class="skills-learned">
+                        <div class="skills-label">Skills You'll Build</div>
+                        <div class="skills-list">
+                            <span class="skill-tag">Self-Awareness</span>
+                            <span class="skill-tag">Critical Thinking</span>
+                            <span class="skill-tag">Mental Clarity</span>
+                        </div>
+                    </div>
+                    <button class="play-btn">Play Now</button>
+                </a>
+
+                <!-- Love Languages Game -->
+                <a href="{{ url_for('love_languages_game') }}" class="game-card">
+                    <div class="game-icon">💝</div>
+                    <div class="game-title">Love Languages</div>
+                    <div class="game-description">
+                        Recognize how people express and receive love through Words, Time, Gifts, Service, or Touch.
+                    </div>
+                    <div class="game-stats">
+                        <div class="stat">16 Scenarios</div>
+                        <div class="stat">10-15 XP/answer</div>
+                    </div>
+                    <div class="skills-learned">
+                        <div class="skills-label">Skills You'll Build</div>
+                        <div class="skills-list">
+                            <span class="skill-tag">Emotional Intelligence</span>
+                            <span class="skill-tag">Connection</span>
+                            <span class="skill-tag">Appreciation</span>
+                        </div>
+                    </div>
+                    <button class="play-btn">Play Now</button>
+                </a>
+
+                <!-- Communication Styles Game -->
+                <a href="{{ url_for('communication_styles_game') }}" class="game-card">
+                    <div class="game-icon">💬</div>
+                    <div class="game-title">Communication Styles</div>
+                    <div class="game-description">
+                        Identify Passive, Aggressive, Assertive, and Passive-Aggressive communication patterns.
+                    </div>
+                    <div class="game-stats">
+                        <div class="stat">16 Scenarios</div>
+                        <div class="stat">10-15 XP/answer</div>
+                    </div>
+                    <div class="skills-learned">
+                        <div class="skills-label">Skills You'll Build</div>
+                        <div class="skills-list">
+                            <span class="skill-tag">Assertiveness</span>
+                            <span class="skill-tag">Conflict Resolution</span>
+                            <span class="skill-tag">Boundaries</span>
+                        </div>
+                    </div>
+                    <button class="play-btn">Play Now</button>
+                </a>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

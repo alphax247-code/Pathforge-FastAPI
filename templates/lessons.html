@@ -1,0 +1,2157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Lessons - PathForge</title>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pathforge-complete.css') }}">
+    <style>
+        .lessons-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-header h1 {
+            color: #D4AF37;
+            font-size: 36px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .feature-icon {
+            width: 36px;
+            height: 36px;
+        }
+
+        .page-header p {
+            color: #9E9E9E;
+            font-size: 16px;
+        }
+
+        /* Daily Progress Badge */
+        .daily-progress-badge {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(212, 175, 55, 0.1) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .daily-stat {
+            text-align: center;
+        }
+
+        .daily-stat-value {
+            color: #D4AF37;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .daily-stat-label {
+            color: #9E9E9E;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        /* Category Filter */
+        .category-filter {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #9E9E9E;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: #D4AF37;
+            color: #D4AF37;
+        }
+
+        /* Video List */
+        .videos-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            margin-bottom: 30px;
+        }
+
+        .video-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            padding: 20px;
+            transition: all 0.3s;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+        }
+
+        .video-item:first-child {
+            border-radius: 12px 12px 0 0;
+        }
+
+        .video-item:last-child {
+            border-radius: 0 0 12px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .video-item:only-child {
+            border-radius: 12px;
+        }
+
+        .video-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(212, 175, 55, 0.3);
+            transform: translateX(4px);
+        }
+
+        .video-item.locked {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .video-item.locked:hover {
+            transform: none;
+        }
+
+        .video-item.completed {
+            border-color: rgba(76, 175, 80, 0.3);
+        }
+
+        .video-thumbnail {
+            position: relative;
+            width: 120px;
+            height: 80px;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(10, 10, 10, 0.8) 100%);
+            border-radius: 8px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .video-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-play-icon {
+            position: absolute;
+            font-size: 32px;
+            color: #D4AF37;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .video-duration {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #FFF;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+
+        .video-info {
+            flex: 1;
+        }
+
+        .video-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .video-category {
+            color: #D4AF37;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: rgba(212, 175, 55, 0.15);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .video-title {
+            color: #FFF;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .video-description {
+            color: #9E9E9E;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .video-meta {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #9E9E9E;
+            font-size: 12px;
+        }
+
+        .video-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .video-status-badge {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .video-status-badge.completed {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .video-status-badge.locked {
+            background: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+            border: 1px solid rgba(244, 67, 54, 0.3);
+        }
+
+        .video-status-badge.ready {
+            background: rgba(212, 175, 55, 0.2);
+            color: #D4AF37;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        /* Video Modal */
+        .video-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .video-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-modal-content {
+            max-width: 900px;
+            width: 100%;
+            background: rgba(26, 26, 26, 0.95);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .video-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .video-modal-title {
+            color: #D4AF37;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .close-modal-btn {
+            background: none;
+            border: none;
+            color: #9E9E9E;
+            font-size: 32px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-modal-btn:hover {
+            color: #FFF;
+        }
+
+        .video-player-container {
+            position: relative;
+            width: 100%;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            aspect-ratio: 16/9;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .video-player-container video {
+            width: 100%;
+            height: 100%;
+            display: block;
+            background: #000;
+            object-fit: contain;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        /* Prevent download via right-click */
+        .video-player-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Hide default controls, we'll make custom ones */
+        .video-player-container video::-webkit-media-controls {
+            display: none !important;
+        }
+
+        .video-player-container video::-moz-media-controls {
+            display: none !important;
+        }
+
+        /* Custom video controls */
+        .custom-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 70%, transparent 100%);
+            padding: 15px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 10;
+        }
+
+        .video-player-container:hover .custom-controls,
+        .custom-controls.show {
+            opacity: 1;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .progress-bar:hover {
+            height: 7px;
+            margin-bottom: 9px;
+        }
+
+        .progress-filled {
+            height: 100%;
+            background: #D4AF37;
+            border-radius: 3px;
+            position: relative;
+            transition: width 0.1s;
+        }
+
+        .progress-filled::after {
+            content: '';
+            position: absolute;
+            right: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            background: #D4AF37;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .progress-bar:hover .progress-filled::after {
+            opacity: 1;
+        }
+
+        .controls-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+        }
+
+        .control-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px;
+            transition: transform 0.2s, color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-btn:hover {
+            color: #D4AF37;
+            transform: scale(1.1);
+        }
+
+        .time-display {
+            font-size: 13px;
+            color: #CCCCCC;
+            font-family: monospace;
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .volume-slider {
+            width: 70px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .volume-filled {
+            height: 100%;
+            background: #D4AF37;
+            border-radius: 2px;
+            transition: width 0.1s;
+        }
+
+        .spacer {
+            flex: 1;
+        }
+
+        .quality-selector {
+            position: relative;
+        }
+
+        .quality-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .quality-btn:hover {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: #D4AF37;
+            color: #D4AF37;
+        }
+
+        .quality-menu {
+            position: absolute;
+            bottom: 40px;
+            right: 0;
+            background: rgba(20, 20, 20, 0.95);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 8px;
+            padding: 8px 0;
+            min-width: 120px;
+            display: none;
+            z-index: 100;
+        }
+
+        .quality-menu.show {
+            display: block;
+        }
+
+        .quality-option {
+            padding: 8px 16px;
+            cursor: pointer;
+            color: white;
+            font-size: 13px;
+            transition: background 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .quality-option:hover {
+            background: rgba(212, 175, 55, 0.2);
+        }
+
+        .quality-option.active {
+            color: #D4AF37;
+            font-weight: 600;
+        }
+
+        .quality-option.active::after {
+            content: '✓';
+            margin-left: 8px;
+        }
+
+        .fullscreen-btn {
+            font-size: 18px;
+        }
+
+        .play-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: rgba(212, 175, 55, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            color: #000;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 5;
+        }
+
+        .play-overlay:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+            background: #FFD700;
+        }
+
+        .play-overlay.hide {
+            display: none;
+        }
+
+        .video-placeholder {
+            width: 100%;
+            aspect-ratio: 16/9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(10, 10, 10, 0.9) 100%);
+            flex-direction: column;
+            gap: 15px;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .video-placeholder-icon {
+            font-size: 64px;
+            opacity: 0.6;
+        }
+
+        .video-placeholder-text {
+            color: #9E9E9E;
+            font-size: 16px;
+        }
+
+        .video-modal-body {
+            padding: 20px;
+        }
+
+        .video-modal-description {
+            color: #CCCCCC;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .complete-video-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #D4AF37 0%, #B8941F 100%);
+            color: #000;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .complete-video-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
+        }
+
+        .complete-video-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .watch-progress-container {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 8px;
+        }
+
+        .watch-progress-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .watch-progress-label span:first-child {
+            color: #D4AF37;
+            font-weight: bold;
+        }
+
+        .watch-progress-label span:last-child {
+            color: #9E9E9E;
+            font-size: 12px;
+        }
+
+        .watch-progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .watch-progress-filled {
+            height: 100%;
+            background: linear-gradient(90deg, #D4AF37 0%, #B8941F 100%);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .watch-progress-filled.complete {
+            background: linear-gradient(90deg, #4CAF50 0%, #45a049 100%);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9E9E9E;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        /* Pulse animation for completion button */
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 6px 20px rgba(212, 175, 55, 0.6);
+            }
+        }
+
+        /* Chapter Markers Styles */
+        .chapter-markers {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .chapter-marker {
+            position: absolute;
+            top: 0;
+            width: 3px;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            pointer-events: all;
+            transition: all 0.2s;
+        }
+
+        .chapter-marker:hover {
+            width: 5px;
+            background: #D4AF37;
+        }
+
+        .chapter-marker:hover::after {
+            content: attr(data-title);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: #D4AF37;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            margin-bottom: 8px;
+            pointer-events: none;
+            z-index: 100;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .chapter-display {
+            color: #D4AF37;
+            font-size: 13px;
+            font-weight: 600;
+            margin-left: 15px;
+            padding: 4px 12px;
+            background: rgba(212, 175, 55, 0.15);
+            border-radius: 6px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        /* Chapters Panel */
+        .chapters-panel {
+            position: absolute;
+            bottom: 70px;
+            right: 10px;
+            width: 300px;
+            max-height: 400px;
+            background: rgba(20, 20, 20, 0.95);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            display: none;
+            flex-direction: column;
+            z-index: 100;
+            overflow: hidden;
+        }
+
+        .chapters-panel.show {
+            display: flex;
+        }
+
+        .chapters-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .chapters-panel-header h4 {
+            color: #D4AF37;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .close-chapters-btn {
+            background: none;
+            border: none;
+            color: #9E9E9E;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+
+        .close-chapters-btn:hover {
+            color: #EF4444;
+        }
+
+        .chapters-list-panel {
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .chapter-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .chapter-item:hover {
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .chapter-item.active {
+            background: rgba(212, 175, 55, 0.2);
+            border-left: 3px solid #D4AF37;
+        }
+
+        .chapter-item-time {
+            color: #9E9E9E;
+            font-size: 12px;
+            font-weight: 600;
+            font-family: monospace;
+            flex-shrink: 0;
+            min-width: 45px;
+        }
+
+        .chapter-item-title {
+            color: #FFF;
+            font-size: 14px;
+            line-height: 1.4;
+            flex: 1;
+        }
+
+        .chapter-item.active .chapter-item-time,
+        .chapter-item.active .chapter-item-title {
+            color: #D4AF37;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    {% include 'nav.html' %}
+
+    <!-- Main Content -->
+    <main class="lessons-container">
+        <div class="page-header">
+            <h1><img src="{{ url_for('static', filename='assets/icons/lesson.svg') }}" class="feature-icon"> Video Lessons</h1>
+            <p>Master social dynamics and confidence through expert-guided video lessons</p>
+        </div>
+
+        <!-- Daily Progress Badge -->
+        <div class="daily-progress-badge" id="dailyProgress">
+            <div class="daily-stat">
+                <div class="daily-stat-value">-/-</div>
+                <div class="daily-stat-label">Videos Today</div>
+            </div>
+            <div class="daily-stat">
+                <div class="daily-stat-value">-/-</div>
+                <div class="daily-stat-label">Total Completed</div>
+            </div>
+            <div class="daily-stat">
+                <div class="daily-stat-value">Level -</div>
+                <div class="daily-stat-label">Your Level</div>
+            </div>
+        </div>
+
+        <!-- Category Filter -->
+        <div class="category-filter" id="categoryFilter">
+            <button class="filter-btn active" data-category="all">All Videos</button>
+        </div>
+
+        <!-- Videos List -->
+        <div class="videos-list" id="videosList">
+            <div class="empty-state">
+                <div class="empty-state-icon">⏳</div>
+                <h3>Loading videos...</h3>
+            </div>
+        </div>
+    </main>
+
+    <!-- Video Modal -->
+    <div class="video-modal" id="videoModal">
+        <div class="video-modal-content">
+            <div class="video-modal-header">
+                <h2 class="video-modal-title" id="modalTitle"></h2>
+                <button class="close-modal-btn" onclick="closeVideoModal()">&times;</button>
+            </div>
+            <div class="video-player-container" id="videoPlayerContainer"></div>
+            <div class="video-modal-body">
+                <p class="video-modal-description" id="modalDescription"></p>
+                <div class="watch-progress-container" id="watchProgressContainer" style="display: none;">
+                    <div class="watch-progress-label">
+                        <span id="watchProgressText">Watch Progress: 0%</span>
+                        <span id="watchProgressRequirement">80% required to unlock XP</span>
+                    </div>
+                    <div class="watch-progress-bar">
+                        <div class="watch-progress-filled" id="watchProgressFilled"></div>
+                    </div>
+                </div>
+                <button class="complete-video-btn" id="completeBtn" onclick="markVideoComplete()">
+                    Mark as Complete & Earn XP
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allVideos = [];
+        let allCarouselLessons = [];
+        let allLessons = [];  // Combined lessons
+        let currentVideo = null;
+        let currentCarouselLesson = null;
+        let dailyProgress = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadVideos();
+        });
+
+        async function loadVideos() {
+            try {
+                // Load both video lessons and carousel lessons
+                const [videoResponse, carouselResponse] = await Promise.all([
+                    fetch('/api/lessons'),
+                    fetch('/api/carousel-lessons')
+                ]);
+
+                const videoData = await videoResponse.json();
+                const carouselData = await carouselResponse.json();
+
+                if (videoData.success) {
+                    allVideos = videoData.lessons.map(v => ({...v, type: 'video'}));
+                }
+
+                if (carouselData.success) {
+                    allCarouselLessons = carouselData.lessons.map(l => ({...l, type: 'carousel'}));
+                }
+
+                // Combine both types of lessons
+                allLessons = [...allVideos, ...allCarouselLessons];
+
+                // Sort by display_order if available, otherwise by creation date
+                allLessons.sort((a, b) => {
+                    const orderA = a.display_order || 999;
+                    const orderB = b.display_order || 999;
+                    return orderA - orderB;
+                });
+
+                renderCategoryFilter();
+                renderVideos();
+                updateDailyProgressDisplay(videoData);
+            } catch (error) {
+                console.error('Error loading lessons:', error);
+                document.getElementById('videosList').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">❌</div>
+                        <h3>Error loading lessons</h3>
+                        <p>Please refresh the page</p>
+                    </div>
+                `;
+            }
+        }
+
+        function renderCategoryFilter() {
+            // Get unique playlists from all lessons (both video and carousel)
+            const playlists = ['all', ...new Set(allLessons.map(l => l.playlist || l.category).filter(p => p))];
+            const filterContainer = document.getElementById('categoryFilter');
+
+            filterContainer.innerHTML = playlists.map(playlist => `
+                <button class="filter-btn ${playlist === 'all' ? 'active' : ''}"
+                        data-category="${playlist}"
+                        onclick="filterByCategory('${playlist}')">
+                    ${playlist === 'all' ? 'All Lessons' : playlist}
+                </button>
+            `).join('');
+        }
+
+        function filterByCategory(playlist) {
+            // Update active button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.category === playlist);
+            });
+
+            renderVideos(playlist);
+        }
+
+        function renderVideos(filterPlaylist = 'all') {
+            const list = document.getElementById('videosList');
+
+            let filteredLessons = allLessons;
+            if (filterPlaylist !== 'all') {
+                // Filter by playlist, fallback to category for backwards compatibility
+                filteredLessons = allLessons.filter(l =>
+                    (l.playlist === filterPlaylist) || (l.category === filterPlaylist)
+                );
+            }
+
+            if (filteredLessons.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📚</div>
+                        <h3>No lessons yet</h3>
+                        <p>Check back soon for new content!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Render both video and carousel lessons
+            list.innerHTML = filteredLessons.map(lesson => {
+                const isLocked = !lesson.is_unlocked;
+                const isCompleted = lesson.completed;
+                const isPremium = lesson.is_premium;
+                const hasAccess = lesson.has_access;
+                const isCarousel = lesson.type === 'carousel';
+
+                let statusBadge = '';
+                let statusClass = '';
+                let clickAction = '';
+
+                if (isCompleted) {
+                    statusBadge = '<span class="video-status-badge completed">✓ Completed</span>';
+                    statusClass = 'completed';
+                    clickAction = isCarousel ? `openCarouselModal('${lesson.id}')` : `openVideoModal(${lesson.id})`;
+                } else if (isLocked) {
+                    statusBadge = `<span class="video-status-badge locked">🔒 Level ${lesson.required_level}</span>`;
+                    statusClass = 'locked';
+                    clickAction = '';
+                } else if (isPremium && !hasAccess) {
+                    statusBadge = '<span class="video-status-badge premium">👑 Premium</span>';
+                    statusClass = 'premium-locked';
+                    clickAction = `showPaywall('upgrade', 'Subscribe to access premium lessons')`;
+                } else {
+                    statusBadge = `<span class="video-status-badge ready">${isCarousel ? '📖 Start' : '▶ Ready'}</span>`;
+                    statusClass = '';
+                    clickAction = isCarousel ? `openCarouselModal('${lesson.id}')` : `openVideoModal(${lesson.id})`;
+
+                }
+
+                // Different rendering for carousel vs video lessons
+                const playIcon = isCarousel ? '📖' : '▶';
+                const durationInfo = isCarousel
+                    ? (lesson.estimated_minutes ? `${lesson.estimated_minutes} min` : `${lesson.slide_count || 0} slides`)
+                    : (lesson.duration_minutes ? `${lesson.duration_minutes} min` : '');
+                const xpDisplay = lesson.xp_reward || 25;
+
+                return `
+                    <div class="video-item ${statusClass} ${isCarousel ? 'carousel-lesson' : 'video-lesson'}"
+                         onclick="${clickAction}">
+                        <div class="video-thumbnail">
+                            ${lesson.thumbnail_url ? `<img src="${lesson.thumbnail_url}" alt="${lesson.title}">` : ''}
+                            ${!isLocked ? `<div class="video-play-icon">${playIcon}</div>` : ''}
+                            ${durationInfo ? `<div class="video-duration">${durationInfo}</div>` : ''}
+                        </div>
+                        <div class="video-info">
+                            <div class="video-header">
+                                ${(lesson.playlist || lesson.category) ? `<span class="video-category">${lesson.playlist || lesson.category}</span>` : ''}
+                                ${isCarousel ? '<span class="lesson-type-badge">Text Lesson</span>' : ''}
+                            </div>
+                            <div class="video-title">${lesson.title}</div>
+                            <div class="video-description">${lesson.description || (isCarousel ? 'Read this lesson to learn more' : 'Watch this lesson to learn more')}</div>
+                            <div class="video-meta">
+                                ${durationInfo ? `<span>⏱️ ${durationInfo}</span>` : ''}
+                                ${!isLocked && !isCompleted ? `<span>💎 +${xpDisplay} XP</span>` : ''}
+                            </div>
+                        </div>
+                        <div class="video-status">
+                            ${statusBadge}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateDailyProgressDisplay(data) {
+            if (data.success && data.lessons.length > 0) {
+                const completedCount = data.lessons.filter(v => v.completed).length;
+                const totalCount = data.lessons.length;
+                const userXP = data.user_xp || 0;
+                const userLevel = data.user_level || 1;
+                const userStreak = data.user_streak || 0;
+
+                document.getElementById('dailyProgress').innerHTML = `
+                    <div class="daily-stat">
+                        <div class="daily-stat-value">${userXP} XP</div>
+                        <div class="daily-stat-label">Total Experience</div>
+                    </div>
+                    <div class="daily-stat">
+                        <div class="daily-stat-value">${completedCount}/${totalCount}</div>
+                        <div class="daily-stat-label">Lessons Completed</div>
+                    </div>
+                    <div class="daily-stat">
+                        <div class="daily-stat-value">Level ${userLevel}</div>
+                        <div class="daily-stat-label">Your Level</div>
+                    </div>
+                    <div class="daily-stat">
+                        <div class="daily-stat-value">${userStreak} 🔥</div>
+                        <div class="daily-stat-label">Day Streak</div>
+                    </div>
+                `;
+            }
+        }
+
+        async function openVideoModal(videoId) {
+            currentVideo = allVideos.find(v => v.id === videoId);
+            if (!currentVideo) return;
+
+            const modal = document.getElementById('videoModal');
+            const title = document.getElementById('modalTitle');
+            const description = document.getElementById('modalDescription');
+            const playerContainer = document.getElementById('videoPlayerContainer');
+            const completeBtn = document.getElementById('completeBtn');
+
+            title.textContent = currentVideo.title;
+            description.textContent = currentVideo.description || 'Watch this video to learn more about ' + currentVideo.title;
+
+            // Set up custom video player with quality options
+            if (currentVideo.video_url) {
+                // Video URL is already a direct Supabase public URL - no need for token fetch
+                const videoUrl = currentVideo.video_url;
+                const videoType = videoUrl.endsWith('.webm') ? 'video/webm' : 'video/mp4';
+
+                playerContainer.innerHTML = `
+                    <video
+                        id="mainVideo"
+                        preload="auto"
+                        oncontextmenu="return false;"
+                        controlsList="nodownload noremoteplayback"
+                        disablePictureInPicture
+                        playsinline
+                        poster="${currentVideo.thumbnail_url || ''}">
+                        <source src="${videoUrl}" type="${videoType}">
+                        Your browser does not support the video tag.
+                    </video>
+
+                    <div class="play-overlay" id="playOverlay">▶</div>
+
+                    <div class="custom-controls" id="customControls">
+                        <div class="progress-bar" id="progressBar">
+                            <div class="progress-filled" id="progressFilled"></div>
+                            <div class="chapter-markers" id="chapterMarkers"></div>
+                        </div>
+                        <div class="controls-row">
+                            <button class="control-btn" id="playPauseBtn">▶</button>
+                            <div class="volume-control">
+                                <button class="control-btn" id="volumeBtn">🔊</button>
+                                <div class="volume-slider" id="volumeSlider">
+                                    <div class="volume-filled" id="volumeFilled"></div>
+                                </div>
+                            </div>
+                            <span class="time-display" id="timeDisplay">0:00 / 0:00</span>
+                            <span class="chapter-display" id="chapterDisplay" style="display: none;"></span>
+                            <div class="spacer"></div>
+                            <button class="control-btn" id="chaptersBtn" title="Chapters" style="display: none;">📑</button>
+                            <div class="quality-selector">
+                                <button class="quality-btn" id="qualityBtn">Auto</button>
+                                <div class="quality-menu" id="qualityMenu">
+                                    <div class="quality-option active" data-quality="auto">Auto</div>
+                                    <div class="quality-option" data-quality="1080">1080p</div>
+                                    <div class="quality-option" data-quality="720">720p</div>
+                                    <div class="quality-option" data-quality="480">480p</div>
+                                    <div class="quality-option" data-quality="360">360p</div>
+                                </div>
+                            </div>
+                            <button class="control-btn fullscreen-btn" id="fullscreenBtn">⛶</button>
+                        </div>
+                    </div>
+
+                    <div class="chapters-panel" id="chaptersPanel">
+                        <div class="chapters-panel-header">
+                            <h4>Chapters</h4>
+                            <button class="close-chapters-btn" id="closeChaptersBtn">✕</button>
+                        </div>
+                        <div class="chapters-list-panel" id="chaptersListPanel">
+                            <!-- Chapters will be populated here -->
+                        </div>
+                    </div>`;
+
+                initializeVideoPlayer();
+            } else {
+                playerContainer.innerHTML = `
+                    <div class="video-placeholder">
+                        <div class="video-placeholder-icon">📹</div>
+                        <div class="video-placeholder-text">Video not available</div>
+                    </div>`;
+            }
+
+            // Update complete button and progress indicator
+            const watchProgressContainer = document.getElementById('watchProgressContainer');
+
+            if (currentVideo.completed) {
+                completeBtn.textContent = '✓ Already Completed';
+                completeBtn.disabled = true;
+                completeBtn.style.opacity = '0.6';
+                watchProgressContainer.style.display = 'none';
+            } else {
+                // Start disabled - user must watch 80% to unlock
+                completeBtn.textContent = 'Watch 80% of video to unlock XP';
+                completeBtn.disabled = true;
+                completeBtn.style.opacity = '0.6';
+                completeBtn.style.cursor = 'not-allowed';
+                // Show progress indicator for incomplete videos
+                watchProgressContainer.style.display = 'block';
+            }
+
+            modal.classList.add('active');
+        }
+
+        function initializeVideoPlayer() {
+            const video = document.getElementById('mainVideo');
+            const playOverlay = document.getElementById('playOverlay');
+            const playPauseBtn = document.getElementById('playPauseBtn');
+            const progressBar = document.getElementById('progressBar');
+            const progressFilled = document.getElementById('progressFilled');
+            const volumeBtn = document.getElementById('volumeBtn');
+            const volumeSlider = document.getElementById('volumeSlider');
+            const volumeFilled = document.getElementById('volumeFilled');
+            const timeDisplay = document.getElementById('timeDisplay');
+            const qualityBtn = document.getElementById('qualityBtn');
+            const qualityMenu = document.getElementById('qualityMenu');
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+            const customControls = document.getElementById('customControls');
+            const completeBtn = document.getElementById('completeBtn');
+            const chaptersBtn = document.getElementById('chaptersBtn');
+            const chapterDisplay = document.getElementById('chapterDisplay');
+            const chaptersPanel = document.getElementById('chaptersPanel');
+            const closeChaptersBtn = document.getElementById('closeChaptersBtn');
+
+            if (!video) {
+                console.error('Video element not found');
+                return;
+            }
+
+            console.log('Initializing video player for:', currentVideo.video_url);
+
+            // Initialize chapters
+            const chapters = currentVideo.chapters || [];
+            if (chapters.length > 0) {
+                initializeChapters(chapters, video);
+            }
+
+            // Add error handling
+            video.addEventListener('error', function(e) {
+                console.error('Video error:', e);
+                if (video.error) {
+                    console.error('Error code:', video.error.code);
+                    console.error('Error message:', video.error.message);
+                    let errorMsg = 'Error loading video. ';
+                    switch(video.error.code) {
+                        case 1: errorMsg += 'Loading aborted.'; break;
+                        case 2: errorMsg += 'Network error.'; break;
+                        case 3: errorMsg += 'Decoding failed.'; break;
+                        case 4: errorMsg += 'Video format not supported.'; break;
+                        default: errorMsg += 'Unknown error.';
+                    }
+                    alert(errorMsg + ' Please try again or contact support.');
+                }
+            });
+
+            // Add load success handler
+            video.addEventListener('loadedmetadata', function() {
+                console.log('Video metadata loaded successfully');
+                console.log('Duration:', video.duration);
+            });
+
+            video.addEventListener('canplay', function() {
+                console.log('Video can start playing');
+            });
+
+            let hideControlsTimeout;
+            let maxWatchedTime = 0; // Track the furthest point watched
+            const REQUIRED_WATCH_PERCENTAGE = 80; // User must watch 80% to unlock completion
+
+            // Play/Pause
+            function togglePlay() {
+                if (video.paused) {
+                    video.play();
+                    playPauseBtn.textContent = '⏸';
+                    playOverlay.classList.add('hide');
+                } else {
+                    video.pause();
+                    playPauseBtn.textContent = '▶';
+                    playOverlay.classList.remove('hide');
+                }
+            }
+
+            playOverlay.addEventListener('click', togglePlay);
+            playPauseBtn.addEventListener('click', togglePlay);
+            video.addEventListener('click', togglePlay);
+
+            // Progress bar
+            video.addEventListener('timeupdate', () => {
+                // Check if currentVideo is still valid (modal might be closed)
+                if (!currentVideo) return;
+
+                const percent = (video.currentTime / video.duration) * 100;
+                progressFilled.style.width = percent + '%';
+                timeDisplay.textContent = formatTime(video.currentTime) + ' / ' + formatTime(video.duration);
+
+                // Track the maximum watched time (prevents skipping ahead to cheat)
+                if (video.currentTime > maxWatchedTime) {
+                    maxWatchedTime = video.currentTime;
+                }
+
+                // Calculate actual watch percentage based on furthest point reached
+                const watchedPercent = (maxWatchedTime / video.duration) * 100;
+
+                // Update watch progress indicator
+                const watchProgressFilled = document.getElementById('watchProgressFilled');
+                const watchProgressText = document.getElementById('watchProgressText');
+                const watchProgressRequirement = document.getElementById('watchProgressRequirement');
+
+                if (!currentVideo.completed && watchProgressFilled) {
+                    watchProgressFilled.style.width = Math.min(100, watchedPercent) + '%';
+                    watchProgressText.textContent = `Watch Progress: ${Math.floor(watchedPercent)}%`;
+
+                    if (watchedPercent >= REQUIRED_WATCH_PERCENTAGE) {
+                        watchProgressFilled.classList.add('complete');
+                        watchProgressRequirement.textContent = '✓ Requirement met!';
+                        watchProgressRequirement.style.color = '#4CAF50';
+                    }
+                }
+
+                // Update completion button state based on watch percentage
+                if (!currentVideo.completed) {
+                    if (watchedPercent >= REQUIRED_WATCH_PERCENTAGE) {
+                        completeBtn.disabled = false;
+                        completeBtn.textContent = 'Mark as Complete & Earn +25 XP';
+                        completeBtn.style.opacity = '1';
+                        completeBtn.style.cursor = 'pointer';
+                    } else {
+                        completeBtn.disabled = true;
+                        const remainingPercent = Math.ceil(REQUIRED_WATCH_PERCENTAGE - watchedPercent);
+                        completeBtn.textContent = `Watch ${remainingPercent}% more to unlock (${Math.floor(watchedPercent)}% watched)`;
+                        completeBtn.style.opacity = '0.6';
+                        completeBtn.style.cursor = 'not-allowed';
+                    }
+                }
+
+                // Track progress
+                updateVideoProgress(currentVideo.id, Math.floor(video.currentTime));
+            });
+
+            progressBar.addEventListener('click', (e) => {
+                const rect = progressBar.getBoundingClientRect();
+                const percent = (e.clientX - rect.left) / rect.width;
+                video.currentTime = percent * video.duration;
+            });
+
+            // Volume
+            let lastVolume = 1;
+            volumeBtn.addEventListener('click', () => {
+                if (video.volume > 0) {
+                    lastVolume = video.volume;
+                    video.volume = 0;
+                    volumeBtn.textContent = '🔇';
+                    volumeFilled.style.width = '0%';
+                } else {
+                    video.volume = lastVolume;
+                    volumeBtn.textContent = '🔊';
+                    volumeFilled.style.width = (lastVolume * 100) + '%';
+                }
+            });
+
+            volumeSlider.addEventListener('click', (e) => {
+                const rect = volumeSlider.getBoundingClientRect();
+                const percent = (e.clientX - rect.left) / rect.width;
+                video.volume = percent;
+                volumeFilled.style.width = (percent * 100) + '%';
+                volumeBtn.textContent = percent === 0 ? '🔇' : '🔊';
+            });
+
+            // Quality selector
+            qualityBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                qualityMenu.classList.toggle('show');
+            });
+
+            document.addEventListener('click', () => {
+                qualityMenu.classList.remove('show');
+            });
+
+            document.querySelectorAll('.quality-option').forEach(option => {
+                option.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const quality = option.dataset.quality;
+                    qualityBtn.textContent = quality === 'auto' ? 'Auto' : quality + 'p';
+
+                    document.querySelectorAll('.quality-option').forEach(opt => {
+                        opt.classList.remove('active');
+                    });
+                    option.classList.add('active');
+
+                    qualityMenu.classList.remove('show');
+
+                    // In a real implementation, you would switch video sources here
+                    // For now, we'll just update the UI
+                    console.log('Quality changed to:', quality);
+                });
+            });
+
+            // Fullscreen
+            fullscreenBtn.addEventListener('click', () => {
+                if (!document.fullscreenElement) {
+                    video.parentElement.requestFullscreen();
+                    fullscreenBtn.textContent = '⛶';
+                } else {
+                    document.exitFullscreen();
+                    fullscreenBtn.textContent = '⛶';
+                }
+            });
+
+            // Show/hide controls
+            video.parentElement.addEventListener('mousemove', () => {
+                customControls.classList.add('show');
+                clearTimeout(hideControlsTimeout);
+                if (!video.paused) {
+                    hideControlsTimeout = setTimeout(() => {
+                        customControls.classList.remove('show');
+                    }, 3000);
+                }
+            });
+
+            // Keyboard controls
+            document.addEventListener('keydown', (e) => {
+                if (!document.getElementById('videoModal').classList.contains('active')) return;
+
+                switch(e.key) {
+                    case ' ':
+                        e.preventDefault();
+                        togglePlay();
+                        break;
+                    case 'ArrowLeft':
+                        video.currentTime = Math.max(0, video.currentTime - 5);
+                        break;
+                    case 'ArrowRight':
+                        video.currentTime = Math.min(video.duration, video.currentTime + 5);
+                        break;
+                    case 'f':
+                        fullscreenBtn.click();
+                        break;
+                    case 'm':
+                        volumeBtn.click();
+                        break;
+                }
+            });
+
+            // Video ended
+            video.addEventListener('ended', () => {
+                playPauseBtn.textContent = '▶';
+                playOverlay.classList.remove('hide');
+                if (!currentVideo.completed) {
+                    completeBtn.style.animation = 'pulse 1s ease-in-out 3';
+                    completeBtn.focus();
+                }
+            });
+
+            // Prevent right-click
+            video.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                return false;
+            });
+
+            // Block download keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                // Prevent Ctrl+S (Save), Ctrl+Shift+S, Ctrl+D (Bookmark/Download)
+                if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'd')) {
+                    if (document.activeElement === video || video.parentElement.contains(document.activeElement)) {
+                        e.preventDefault();
+                        return false;
+                    }
+                }
+            });
+
+            // Set initial volume
+            video.volume = 1;
+            volumeFilled.style.width = '100%';
+
+            // Force video to load
+            console.log('Forcing video load...');
+            video.load();
+
+            // Try to preload first frame
+            video.addEventListener('loadeddata', function() {
+                console.log('Video data loaded, ready to play');
+            }, { once: true });
+        }
+
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return '0:00';
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return mins + ':' + (secs < 10 ? '0' : '') + secs;
+        }
+
+        // ============= CHAPTER FUNCTIONS =============
+
+        function initializeChapters(chapters, video) {
+            console.log('Initializing chapters:', chapters);
+
+            // Show chapters button and display
+            const chaptersBtn = document.getElementById('chaptersBtn');
+            const chapterDisplay = document.getElementById('chapterDisplay');
+            if (chaptersBtn) chaptersBtn.style.display = 'block';
+            if (chapterDisplay) chapterDisplay.style.display = 'inline-block';
+
+            // Wait for video metadata to load before rendering markers
+            if (video.readyState >= 1) {
+                renderChapterMarkers(chapters, video.duration);
+                populateChaptersPanel(chapters);
+            } else {
+                video.addEventListener('loadedmetadata', () => {
+                    renderChapterMarkers(chapters, video.duration);
+                    populateChaptersPanel(chapters);
+                }, { once: true });
+            }
+
+            // Update current chapter as video plays
+            video.addEventListener('timeupdate', () => {
+                updateCurrentChapter(chapters, video.currentTime);
+            });
+
+            // Chapters button click handler
+            chaptersBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const panel = document.getElementById('chaptersPanel');
+                panel.classList.toggle('show');
+            });
+
+            // Close chapters panel
+            const closeChaptersBtn = document.getElementById('closeChaptersBtn');
+            closeChaptersBtn.addEventListener('click', () => {
+                document.getElementById('chaptersPanel').classList.remove('show');
+            });
+        }
+
+        function renderChapterMarkers(chapters, videoDuration) {
+            const markersContainer = document.getElementById('chapterMarkers');
+            if (!markersContainer || !videoDuration) return;
+
+            markersContainer.innerHTML = '';
+
+            chapters.forEach((chapter, index) => {
+                const percent = (chapter.time / videoDuration) * 100;
+                const marker = document.createElement('div');
+                marker.className = 'chapter-marker';
+                marker.style.left = `${percent}%`;
+                marker.setAttribute('data-title', chapter.title);
+                marker.setAttribute('data-time', chapter.time);
+
+                // Click to jump to chapter
+                marker.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const video = document.getElementById('mainVideo');
+                    if (video) {
+                        video.currentTime = chapter.time;
+                    }
+                });
+
+                markersContainer.appendChild(marker);
+            });
+        }
+
+        function populateChaptersPanel(chapters) {
+            const listPanel = document.getElementById('chaptersListPanel');
+            if (!listPanel) return;
+
+            listPanel.innerHTML = chapters.map((chapter, index) => `
+                <div class="chapter-item" data-time="${chapter.time}" onclick="jumpToChapter(${chapter.time})">
+                    <div class="chapter-item-time">${formatTime(chapter.time)}</div>
+                    <div class="chapter-item-title">${chapter.title}</div>
+                </div>
+            `).join('');
+        }
+
+        function updateCurrentChapter(chapters, currentTime) {
+            const chapterDisplay = document.getElementById('chapterDisplay');
+            if (!chapterDisplay) return;
+
+            // Find the current chapter (latest chapter before or at current time)
+            let currentChapter = null;
+            for (let i = chapters.length - 1; i >= 0; i--) {
+                if (currentTime >= chapters[i].time) {
+                    currentChapter = chapters[i];
+                    break;
+                }
+            }
+
+            // Update chapter display
+            if (currentChapter) {
+                chapterDisplay.textContent = currentChapter.title;
+                chapterDisplay.style.display = 'inline-block';
+            } else {
+                chapterDisplay.style.display = 'none';
+            }
+
+            // Update active chapter in panel
+            const chapterItems = document.querySelectorAll('.chapter-item');
+            chapterItems.forEach((item, index) => {
+                const chapterTime = parseFloat(item.getAttribute('data-time'));
+                if (currentChapter && chapterTime === currentChapter.time) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        }
+
+        function jumpToChapter(time) {
+            const video = document.getElementById('mainVideo');
+            if (video) {
+                video.currentTime = time;
+                // Close the chapters panel after jumping
+                document.getElementById('chaptersPanel').classList.remove('show');
+            }
+        }
+
+        function updateVideoProgress(videoId, watchTimeSeconds) {
+            // Throttle updates to every 10 seconds
+            if (!window.lastProgressUpdate || Date.now() - window.lastProgressUpdate > 10000) {
+                window.lastProgressUpdate = Date.now();
+                fetch(`/api/lessons/${videoId}/progress`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({progress_data: watchTimeSeconds})
+                }).catch(err => console.error('Error updating progress:', err));
+            }
+        }
+
+        function closeVideoModal() {
+            // Stop the video before removing it to prevent playback errors
+            const video = document.getElementById('mainVideo');
+            if (video) {
+                video.pause();
+                video.src = '';
+                video.load();
+            }
+
+            document.getElementById('videoModal').classList.remove('active');
+            document.getElementById('videoPlayerContainer').innerHTML = '';
+            currentVideo = null;
+        }
+
+        async function markVideoComplete() {
+            if (!currentVideo || currentVideo.completed) return;
+
+            const completeBtn = document.getElementById('completeBtn');
+            completeBtn.disabled = true;
+            completeBtn.textContent = 'Saving...';
+
+            try {
+                const response = await fetch(`/api/lessons/${currentVideo.id}/complete`, {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    completeBtn.textContent = `✓ Completed! +${data.xp_awarded} XP`;
+                    currentVideo.completed = true;
+
+                    // Refresh videos list
+                    await loadVideos();
+
+                    // Show success message
+                    setTimeout(() => {
+                        closeVideoModal();
+                    }, 1500);
+                } else {
+                    completeBtn.textContent = 'Error - Try Again';
+                    completeBtn.disabled = false;
+                }
+            } catch (error) {
+                console.error('Error completing video:', error);
+                completeBtn.textContent = 'Error - Try Again';
+                completeBtn.disabled = false;
+            }
+        }
+
+        // -------- Carousel Lesson Functions --------
+        async function openCarouselModal(lessonId) {
+            currentCarouselLesson = allCarouselLessons.find(l => l.id === lessonId);
+            if (!currentCarouselLesson) return;
+
+            const modal = document.getElementById('carouselModal');
+            const title = document.getElementById('carouselModalTitle');
+            const slideContainer = document.getElementById('carouselSlideContainer');
+            const progressBar = document.getElementById('carouselProgressBar');
+            const slideCounter = document.getElementById('carouselSlideCounter');
+            const completeBtn = document.getElementById('completeCarouselBtn');
+
+            title.textContent = currentCarouselLesson.title;
+
+            // Initialize carousel state
+            window.carouselState = {
+                currentSlide: 0,
+                totalSlides: currentCarouselLesson.slides.length,
+                viewedSlides: new Set([0])  // Track which slides have been viewed
+            };
+
+            renderCarouselSlide();
+            updateCarouselProgress();
+
+            // Update complete button state
+            if (currentCarouselLesson.completed) {
+                completeBtn.textContent = '✓ Already Completed';
+                completeBtn.disabled = true;
+                completeBtn.style.opacity = '0.6';
+            } else {
+                completeBtn.textContent = 'View all slides to unlock XP';
+                completeBtn.disabled = true;
+                completeBtn.style.opacity = '0.6';
+            }
+
+            modal.classList.add('active');
+        }
+
+        function renderCarouselSlide() {
+            const slideContainer = document.getElementById('carouselSlideContainer');
+            const slide = currentCarouselLesson.slides[window.carouselState.currentSlide];
+
+            if (!slide) return;
+
+            slideContainer.innerHTML = `
+                <div class="carousel-slide fade-in">
+                    ${slide.title ? `<h3 class="carousel-slide-title">${slide.title}</h3>` : ''}
+                    ${slide.image_url ? `<img src="${slide.image_url}" class="carousel-slide-image" alt="${slide.title || 'Slide image'}">` : ''}
+                    <div class="carousel-slide-content">${slide.content}</div>
+                </div>
+            `;
+
+            // Mark this slide as viewed
+            window.carouselState.viewedSlides.add(window.carouselState.currentSlide);
+
+            // Update navigation buttons
+            updateCarouselNav();
+            updateCarouselProgress();
+            checkCarouselCompletion();
+        }
+
+        function updateCarouselNav() {
+            const prevBtn = document.getElementById('carouselPrevBtn');
+            const nextBtn = document.getElementById('carouselNextBtn');
+            const { currentSlide, totalSlides } = window.carouselState;
+
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.disabled = currentSlide === totalSlides - 1;
+
+            nextBtn.textContent = currentSlide === totalSlides - 1 ? 'Finish' : 'Next →';
+        }
+
+        function updateCarouselProgress() {
+            const progressFilled = document.getElementById('carouselProgressFilled');
+            const slideCounter = document.getElementById('carouselSlideCounter');
+            const { currentSlide, totalSlides } = window.carouselState;
+
+            const progress = ((currentSlide + 1) / totalSlides) * 100;
+            progressFilled.style.width = progress + '%';
+            slideCounter.textContent = `${currentSlide + 1} / ${totalSlides}`;
+        }
+
+        function checkCarouselCompletion() {
+            const completeBtn = document.getElementById('completeCarouselBtn');
+            const { viewedSlides, totalSlides } = window.carouselState;
+
+            // User must view all slides to unlock completion
+            if (viewedSlides.size === totalSlides && !currentCarouselLesson.completed) {
+                completeBtn.disabled = false;
+                completeBtn.textContent = `Mark as Complete & Earn +${currentCarouselLesson.xp_reward || 25} XP`;
+                completeBtn.style.opacity = '1';
+                completeBtn.style.cursor = 'pointer';
+            }
+        }
+
+        function nextCarouselSlide() {
+            if (window.carouselState.currentSlide < window.carouselState.totalSlides - 1) {
+                window.carouselState.currentSlide++;
+                renderCarouselSlide();
+
+                // Update progress via API
+                updateCarouselLessonProgress(currentCarouselLesson.id, window.carouselState.currentSlide);
+            }
+        }
+
+        function prevCarouselSlide() {
+            if (window.carouselState.currentSlide > 0) {
+                window.carouselState.currentSlide--;
+                renderCarouselSlide();
+            }
+        }
+
+        function closeCarouselModal() {
+            document.getElementById('carouselModal').classList.remove('active');
+            currentCarouselLesson = null;
+            window.carouselState = null;
+        }
+
+        async function markCarouselComplete() {
+            if (!currentCarouselLesson || currentCarouselLesson.completed) return;
+
+            const completeBtn = document.getElementById('completeCarouselBtn');
+            completeBtn.disabled = true;
+            completeBtn.textContent = 'Saving...';
+
+            try {
+                const response = await fetch(`/api/carousel-lessons/${currentCarouselLesson.id}/complete`, {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    completeBtn.textContent = `✓ Completed! +${data.xp_awarded} XP`;
+                    currentCarouselLesson.completed = true;
+
+                    // Refresh lessons list
+                    await loadVideos();
+
+                    // Show success message
+                    setTimeout(() => {
+                        closeCarouselModal();
+                    }, 1500);
+                } else {
+                    completeBtn.textContent = 'Error - Try Again';
+                    completeBtn.disabled = false;
+                }
+            } catch (error) {
+                console.error('Error completing carousel lesson:', error);
+                completeBtn.textContent = 'Error - Try Again';
+                completeBtn.disabled = false;
+            }
+        }
+
+        function updateCarouselLessonProgress(lessonId, currentSlide) {
+            // Throttle updates
+            if (!window.lastCarouselProgressUpdate || Date.now() - window.lastCarouselProgressUpdate > 5000) {
+                window.lastCarouselProgressUpdate = Date.now();
+                fetch(`/api/carousel-lessons/${lessonId}/progress`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({current_slide: currentSlide})
+                }).catch(err => console.error('Error updating carousel progress:', err));
+            }
+        }
+
+        // Close modal on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeVideoModal();
+                closeCarouselModal();
+            }
+        });
+
+        // Keyboard navigation for carousel
+        document.addEventListener('keydown', (e) => {
+            const carouselModal = document.getElementById('carouselModal');
+            if (!carouselModal || !carouselModal.classList.contains('active')) return;
+
+            if (e.key === 'ArrowRight') {
+                nextCarouselSlide();
+            } else if (e.key === 'ArrowLeft') {
+                prevCarouselSlide();
+            }
+        });
+    </script>
+
+    <!-- Carousel Lesson Modal -->
+    <div class="video-modal" id="carouselModal">
+        <div class="video-modal-content carousel-modal-content">
+            <div class="video-modal-header">
+                <h2 class="video-modal-title" id="carouselModalTitle"></h2>
+                <button class="close-modal-btn" onclick="closeCarouselModal()">&times;</button>
+            </div>
+
+            <div class="carousel-container">
+                <!-- Progress bar -->
+                <div class="carousel-progress-section">
+                    <div class="carousel-progress-bar" id="carouselProgressBar">
+                        <div class="carousel-progress-filled" id="carouselProgressFilled"></div>
+                    </div>
+                    <div class="carousel-slide-counter" id="carouselSlideCounter">1 / 1</div>
+                </div>
+
+                <!-- Slide content -->
+                <div class="carousel-slide-container" id="carouselSlideContainer">
+                    <div class="carousel-slide">
+                        <p>Loading...</p>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="carousel-nav">
+                    <button class="carousel-nav-btn" id="carouselPrevBtn" onclick="prevCarouselSlide()">
+                        ← Previous
+                    </button>
+                    <button class="carousel-nav-btn carousel-nav-btn-next" id="carouselNextBtn" onclick="nextCarouselSlide()">
+                        Next →
+                    </button>
+                </div>
+
+                <!-- Complete button -->
+                <button class="complete-video-btn" id="completeCarouselBtn" onclick="markCarouselComplete()">
+                    View all slides to unlock XP
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include Paywall Modal -->
+    {% include 'paywall_modal.html' %}
+
+    <style>
+        /* Premium lesson styling */
+        .video-status-badge.premium {
+            background: linear-gradient(135deg, #D4AF37, #FFD700);
+            color: #000;
+            font-weight: bold;
+        }
+
+        .video-item.premium-locked {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .video-item.premium-locked::after {
+            content: '👑';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            opacity: 0.8;
+        }
+
+        .video-item.premium-locked:hover {
+            border-color: #D4AF37;
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+        }
+
+        /* Carousel Lesson Styling */
+        .lesson-type-badge {
+            background: rgba(100, 150, 255, 0.2);
+            border: 1px solid rgba(100, 150, 255, 0.4);
+            color: #6496FF;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .carousel-lesson {
+            border-left: 3px solid rgba(100, 150, 255, 0.3);
+        }
+
+        .carousel-lesson:hover {
+            border-left-color: #6496FF;
+        }
+
+        /* Carousel Modal Styling */
+        .carousel-modal-content {
+            max-width: 800px;
+        }
+
+        .carousel-container {
+            padding: 30px;
+        }
+
+        .carousel-progress-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .carousel-progress-bar {
+            flex: 1;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .carousel-progress-filled {
+            height: 100%;
+            background: linear-gradient(90deg, #D4AF37 0%, #FFD700 100%);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .carousel-slide-counter {
+            color: #D4AF37;
+            font-weight: 600;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .carousel-slide-container {
+            min-height: 400px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .carousel-slide {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 30px;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .carousel-slide.fade-in {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .carousel-slide-title {
+            color: #D4AF37;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+
+        .carousel-slide-image {
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+            border-radius: 8px;
+            margin: 20px auto;
+            display: block;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .carousel-slide-content {
+            color: #E0E0E0;
+            font-size: 16px;
+            line-height: 1.8;
+            white-space: pre-wrap;
+        }
+
+        .carousel-slide-content p {
+            margin-bottom: 15px;
+        }
+
+        .carousel-slide-content ul,
+        .carousel-slide-content ol {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+
+        .carousel-slide-content li {
+            margin-bottom: 10px;
+        }
+
+        .carousel-slide-content strong {
+            color: #D4AF37;
+            font-weight: 600;
+        }
+
+        .carousel-nav {
+            display: flex;
+            gap: 15px;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .carousel-nav-btn {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #FFF;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .carousel-nav-btn:hover:not(:disabled) {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: #D4AF37;
+            color: #D4AF37;
+            transform: translateY(-2px);
+        }
+
+        .carousel-nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .carousel-nav-btn-next {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(212, 175, 55, 0.1) 100%);
+            border-color: rgba(212, 175, 55, 0.4);
+            color: #D4AF37;
+        }
+
+        .carousel-nav-btn-next:hover:not(:disabled) {
+            background: linear-gradient(135deg, #D4AF37 0%, #B8941F 100%);
+            color: #000;
+        }
+
+        /* Mobile responsive adjustments */
+        @media (max-width: 768px) {
+            .carousel-container {
+                padding: 20px;
+            }
+
+            .carousel-slide {
+                padding: 20px;
+            }
+
+            .carousel-slide-title {
+                font-size: 20px;
+            }
+
+            .carousel-slide-content {
+                font-size: 15px;
+            }
+
+            .carousel-nav {
+                flex-direction: column;
+            }
+
+            .carousel-nav-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</body>
+</html>

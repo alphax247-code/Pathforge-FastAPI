@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to PathForge</title>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pathforge-complete.css') }}">
+</head>
+<body class="welcome-page">
+    <div class="container">
+        <!-- Logo -->
+        <div class="logo-container">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='assets/icons/main icon.svg') }}" alt="PathForge Logo" style="width: 140px; height: 140px;">
+            </div>
+        </div>
+
+        <!-- Title -->
+        <h1 class="title">PATHFORGE</h1>
+
+        <!-- Character Portrait -->
+        <div class="portrait-container">
+            <div class="portrait">
+                <img src="{{ url_for('static', filename='assets/images/welcome.png') }}" alt="Welcome Character" style="width: auto; height: auto; max-width: 100%; max-height: 100%; object-fit: contain;">
+            </div>
+        </div>
+
+        <!-- Welcome Text -->
+        <h2 class="welcome-text">Welcome to<br>PathForge</h2>
+
+        <!-- Description -->
+        <p class="description">
+            Forge your confidence for the dating world. Join me to become a master with women.
+        </p>
+
+        <!-- Start Button -->
+        <button class="start-button" onclick="startJourney()">START</button>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/pathforge-complete.js') }}"></script>
+    <script>
+        // Mark that user has visited the site
+        function markAsVisited() {
+            // Set cookie that expires in 1 year
+            const expiryDate = new Date();
+            expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+            document.cookie = `has_visited=true; expires=${expiryDate.toUTCString()}; path=/`;
+
+            // Also set localStorage as backup
+            localStorage.setItem('has_visited', 'true');
+        }
+
+        // Override startJourney to mark as visited
+        const originalStartJourney = window.startJourney;
+        window.startJourney = function() {
+            markAsVisited();
+            originalStartJourney();
+        };
+    </script>
+</body>
+</html>

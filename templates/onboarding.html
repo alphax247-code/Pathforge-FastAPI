@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to PathForge</title>
+    <link rel="icon" href="/favicon.ico">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000000;
+            color: white;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at 50% 50%, rgba(212, 175, 55, 0.03) 0%, transparent 70%);
+            pointer-events: none;
+            animation: pulse 8s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+            position: relative;
+            z-index: 1;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .progress-header {
+            margin-bottom: 60px;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(51, 51, 51, 0.3);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.6);
+            position: relative;
+        }
+
+        .progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #B8860B 0%, #D4AF37 50%, #FFD700 100%);
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 40px;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3));
+            animation: progressGlow 1.5s ease-in-out infinite;
+        }
+
+        @keyframes progressGlow {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        .step-title {
+            text-align: center;
+            font-size: 32px;
+            color: #D4AF37;
+            font-weight: 300;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            text-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+            animation: titleGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes titleGlow {
+            0%, 100% {
+                text-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+            }
+            50% {
+                text-shadow: 0 0 40px rgba(212, 175, 55, 0.6), 0 0 60px rgba(212, 175, 55, 0.3);
+            }
+        }
+
+        .simple-view {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            animation: scaleIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .question-text {
+            font-size: 28px;
+            color: white;
+            text-align: center;
+            margin-bottom: 60px;
+            line-height: 1.5;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.8);
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .text-input {
+            width: 100%;
+            max-width: 400px;
+            background: rgba(26, 26, 26, 0.6);
+            border: none;
+            border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+            color: white;
+            font-size: 20px;
+            text-align: center;
+            padding: 16px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        .text-input:focus {
+            outline: none;
+            border-bottom-color: #D4AF37;
+            box-shadow: 0 6px 30px rgba(212, 175, 55, 0.2), 0 0 0 1px rgba(212, 175, 55, 0.1);
+            transform: translateY(-2px);
+            background: rgba(26, 26, 26, 0.8);
+        }
+
+        .text-input::placeholder {
+            color: #666;
+            transition: color 0.3s;
+        }
+
+        .text-input:focus::placeholder {
+            color: #888;
+        }
+
+        .detailed-view {
+            display: none;
+        }
+
+        .detailed-view.active {
+            display: block;
+        }
+
+        .question-card {
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.8) 0%, rgba(10, 10, 10, 0.9) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 24px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .question-card.completed {
+            border-color: rgba(34, 197, 94, 0.5);
+            border-width: 2px;
+            box-shadow: 0 8px 32px rgba(34, 197, 94, 0.1);
+        }
+
+        body.step-transition .question-card {
+            animation: cardSlideIn 0.6s ease-out backwards;
+            animation-delay: calc(var(--index) * 0.1s);
+        }
+
+        @keyframes cardSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .question-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .question-number {
+            width: 28px;
+            height: 28px;
+            background: #D4AF37;
+            color: #000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .question-card.completed .question-number {
+            background: #22C55E;
+        }
+
+        .question-card.completed .question-header-text {
+            color: #22C55E;
+        }
+
+        .question-header-text {
+            flex: 1;
+            font-size: 16px;
+            color: #D4AF37;
+            line-height: 1.5;
+        }
+
+        .likert-scale {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .scale-options {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .scale-option {
+            flex: 1;
+            height: 64px;
+            border: 2px solid rgba(212, 175, 55, 0.4);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: bold;
+            color: #D4AF37;
+            cursor: pointer;
+            background: rgba(10, 10, 10, 0.6);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s;
+        }
+
+        .scale-option:hover {
+            background: rgba(212, 175, 55, 0.1);
+            transform: scale(1.05);
+        }
+
+        .scale-option.selected {
+            background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+            color: #000;
+            border-color: #D4AF37;
+        }
+
+        .scale-labels {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 4px;
+        }
+
+        .scale-label {
+            font-size: 11px;
+            color: #9E9E9E;
+            text-align: center;
+            flex: 1;
+            max-width: 70px;
+        }
+
+        .continue-button {
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: 40px;
+            box-shadow: 0 8px 32px rgba(212, 175, 55, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .continue-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s;
+        }
+
+        .continue-button:hover::before {
+            left: 100%;
+        }
+
+        .continue-button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #FFD700 0%, #D4AF37 100%);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 48px rgba(212, 175, 55, 0.5), 0 0 60px rgba(212, 175, 55, 0.2);
+        }
+
+        .continue-button:active:not(:disabled) {
+            transform: translateY(-2px) scale(1.01);
+        }
+
+        .continue-button:disabled {
+            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+            color: #666;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(10, 10, 10, 0.98) 100%);
+            border: 2px solid #D4AF37;
+            border-radius: 24px;
+            padding: 50px;
+            max-width: 550px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 0 80px rgba(212, 175, 55, 0.3), 0 20px 60px rgba(0, 0, 0, 0.8);
+            animation: modalSlideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes modalSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .modal h2 {
+            color: #D4AF37;
+            font-size: 36px;
+            margin-bottom: 20px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-shadow: 0 0 40px rgba(212, 175, 55, 0.5);
+            position: relative;
+            z-index: 1;
+        }
+
+        .modal p {
+            color: white;
+            font-size: 18px;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
+            opacity: 0.9;
+        }
+
+        .modal-button {
+            background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+            color: #000;
+            border: none;
+            padding: 16px 48px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 32px rgba(212, 175, 55, 0.4);
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .modal-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s;
+        }
+
+        .modal-button:hover::before {
+            left: 100%;
+        }
+
+        .modal-button:hover {
+            background: linear-gradient(135deg, #FFD700 0%, #D4AF37 100%);
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 12px 48px rgba(212, 175, 55, 0.6), 0 0 80px rgba(212, 175, 55, 0.3);
+        }
+
+        .modal-button:active {
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            gap: 30px;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(51, 51, 51, 0.3);
+            border-top-color: #D4AF37;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            box-shadow: 0 0 40px rgba(212, 175, 55, 0.3);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading p {
+            color: #D4AF37;
+            font-size: 18px;
+            letter-spacing: 2px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .result-section {
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.6) 0%, rgba(10, 10, 10, 0.8) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .result-section h3 {
+            color: #D4AF37;
+            font-size: 20px;
+            font-weight: 400;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .result-section .dominant-label {
+            color: #FFD700;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-transform: capitalize;
+        }
+
+        .result-section .description {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .scores-breakdown {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .score-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .score-name {
+            min-width: 140px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            text-transform: capitalize;
+        }
+
+        .score-bar-bg {
+            flex: 1;
+            height: 24px;
+            background: rgba(26, 26, 26, 0.6);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .score-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #B8860B 0%, #D4AF37 50%, #FFD700 100%);
+            border-radius: 12px;
+            transition: width 1s ease-out;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 8px;
+        }
+
+        .score-percentage {
+            color: #000;
+            font-weight: 600;
+            font-size: 12px;
+            min-width: 45px;
+            text-align: right;
+        }
+
+        @media (max-width: 768px) {
+            .question-text {
+                font-size: 20px;
+            }
+
+            .scale-options {
+                gap: 4px;
+            }
+
+            .scale-option {
+                height: 50px;
+                font-size: 16px;
+            }
+
+            .scale-label {
+                font-size: 9px;
+            }
+
+            .score-name {
+                min-width: 100px;
+                font-size: 12px;
+            }
+
+            .result-section h3 {
+                font-size: 18px;
+            }
+
+            .dominant-label {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="loading">
+        <div class="spinner"></div>
+        <p style="color: #D4AF37;">Loading assessment...</p>
+    </div>
+
+    <div id="resultsModal" class="modal-overlay">
+        <div class="modal" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+            <h2 id="welcomeName" style="margin-bottom: 10px;">Welcome!</h2>
+            <p style="margin-bottom: 40px; opacity: 0.8;">Here's your complete personality profile</p>
+
+            <div id="resultsContent" style="text-align: left; position: relative; z-index: 1;">
+                <!-- Results will be inserted here -->
+            </div>
+
+            <button class="modal-button" onclick="startJourney()" style="margin-top: 30px;">START YOUR JOURNEY</button>
+        </div>
+    </div>
+
+    <script>
+        let assessmentData = null;
+        let currentStep = 0;
+        let currentQuestionIndex = 0;
+        let isTransitioning = false;
+        let answers = {
+            general: {},
+            attachment: {},
+            archetype: {},
+            shadow: {}
+        };
+
+        async function loadAssessmentData() {
+            try {
+                // Try to fetch external JSON file first
+                const response = await fetch("{{ url_for('static', filename='data/assessment_questions.json') }}");
+                if (!response.ok) {
+                    throw new Error('Failed to load assessment data');
+                }
+                assessmentData = await response.json();
+                return assessmentData;
+            } catch (error) {
+                console.log('Loading embedded assessment data...');
+                // Fallback to embedded data
+                assessmentData = {
+                    "version": "1.0",
+                    "steps": [
+                        {
+                            "id": "general",
+                            "title": "About You",
+                            "questions": [
+                                { "id": "name", "text": "What's your first name?", "type": "text" },
+                                { "id": "age", "text": "How old are you?", "type": "number" }
+                            ]
+                        },
+                        {
+                            "id": "attachment",
+                            "title": "Attachment Style",
+                            "answer_type": "likert5",
+                            "styles": ["secure", "anxious", "avoidant", "fearful"],
+                            "questions": [
+                                { "id": "attachment_1", "text": "I feel comfortable depending on others and having them depend on me.", "item_weight": 1.0, "targets": { "secure": { "weight": 1.0, "direction": "positive" } } },
+                                { "id": "attachment_2", "text": "I worry about being abandoned or left alone.", "item_weight": 1.0, "targets": { "anxious": { "weight": 1.0, "direction": "positive" } } },
+                                { "id": "attachment_3", "text": "I prefer not to show others how I feel deep down.", "item_weight": 1.0, "targets": { "avoidant": { "weight": 1.0, "direction": "positive" } } },
+                                { "id": "attachment_4", "text": "I want emotionally close relationships, but I find it difficult to trust others completely.", "item_weight": 1.0, "targets": { "fearful": { "weight": 1.0, "direction": "positive" } } }
+                            ]
+                        },
+                        {
+                            "id": "archetype",
+                            "title": "Seduction Archetype",
+                            "answer_type": "likert5",
+                            "styles": ["siren", "rake", "ideal_lover", "dandy", "natural", "coquette", "charmer", "charismatic"],
+                            "questions": [
+                                { "id": "arch_1", "text": "I enjoy drawing others in with mystery and allure.", "item_weight": 1.1, "targets": { "siren": { "weight": 1.0, "direction": "positive" } } },
+                                { "id": "arch_2", "text": "I pursue with intensity and passion when I want someone.", "item_weight": 1.2, "targets": { "rake": { "weight": 1.0, "direction": "positive" } } },
+                                { "id": "arch_3", "text": "I adapt myself to fulfill what others are secretly longing for.", "item_weight": 1.1, "targets": { "ideal_lover": { "weight": 1.0, "direction": "positive" } } },
+                                { "id": "arch_4", "text": "I often stand out by being unconventional or stylishly different.", "item_weight": 1.2, "targets": { "dandy": { "weight": 1.0, "direction": "positive" } } },
+                                { "id": "arch_5", "text": "I retain a sense of childlike playfulness that draws others in.", "item_weight": 1.0, "targets": { "natural": { "weight": 1.0, "direction": "positive" } } },
+                                { "id": "arch_6", "text": "I give affection, then suddenly pull back to keep people wanting more.", "item_weight": 1.3, "targets": { "coquette": { "weight": 1.0, "direction": "positive" } } },
+                                { "id": "arch_7", "text": "I make others feel seen, comfortable, and valued in my presence.", "item_weight": 1.1, "targets": { "charmer": { "weight": 1.0, "direction": "positive" } } },
+                                { "id": "arch_8", "text": "I naturally attract attention in social settings without trying hard.", "item_weight": 1.0, "targets": { "charismatic": { "weight": 1.0, "direction": "positive" } } },
+                                { "id": "arch_9", "text": "I use voice, appearance, or atmosphere to create an irresistible aura.", "item_weight": 1.1, "targets": { "siren": { "weight": 1.0, "direction": "positive" }, "charismatic": { "weight": 0.5, "direction": "positive" } } },
+                                { "id": "arch_10", "text": "I find joy in making others feel addicted to my attention.", "item_weight": 1.2, "targets": { "rake": { "weight": 1.0, "direction": "positive" }, "coquette": { "weight": 0.5, "direction": "positive" } } },
+                                { "id": "arch_11", "text": "I mirror people's fantasies and show them what they dream of.", "item_weight": 1.2, "targets": { "ideal_lover": { "weight": 1.0, "direction": "positive" } } },
+                                { "id": "arch_12", "text": "I deliberately break norms to highlight my uniqueness.", "item_weight": 1.3, "targets": { "dandy": { "weight": 1.0, "direction": "positive" } } },
+                                { "id": "arch_13", "text": "I tend to be playful, spontaneous, and make people laugh easily.", "item_weight": 1.0, "targets": { "natural": { "weight": 1.0, "direction": "positive" } } },
+                                { "id": "arch_14", "text": "I sometimes withhold warmth just to increase desire.", "item_weight": 1.2, "targets": { "coquette": { "weight": 1.0, "direction": "positive" } } },
+                                { "id": "arch_15", "text": "People often describe me as magnetic or captivating.", "item_weight": 1.1, "targets": { "charmer": { "weight": 1.0, "direction": "positive" }, "charismatic": { "weight": 0.7, "direction": "positive" } } },
+                                { "id": "arch_16", "text": "I enjoy being admired and thrive when attention is focused on me.", "item_weight": 1.2, "targets": { "charismatic": { "weight": 1.0, "direction": "positive" } } }
+                            ]
+                        },
+                        {
+                            "id": "shadow",
+                            "title": "Shadow Patterns",
+                            "answer_type": "likert5",
+                            "styles": ["the_innocent", "the_orphan", "the_warrior", "the_caregiver", "the_seeker", "the_destroyer", "the_creator", "the_magician"],
+                            "questions": [
+                                { "id": "shadow_1", "text": "I often avoid harsh realities and prefer to see the world as simple and safe.", "item_weight": 1.0, "targets": { "the_innocent": { "weight": 1.0, "direction": "positive" } } },
+                                { "id": "shadow_2", "text": "I sometimes feel abandoned or betrayed, and find it hard to trust others fully.", "item_weight": 1.1, "targets": { "the_orphan": { "weight": 1.0, "direction": "positive" } } },
+                                { "id": "shadow_3", "text": "I feel the need to prove myself by fighting battles or standing up strongly.", "item_weight": 1.2, "targets": { "the_warrior": { "weight": 1.0, "direction": "positive" } } },
+                                { "id": "shadow_4", "text": "I often prioritize others' needs over my own, even to my own detriment.", "item_weight": 1.0, "targets": { "the_caregiver": { "weight": 1.0, "direction": "positive" } } },
+                                { "id": "shadow_5", "text": "I crave freedom and new experiences, but struggle to feel content where I am.", "item_weight": 1.2, "targets": { "the_seeker": { "weight": 1.0, "direction": "positive" } } },
+                                { "id": "shadow_6", "text": "I sometimes destroy things in my life (relationships, projects) before they destroy me.", "item_weight": 1.1, "targets": { "the_destroyer": { "weight": 1.0, "direction": "positive" } } },
+                                { "id": "shadow_7", "text": "I feel most alive when I'm creating something new and original.", "item_weight": 1.0, "targets": { "the_creator": { "weight": 1.0, "direction": "positive" } } },
+                                { "id": "shadow_8", "text": "I'm drawn to transformation and guiding others, but sometimes I manipulate to get results.", "item_weight": 1.2, "targets": { "the_magician": { "weight": 1.0, "direction": "positive" } } },
+                                { "id": "shadow_9", "text": "I rely on hope that things will work out, even when evidence suggests otherwise.", "item_weight": 1.0, "targets": { "the_innocent": { "weight": 1.0, "direction": "positive" } } },
+                                { "id": "shadow_10", "text": "I often feel like life is unfair and I've been left behind compared to others.", "item_weight": 1.1, "targets": { "the_orphan": { "weight": 1.0, "direction": "positive" } } },
+                                { "id": "shadow_11", "text": "I push myself and others hard to achieve goals, even if it causes conflict.", "item_weight": 1.2, "targets": { "the_warrior": { "weight": 1.0, "direction": "positive" } } },
+                                { "id": "shadow_12", "text": "I feel guilty when I take time for myself instead of helping others.", "item_weight": 1.0, "targets": { "the_caregiver": { "weight": 1.0, "direction": "positive" } } },
+                                { "id": "shadow_13", "text": "I often feel restless and believe happiness lies somewhere else.", "item_weight": 1.2, "targets": { "the_seeker": { "weight": 1.0, "direction": "positive" } } },
+                                { "id": "shadow_14", "text": "Sometimes I burn bridges or end things abruptly as a way of regaining control.", "item_weight": 1.1, "targets": { "the_destroyer": { "weight": 1.0, "direction": "positive" } } },
+                                { "id": "shadow_15", "text": "I get frustrated if I can't express myself creatively or make something original.", "item_weight": 1.0, "targets": { "the_creator": { "weight": 1.0, "direction": "positive" } } },
+                                { "id": "shadow_16", "text": "I feel I have the ability to transform situations, but I worry about misusing my influence.", "item_weight": 1.2, "targets": { "the_magician": { "weight": 1.0, "direction": "positive" } } }
+                            ]
+                        }
+                    ]
+                };
+                return assessmentData;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadAssessmentData();
+
+            if (assessmentData) {
+                setTimeout(() => {
+                    isTransitioning = true;
+                    document.body.classList.add('step-transition');
+                    renderStep();
+                }, 1000);
+            }
+        });
+
+        function renderStep() {
+            if (!assessmentData) return;
+
+            const step = assessmentData.steps[currentStep];
+            const app = document.getElementById('app');
+            const progress = ((currentStep + 1) / assessmentData.steps.length) * 100;
+
+            let html = `
+                <div class="container">
+                    <div class="progress-header">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${progress}%"></div>
+                        </div>
+                        <h1 class="step-title">${step.title}</h1>
+                    </div>
+            `;
+
+            if (currentStep === 0) {
+                html += renderSimpleView(step);
+            } else {
+                html += renderDetailedView(step);
+            }
+
+            html += '</div>';
+            app.innerHTML = html;
+            app.className = '';
+
+            if (isTransitioning) {
+                setTimeout(() => {
+                    document.body.classList.remove('step-transition');
+                    isTransitioning = false;
+                }, 1000);
+            }
+        }
+
+        function renderSimpleView(step) {
+            const question = step.questions[currentQuestionIndex];
+            const placeholder = question.type === 'number' ? 'Enter your age' : '';
+
+            return `
+                <div class="simple-view">
+                    <p class="question-text">${question.text}</p>
+                    <input
+                        type="${question.type === 'number' ? 'number' : 'text'}"
+                        class="text-input"
+                        placeholder="${placeholder}"
+                        id="textInput"
+                        onkeypress="handleTextInput(event, '${question.id}')"
+                        autofocus
+                    >
+                </div>
+            `;
+        }
+
+        function renderDetailedView(step) {
+            let html = '<div class="detailed-view active">';
+
+            step.questions.forEach((question, index) => {
+                const answered = answers[step.id][question.id] !== undefined;
+                const selectedValue = answers[step.id][question.id];
+                const questionNumber = answered ? '&#10003;' : (index + 1);
+
+                html += '<div class="question-card ' + (answered ? 'completed' : '') + '" style="--index: ' + index + ';">';
+                html += '<div class="question-header">';
+                html += '<div class="question-number">' + questionNumber + '</div>';
+                html += '<div class="question-header-text">' + question.text + '</div>';
+                html += '</div>';
+                html += '<div class="likert-scale">';
+                html += '<div class="scale-options">';
+
+                for (let value = 1; value <= 5; value++) {
+                    const isSelected = selectedValue === value ? 'selected' : '';
+                    html += '<button class="scale-option ' + isSelected + '" onclick="answerQuestion(\'' + step.id + '\', \'' + question.id + '\', ' + value + ')">';
+                    html += value;
+                    html += '</button>';
+                }
+
+                html += '</div>';
+                html += '<div class="scale-labels">';
+                html += '<div class="scale-label">Strongly Disagree</div>';
+                html += '<div class="scale-label">Disagree</div>';
+                html += '<div class="scale-label">Neutral</div>';
+                html += '<div class="scale-label">Agree</div>';
+                html += '<div class="scale-label">Strongly Agree</div>';
+                html += '</div>';
+                html += '</div>';
+                html += '</div>';
+            });
+
+            const allAnswered = step.questions.every(q => answers[step.id][q.id] !== undefined);
+            const buttonText = allAnswered ? 'CONTINUE' : 'ANSWER ALL ' + step.title.toUpperCase() + ' QUESTIONS';
+            const disabledAttr = allAnswered ? '' : 'disabled';
+
+            html += '<button class="continue-button" ' + disabledAttr + ' onclick="nextStep()">';
+            html += buttonText;
+            html += '</button>';
+            html += '</div>';
+
+            return html;
+        }
+
+        function handleTextInput(event, questionId) {
+            if (event.key === 'Enter') {
+                const input = event.target;
+                const value = input.value.trim();
+
+                if (value) {
+                    if (questionId === 'age') {
+                        const age = parseInt(value);
+                        if (age < 13 || age > 100) {
+                            alert('Please enter a valid age (13-100)');
+                            return;
+                        }
+                    }
+
+                    answers.general[questionId] = value;
+
+                    if (assessmentData && currentQuestionIndex < assessmentData.steps[0].questions.length - 1) {
+                        currentQuestionIndex++;
+                        window.scrollTo(0, 0);
+                        renderStep();
+                    } else {
+                        isTransitioning = true;
+                        document.body.classList.add('step-transition');
+                        nextStep();
+                    }
+                }
+            }
+        }
+
+        function answerQuestion(stepId, questionId, value) {
+            if (!assessmentData) return;
+
+            answers[stepId][questionId] = value;
+
+            const allCards = document.querySelectorAll('.question-card');
+            const step = assessmentData.steps[currentStep];
+            const questionIndex = step.questions.findIndex(q => q.id === questionId);
+
+            if (questionIndex !== -1 && allCards[questionIndex]) {
+                const card = allCards[questionIndex];
+                const numberEl = card.querySelector('.question-number');
+                if (numberEl) {
+                    numberEl.textContent = '✓';
+                }
+                card.classList.add('completed');
+
+                const scaleOptions = card.querySelectorAll('.scale-option');
+                scaleOptions.forEach((btn, idx) => {
+                    if (idx + 1 === value) {
+                        btn.classList.add('selected');
+                    } else {
+                        btn.classList.remove('selected');
+                    }
+                });
+            }
+
+            updateContinueButton();
+        }
+
+        function updateContinueButton() {
+            if (!assessmentData) return;
+
+            const step = assessmentData.steps[currentStep];
+            const allAnswered = step.questions.every(q => answers[step.id][q.id] !== undefined);
+            const continueBtn = document.querySelector('.continue-button');
+
+            if (continueBtn) {
+                if (allAnswered) {
+                    continueBtn.disabled = false;
+                    continueBtn.textContent = 'CONTINUE';
+                } else {
+                    continueBtn.disabled = true;
+                    continueBtn.textContent = `ANSWER ALL ${step.title.toUpperCase()} QUESTIONS`;
+                }
+            }
+        }
+
+        function nextStep() {
+            if (!assessmentData) return;
+
+            if (currentStep < assessmentData.steps.length - 1) {
+                currentStep++;
+                currentQuestionIndex = 0;
+                isTransitioning = true;
+                document.body.classList.add('step-transition');
+                window.scrollTo(0, 0);
+                renderStep();
+            } else {
+                completeAssessment();
+            }
+        }
+
+        function calculateDominantStyle(stepId) {
+            if (!assessmentData) return { dominant: 'balanced', scores: {}, percentages: {} };
+
+            const step = assessmentData.steps.find(s => s.id === stepId);
+            if (!step || !step.styles) return { dominant: 'balanced', scores: {}, percentages: {} };
+
+            const scores = {};
+            step.styles.forEach(style => scores[style] = 0);
+
+            step.questions.forEach(question => {
+                const answer = answers[stepId][question.id];
+                if (answer !== undefined) {
+                    const normalizedScore = (answer - 3);
+
+                    Object.entries(question.targets || {}).forEach(([style, target]) => {
+                        const weight = target.weight || 1.0;
+                        const direction = target.direction === 'positive' ? 1 : -1;
+                        const itemWeight = question.item_weight || 1.0;
+
+                        scores[style] = (scores[style] || 0) + (normalizedScore * weight * direction * itemWeight);
+                    });
+                }
+            });
+
+            // Normalize scores to be non-negative (shift minimum to 0)
+            const scoreValues = Object.values(scores);
+            const minScore = Math.min(...scoreValues);
+            const normalizedScores = {};
+            Object.entries(scores).forEach(([style, score]) => {
+                normalizedScores[style] = score - minScore; // Shift so minimum is 0
+            });
+
+            // Calculate percentages based on normalized positive scores
+            const totalScore = Object.values(normalizedScores).reduce((sum, score) => sum + score, 0);
+            const percentages = {};
+            Object.entries(normalizedScores).forEach(([style, score]) => {
+                percentages[style] = totalScore > 0 ? Math.round((score / totalScore) * 100) : 0;
+            });
+
+            const dominant = Object.entries(scores).reduce((a, b) => a[1] > b[1] ? a : b)[0];
+
+            return { dominant, scores, percentages };
+        }
+
+        async function completeAssessment() {
+            const attachmentResult = calculateDominantStyle('attachment');
+            const archetypeResult = calculateDominantStyle('archetype');
+            const shadowResult = calculateDominantStyle('shadow');
+
+            const results = {
+                name: answers.general.name,
+                age: answers.general.age,
+                attachment: {
+                    dominant: attachmentResult.dominant,
+                    scores: attachmentResult.scores,
+                    percentages: attachmentResult.percentages
+                },
+                archetype: {
+                    dominant: archetypeResult.dominant,
+                    scores: archetypeResult.scores,
+                    percentages: archetypeResult.percentages
+                },
+                shadow: {
+                    dominant: shadowResult.dominant,
+                    scores: shadowResult.scores,
+                    percentages: shadowResult.percentages
+                },
+                completedAt: new Date().toISOString()
+            };
+
+            console.log('Assessment Results:', results);
+
+            // Save to backend
+            try {
+                const response = await fetch('/api/assessment/save', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(results)
+                });
+
+                const result = await response.json();
+                console.log('Save response:', result);
+            } catch (error) {
+                console.error('Error saving assessment:', error);
+            }
+
+            showResults(results);
+        }
+
+        function showResults(results) {
+            document.getElementById('welcomeName').textContent = `Welcome ${results.name}!`;
+
+            // Get style descriptions
+            const attachmentDescriptions = {
+                'secure': 'You tend to be comfortable with intimacy and independence, finding it easy to form healthy relationships. You communicate openly and trust comes naturally to you.',
+                'anxious': 'You may seek high levels of intimacy and approval, sometimes worrying about your relationships. You deeply value connection and want reassurance from those close to you.',
+                'avoidant': 'You value independence and may feel uncomfortable with too much closeness in relationships. You maintain your autonomy and prefer emotional self-reliance.',
+                'fearful': 'You may want close relationships but feel uncomfortable trusting or depending on others. You desire intimacy but worry about getting hurt if you let people too close.'
+            };
+
+            const archetypeDescriptions = {
+                'siren': 'You draw others in with mystery, allure, and an irresistible aura. You have a magnetic presence that captivates people through your sensual and enigmatic energy.',
+                'rake': 'You pursue with intensity and passion, making others feel desired. You focus your attention completely on those you\'re interested in, making them feel like the center of your world.',
+                'ideal_lover': 'You adapt to fulfill others\' deepest fantasies and longings. You have an intuitive ability to understand what people truly want and become their perfect romantic ideal.',
+                'dandy': 'You stand out through unconventional style and bold uniqueness. You challenge norms and create intrigue through your distinctive, confident self-expression.',
+                'natural': 'You charm with childlike playfulness and spontaneous joy. Your authentic, unaffected nature draws people in with its refreshing sincerity and playful energy.',
+                'coquette': 'You create desire by giving affection then pulling back. You understand the power of push-pull dynamics and keep people wanting more through strategic distance.',
+                'charmer': 'You make others feel valued, seen, and comfortable in your presence. Your warmth and attentiveness create an atmosphere where people feel accepted and appreciated.',
+                'charismatic': 'You naturally attract attention and admiration without trying. You have a radiant quality that makes people want to be near you and bask in your energy.'
+            };
+
+            const shadowDescriptions = {
+                'the_innocent': 'You seek simplicity and safety, sometimes avoiding harsh realities. You maintain hope and optimism, though this can lead to denial of life\'s darker aspects. Your challenge is to face complexity without losing your essential goodness.',
+                'the_orphan': 'You carry feelings of abandonment and struggle to trust fully. You\'ve experienced betrayal or disappointment that makes you cautious. Your journey is to find belonging while honoring your protective instincts.',
+                'the_warrior': 'You prove yourself through battles and standing up strongly. You face challenges head-on and defend what matters to you. Your task is to know when to fight and when to surrender.',
+                'the_caregiver': 'You prioritize others\' needs, sometimes at your own expense. Your nurturing nature is a gift, but you must learn that self-care isn\'t selfish - it\'s necessary.',
+                'the_seeker': 'You crave freedom and new experiences, seeking fulfillment elsewhere. You\'re always searching for something more, which drives growth but can prevent contentment. Your lesson is to find peace in the present.',
+                'the_destroyer': 'You sometimes end things before they can hurt you. You understand that destruction can be necessary for transformation, but you must learn to discern what needs to end and what deserves to be healed.',
+                'the_creator': 'You feel most alive when creating something new and original. Your imagination and drive to manifest ideas are powerful, but perfectionism can become self-sabotage. Your gift is bringing new realities into existence.',
+                'the_magician': 'You transform situations but worry about misusing your power. You understand how to influence and catalyze change in yourself and others. Your responsibility is to use this power wisely and ethically.'
+            };
+
+            // Build results HTML
+            let html = '';
+
+            // Attachment Style Section
+            html += '<div class="result-section">';
+            html += '<h3>Your Attachment Style</h3>';
+            html += `<div class="dominant-label">${formatStyleName(results.attachment.dominant)}</div>`;
+            html += `<div class="description">${attachmentDescriptions[results.attachment.dominant]}</div>`;
+            html += '</div>';
+
+            // Seduction Archetype Section
+            html += '<div class="result-section">';
+            html += '<h3>Your Seduction Archetype</h3>';
+            html += `<div class="dominant-label">${formatStyleName(results.archetype.dominant)}</div>`;
+            html += `<div class="description">${archetypeDescriptions[results.archetype.dominant]}</div>`;
+            html += '</div>';
+
+            // Shadow Pattern Section
+            html += '<div class="result-section">';
+            html += '<h3>Your Shadow Pattern</h3>';
+            html += `<div class="dominant-label">${formatStyleName(results.shadow.dominant)}</div>`;
+            html += `<div class="description">${shadowDescriptions[results.shadow.dominant]}</div>`;
+            html += '</div>';
+
+            document.getElementById('resultsContent').innerHTML = html;
+            document.getElementById('resultsModal').classList.add('active');
+        }
+
+        function formatStyleName(style) {
+            return style.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        }
+
+        function startJourney() {
+            window.location.href = "{{ url_for('dashboard') }}";
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inner Game - PathForge</title>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pathforge-complete.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .inner-game-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .ig-card {
+            background: rgba(26, 26, 26, 0.8);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .ig-card h2 {
+            color: #D4AF37;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .ig-card p.subtitle {
+            color: #9E9E9E;
+            margin-bottom: 25px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #D4AF37, #FFD700);
+            color: #1a1a1a;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(212, 175, 55, 0.1);
+            color: #D4AF37;
+            border: 2px solid #D4AF37;
+            padding: 10px 25px;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(212, 175, 55, 0.2);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #FF6B6B, #FF5252);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-danger:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.5);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: #1a1a1a;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #D4AF37;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            color: #E0E0E0;
+            font-size: 15px;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #D4AF37;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .slider-container {
+            margin: 20px 0;
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: rgba(212, 175, 55, 0.2);
+            outline: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #D4AF37;
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #D4AF37;
+            cursor: pointer;
+        }
+
+        .slider-value {
+            text-align: center;
+            color: #D4AF37;
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 2px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .stat-value {
+            color: #D4AF37;
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            color: #9E9E9E;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .coaching-card {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(33, 150, 243, 0.1));
+            border: 2px solid #4CAF50;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .coaching-section {
+            margin-bottom: 20px;
+        }
+
+        .coaching-section h3 {
+            color: #4CAF50;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .coaching-section p {
+            color: #E0E0E0;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .radio-group {
+            display: grid;
+            gap: 10px;
+        }
+
+        .radio-option {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .radio-option:hover {
+            border-color: #D4AF37;
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .radio-option input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        .radio-option.selected {
+            border-color: #D4AF37;
+            background: rgba(212, 175, 55, 0.2);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(212, 175, 55, 0.2);
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #D4AF37, #FFD700);
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    {% include 'nav.html' %}
+
+    <!-- Main Content -->
+    <main>
+        <!-- Page Header -->
+        <section class="page-header">
+            <h1>🎯 Inner Game</h1>
+            <p>Build confidence, regulate emotions, and master healthy connection</p>
+        </section>
+
+        <div class="inner-game-container">
+            <!-- Loading State -->
+            <div id="loadingState" class="ig-card" style="text-align: center;">
+                <i class="fas fa-spinner fa-spin" style="font-size: 48px; color: #D4AF37;"></i>
+                <p style="color: #9E9E9E; margin-top: 20px;">Loading your Inner Game...</p>
+            </div>
+
+            <!-- Assessment Flow (shown if not completed) -->
+            <div id="assessmentFlow" style="display: none;">
+                <div class="ig-card">
+                    <h2>Welcome to Your Inner Game Journey</h2>
+                    <p class="subtitle">Answer a few questions to get personalized guidance</p>
+
+                    <div id="assessmentStep1" class="assessment-step">
+                        <h3 style="color: #D4AF37; margin-bottom: 20px;">What's your primary goal?</h3>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="primary_goal" value="confidence">
+                                <strong>Build Confidence</strong> - Feel more self-assured in social situations
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="primary_goal" value="dating">
+                                <strong>Dating Skills</strong> - Improve at meeting and attracting people
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="primary_goal" value="relationship">
+                                <strong>Relationship Skills</strong> - Build healthier connections
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="primary_goal" value="social_skills">
+                                <strong>Social Skills</strong> - Connect better with others
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="primary_goal" value="emotional_control">
+                                <strong>Emotional Control</strong> - Regulate anxiety and reactions
+                            </label>
+                        </div>
+                        <button class="btn-primary" style="margin-top: 25px;" onclick="nextAssessmentStep(2)">Continue</button>
+                    </div>
+
+                    <div id="assessmentStep2" class="assessment-step" style="display: none;">
+                        <h3 style="color: #D4AF37; margin-bottom: 20px;">What's your attachment style?</h3>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="attachment_style" value="secure">
+                                <strong>Secure</strong> - Comfortable with intimacy and independence
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="attachment_style" value="anxious">
+                                <strong>Anxious</strong> - Worry about relationships, fear abandonment
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="attachment_style" value="avoidant">
+                                <strong>Avoidant</strong> - Value independence, uncomfortable with closeness
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="attachment_style" value="fearful_avoidant">
+                                <strong>Fearful-Avoidant</strong> - Want closeness but fear getting hurt
+                            </label>
+                        </div>
+                        <button class="btn-secondary" onclick="nextAssessmentStep(1)" style="margin-top: 25px; margin-right: 15px;">Back</button>
+                        <button class="btn-primary" onclick="nextAssessmentStep(3)" style="margin-top: 25px;">Continue</button>
+                    </div>
+
+                    <div id="assessmentStep3" class="assessment-step" style="display: none;">
+                        <h3 style="color: #D4AF37; margin-bottom: 20px;">Rate yourself (1-10)</h3>
+
+                        <div class="form-group">
+                            <label>Confidence Level</label>
+                            <input type="range" min="1" max="10" value="5" class="slider" id="baseline_confidence" oninput="updateSliderValue(this)">
+                            <div class="slider-value" id="baseline_confidence_val">5</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Social Anxiety</label>
+                            <input type="range" min="1" max="10" value="5" class="slider" id="baseline_social_anxiety" oninput="updateSliderValue(this)">
+                            <div class="slider-value" id="baseline_social_anxiety_val">5</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Boundary Strength</label>
+                            <input type="range" min="1" max="10" value="5" class="slider" id="boundary_strength" oninput="updateSliderValue(this)">
+                            <div class="slider-value" id="boundary_strength_val">5</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Rumination / Overthinking</label>
+                            <input type="range" min="1" max="10" value="5" class="slider" id="rumination_score" oninput="updateSliderValue(this)">
+                            <div class="slider-value" id="rumination_score_val">5</div>
+                        </div>
+
+                        <button class="btn-secondary" onclick="nextAssessmentStep(2)" style="margin-top: 25px; margin-right: 15px;">Back</button>
+                        <button class="btn-primary" onclick="submitAssessment()" style="margin-top: 25px;">Complete Assessment</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Dashboard (shown after assessment) -->
+            <div id="mainDashboard" style="display: none;">
+                <!-- Snapshot Card -->
+                <div class="ig-card">
+                    <h2>📊 Your Snapshot</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="attachmentDisplay">-</div>
+                            <div class="stat-label">Attachment Style</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="streakDisplay">0 🔥</div>
+                            <div class="stat-label">Day Streak</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="repsDisplay">0</div>
+                            <div class="stat-label">Total Reps</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="journalDisplay">0</div>
+                            <div class="stat-label">Journal Entries</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stability Rule -->
+                <div class="ig-card" style="background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(33, 150, 243, 0.1)); border-color: #4CAF50;">
+                    <h2>🧘 Your Stability Rule</h2>
+                    <p id="stabilityRule" style="color: #E0E0E0; font-size: 18px; line-height: 1.6; margin: 0;"></p>
+                </div>
+
+                <!-- Today's Rep -->
+                <div class="ig-card">
+                    <h2>💪 Today's Rep</h2>
+                    <div id="todayRep">
+                        <p style="color: #9E9E9E;">Loading today's challenge...</p>
+                    </div>
+                </div>
+
+                <!-- Week Stats -->
+                <div class="ig-card">
+                    <h2>📈 This Week</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="weekRepsCompleted">0</div>
+                            <div class="stat-label">Reps Completed</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="weekRepsTotal">0</div>
+                            <div class="stat-label">Total Reps</div>
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="weekProgress" style="width: 0%;"></div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="ig-card">
+                    <h2>⚡ Quick Actions</h2>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 20px;">
+                        <button class="btn-primary" onclick="openJournalModal('quick')">
+                            <i class="fas fa-book"></i> Quick Journal
+                        </button>
+                        <button class="btn-primary" onclick="openJournalModal('full')">
+                            <i class="fas fa-book-open"></i> Full Journal
+                        </button>
+                        <button class="btn-danger" onclick="openTriggeredModal()">
+                            <i class="fas fa-exclamation-triangle"></i> I'M TRIGGERED
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Recent Journal Entries -->
+                <div class="ig-card">
+                    <h2>📝 Recent Journal Entries</h2>
+                    <div id="recentJournalEntries">
+                        <p style="color: #9E9E9E;">No journal entries yet. Start writing!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Quick Journal Modal -->
+    <div id="quickJournalModal" class="modal">
+        <div class="modal-content">
+            <h2 style="color: #D4AF37; margin-bottom: 20px;">📝 Quick Journal (1 min)</h2>
+
+            <div class="form-group">
+                <label>Situation (What happened?)</label>
+                <textarea id="quick_situation" rows="3" placeholder="Describe the situation briefly..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Fear/Discomfort Before (1-10)</label>
+                <input type="range" min="1" max="10" value="5" class="slider" id="quick_intensity_before" oninput="updateSliderValue(this)">
+                <div class="slider-value" id="quick_intensity_before_val">5</div>
+            </div>
+
+            <div class="form-group">
+                <label>Fear/Discomfort After (1-10)</label>
+                <input type="range" min="1" max="10" value="5" class="slider" id="quick_intensity_after" oninput="updateSliderValue(this)">
+                <div class="slider-value" id="quick_intensity_after_val">5</div>
+            </div>
+
+            <div class="form-group">
+                <label>What I Learned</label>
+                <textarea id="quick_lesson_learned" rows="3" placeholder="What did you learn from this?"></textarea>
+            </div>
+
+            <div style="display: flex; gap: 15px; margin-top: 25px;">
+                <button class="btn-secondary" onclick="closeModal('quickJournalModal')">Cancel</button>
+                <button class="btn-primary" onclick="saveJournalEntry('quick')">Save Entry</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Full Journal Modal -->
+    <div id="fullJournalModal" class="modal">
+        <div class="modal-content">
+            <h2 style="color: #D4AF37; margin-bottom: 20px;">📖 Full Journal Entry (10 Steps)</h2>
+
+            <div class="form-group">
+                <label>1. Situation (Facts only)</label>
+                <textarea id="full_situation" rows="2" placeholder="What happened? Just the facts..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>2. Fear Prediction</label>
+                <input type="text" id="full_fear_prediction" placeholder="What did I fear would happen?">
+            </div>
+
+            <div class="form-group">
+                <label>3. Intensity Before (1-10)</label>
+                <input type="range" min="1" max="10" value="5" class="slider" id="full_intensity_before" oninput="updateSliderValue(this)">
+                <div class="slider-value" id="full_intensity_before_val">5</div>
+            </div>
+
+            <div class="form-group">
+                <label>4. Story in My Head</label>
+                <input type="text" id="full_story" placeholder="What story was I telling myself?">
+            </div>
+
+            <div class="form-group">
+                <label>5. Body Signal</label>
+                <input type="text" id="full_body_signal" placeholder="What did I feel in my body?">
+            </div>
+
+            <div class="form-group">
+                <label>6. Urge</label>
+                <select id="full_urge">
+                    <option value="">Select urge...</option>
+                    <option value="avoid">Avoid</option>
+                    <option value="chase">Chase</option>
+                    <option value="freeze">Freeze</option>
+                    <option value="fawn">Fawn/Please</option>
+                    <option value="calm">Stay Calm</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>7. Best Action</label>
+                <input type="text" id="full_best_action" placeholder="What's the best thing to do?">
+            </div>
+
+            <div class="form-group">
+                <label>8. Action Taken</label>
+                <input type="text" id="full_action_taken" placeholder="What did I actually do?">
+            </div>
+
+            <div class="form-group">
+                <label>9. Outcome</label>
+                <textarea id="full_outcome" rows="2" placeholder="What actually happened?"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>10. Intensity After (1-10)</label>
+                <input type="range" min="1" max="10" value="5" class="slider" id="full_intensity_after" oninput="updateSliderValue(this)">
+                <div class="slider-value" id="full_intensity_after_val">5</div>
+            </div>
+
+            <div class="form-group">
+                <label>Lesson Learned</label>
+                <textarea id="full_lesson_learned" rows="2" placeholder="What did I learn?"></textarea>
+            </div>
+
+            <div style="display: flex; gap: 15px; margin-top: 25px;">
+                <button class="btn-secondary" onclick="closeModal('fullJournalModal')">Cancel</button>
+                <button class="btn-primary" onclick="saveJournalEntry('full')">Save Entry</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Triggered Modal -->
+    <div id="triggeredModal" class="modal">
+        <div class="modal-content">
+            <h2 style="color: #FF6B6B; margin-bottom: 20px;">🚨 You're Triggered - Let's Handle This</h2>
+
+            <div class="form-group">
+                <label>What triggered you?</label>
+                <select id="trigger_type">
+                    <option value="slow_reply">Slow reply / No response</option>
+                    <option value="flake">Flake / Cancelled plans</option>
+                    <option value="conflict">Conflict / Argument</option>
+                    <option value="intimacy">Intimacy / Getting close</option>
+                    <option value="criticism">Criticism / Feedback</option>
+                    <option value="rejection">Rejection</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>How intense is it? (1-10)</label>
+                <input type="range" min="1" max="10" value="7" class="slider" id="trigger_intensity" oninput="updateSliderValue(this)">
+                <div class="slider-value" id="trigger_intensity_val">7</div>
+            </div>
+
+            <button class="btn-primary" style="width: 100%; margin-top: 25px;" onclick="getCoaching()">Get Coaching</button>
+
+            <div id="coachingResponse" style="display: none; margin-top: 30px;">
+                <!-- Coaching will be inserted here -->
+            </div>
+
+            <div style="margin-top: 25px;">
+                <button class="btn-secondary" style="width: 100%;" onclick="closeModal('triggeredModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rep Completion Modal -->
+    <div id="repCompletionModal" class="modal">
+        <div class="modal-content">
+            <h2 style="color: #D4AF37; margin-bottom: 20px;">✅ Complete Rep</h2>
+            <p id="repTitle" style="color: #E0E0E0; font-size: 16px; margin-bottom: 25px;"></p>
+
+            <div class="form-group">
+                <label>Discomfort Before (1-10)</label>
+                <input type="range" min="1" max="10" value="5" class="slider" id="rep_discomfort_before" oninput="updateSliderValue(this)">
+                <div class="slider-value" id="rep_discomfort_before_val">5</div>
+            </div>
+
+            <div class="form-group">
+                <label>Discomfort After (1-10)</label>
+                <input type="range" min="1" max="10" value="5" class="slider" id="rep_discomfort_after" oninput="updateSliderValue(this)">
+                <div class="slider-value" id="rep_discomfort_after_val">5</div>
+            </div>
+
+            <div class="form-group">
+                <label>What I Learned</label>
+                <textarea id="rep_what_learned" rows="3" placeholder="What did you learn from doing this?"></textarea>
+            </div>
+
+            <div style="display: flex; gap: 15px; margin-top: 25px;">
+                <button class="btn-secondary" onclick="closeModal('repCompletionModal')">Cancel</button>
+                <button class="btn-primary" onclick="completeRep()">Mark Complete</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentProfile = null;
+        let currentRep = null;
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProfile();
+
+            // Setup radio option visual feedback
+            document.querySelectorAll('.radio-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const input = this.querySelector('input[type="radio"]');
+                    input.checked = true;
+
+                    // Remove selected class from siblings
+                    this.parentElement.querySelectorAll('.radio-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+
+                    // Add selected class to this option
+                    this.classList.add('selected');
+                });
+            });
+        });
+
+        function updateSliderValue(slider) {
+            const valueDisplay = document.getElementById(slider.id + '_val');
+            if (valueDisplay) {
+                valueDisplay.textContent = slider.value;
+            }
+        }
+
+        async function loadProfile() {
+            try {
+                const response = await fetch('/api/inner-game/profile');
+                const data = await response.json();
+
+                if (data.needs_assessment) {
+                    // Show assessment flow
+                    document.getElementById('loadingState').style.display = 'none';
+                    document.getElementById('assessmentFlow').style.display = 'block';
+                } else {
+                    // Show dashboard
+                    currentProfile = data.profile;
+                    document.getElementById('loadingState').style.display = 'none';
+                    document.getElementById('mainDashboard').style.display = 'block';
+                    loadDashboard();
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                alert('Failed to load Inner Game. Please refresh the page.');
+            }
+        }
+
+        function nextAssessmentStep(step) {
+            // Hide all steps
+            document.querySelectorAll('.assessment-step').forEach(el => el.style.display = 'none');
+
+            // Show target step
+            document.getElementById('assessmentStep' + step).style.display = 'block';
+        }
+
+        async function submitAssessment() {
+            const primary_goal = document.querySelector('input[name="primary_goal"]:checked')?.value;
+            const attachment_style = document.querySelector('input[name="attachment_style"]:checked')?.value;
+
+            if (!primary_goal || !attachment_style) {
+                alert('Please complete all steps');
+                return;
+            }
+
+            const assessmentData = {
+                primary_goal,
+                attachment_style,
+                baseline_confidence: parseInt(document.getElementById('baseline_confidence').value),
+                baseline_social_anxiety: parseInt(document.getElementById('baseline_social_anxiety').value),
+                boundary_strength: parseInt(document.getElementById('boundary_strength').value),
+                rumination_score: parseInt(document.getElementById('rumination_score').value)
+            };
+
+            try {
+                const response = await fetch('/api/inner-game/assessment', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(assessmentData)
+                });
+
+                if (response.ok) {
+                    // Reload to show dashboard
+                    window.location.reload();
+                } else {
+                    alert('Failed to save assessment. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error submitting assessment:', error);
+                alert('Error submitting assessment.');
+            }
+        }
+
+        async function loadDashboard() {
+            try {
+                const response = await fetch('/api/inner-game/dashboard');
+                const data = await response.json();
+
+                if (data.success) {
+                    const dashboard = data.dashboard;
+                    const profile = dashboard.profile;
+                    const weekStats = dashboard.week_stats;
+
+                    // Update snapshot
+                    document.getElementById('attachmentDisplay').textContent =
+                        profile.attachment_style.replace('_', ' ').toUpperCase();
+                    document.getElementById('streakDisplay').textContent =
+                        (weekStats.streak_days || 0) + ' 🔥';
+                    document.getElementById('repsDisplay').textContent =
+                        profile.total_reps_completed || 0;
+                    document.getElementById('journalDisplay').textContent =
+                        profile.total_journal_entries || 0;
+
+                    // Update stability rule
+                    document.getElementById('stabilityRule').textContent = dashboard.stability_rule;
+
+                    // Update today's rep
+                    if (dashboard.today_rep) {
+                        currentRep = dashboard.today_rep;
+                        const repHtml = `
+                            <div style="background: rgba(0, 0, 0, 0.5); border-radius: 12px; padding: 20px;">
+                                <h3 style="color: #D4AF37; margin-bottom: 10px;">${dashboard.today_rep.title}</h3>
+                                <p style="color: #9E9E9E; margin-bottom: 15px;">Difficulty: Level ${dashboard.today_rep.difficulty_level}</p>
+                                ${dashboard.today_rep.status === 'completed' ?
+                                    '<p style="color: #4CAF50; font-weight: bold;">✓ Completed!</p>' :
+                                    '<button class="btn-primary" onclick="openRepCompletionModal()">Complete Rep</button>'
+                                }
+                            </div>
+                        `;
+                        document.getElementById('todayRep').innerHTML = repHtml;
+                    } else {
+                        document.getElementById('todayRep').innerHTML =
+                            '<p style="color: #9E9E9E;">No rep for today yet. Check back tomorrow!</p>';
+                    }
+
+                    // Update week stats
+                    document.getElementById('weekRepsCompleted').textContent = weekStats.reps_completed || 0;
+                    document.getElementById('weekRepsTotal').textContent = weekStats.total_reps || 0;
+
+                    const progressPercent = weekStats.total_reps > 0 ?
+                        (weekStats.reps_completed / weekStats.total_reps) * 100 : 0;
+                    document.getElementById('weekProgress').style.width = progressPercent + '%';
+
+                    // Load recent journal entries
+                    loadRecentJournal();
+                }
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+
+        async function loadRecentJournal() {
+            try {
+                const response = await fetch('/api/inner-game/journal?limit=5');
+                const data = await response.json();
+
+                if (data.success && data.entries.length > 0) {
+                    const entriesHtml = data.entries.map(entry => {
+                        const date = new Date(entry.date_time).toLocaleDateString();
+                        const reduction = entry.intensity_before - entry.intensity_after;
+                        return `
+                            <div style="background: rgba(0, 0, 0, 0.5); border-radius: 10px; padding: 15px; margin-bottom: 15px; border-left: 3px solid #D4AF37;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                    <strong style="color: #D4AF37;">${entry.entry_type === 'journal_quick' ? 'Quick' : 'Full'} Journal</strong>
+                                    <span style="color: #9E9E9E; font-size: 14px;">${date}</span>
+                                </div>
+                                <p style="color: #E0E0E0; margin-bottom: 10px;">${entry.situation}</p>
+                                <div style="display: flex; gap: 20px; font-size: 14px;">
+                                    <span style="color: ${reduction > 0 ? '#4CAF50' : '#FF6B6B'};">
+                                        ${entry.intensity_before} → ${entry.intensity_after}
+                                        (${reduction > 0 ? '-' + reduction : '+' + Math.abs(reduction)})
+                                    </span>
+                                </div>
+                                ${entry.lesson_learned ?
+                                    `<p style="color: #D4AF37; font-size: 14px; margin-top: 10px; font-style: italic;">💡 ${entry.lesson_learned}</p>` : ''
+                                }
+                            </div>
+                        `;
+                    }).join('');
+
+                    document.getElementById('recentJournalEntries').innerHTML = entriesHtml;
+                }
+            } catch (error) {
+                console.error('Error loading journal:', error);
+            }
+        }
+
+        function openJournalModal(type) {
+            if (type === 'quick') {
+                document.getElementById('quickJournalModal').classList.add('active');
+            } else {
+                document.getElementById('fullJournalModal').classList.add('active');
+            }
+        }
+
+        async function saveJournalEntry(type) {
+            let entryData;
+
+            if (type === 'quick') {
+                entryData = {
+                    entry_type: 'journal_quick',
+                    situation: document.getElementById('quick_situation').value,
+                    intensity_before: parseInt(document.getElementById('quick_intensity_before').value),
+                    intensity_after: parseInt(document.getElementById('quick_intensity_after').value),
+                    lesson_learned: document.getElementById('quick_lesson_learned').value
+                };
+            } else {
+                entryData = {
+                    entry_type: 'journal_full',
+                    situation: document.getElementById('full_situation').value,
+                    fear_prediction: document.getElementById('full_fear_prediction').value,
+                    intensity_before: parseInt(document.getElementById('full_intensity_before').value),
+                    story_in_my_head: document.getElementById('full_story').value,
+                    body_signal: document.getElementById('full_body_signal').value,
+                    urge: document.getElementById('full_urge').value,
+                    best_action: document.getElementById('full_best_action').value,
+                    action_taken: document.getElementById('full_action_taken').value,
+                    outcome: document.getElementById('full_outcome').value,
+                    intensity_after: parseInt(document.getElementById('full_intensity_after').value),
+                    lesson_learned: document.getElementById('full_lesson_learned').value
+                };
+            }
+
+            try {
+                const response = await fetch('/api/inner-game/journal', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(entryData)
+                });
+
+                if (response.ok) {
+                    closeModal(type === 'quick' ? 'quickJournalModal' : 'fullJournalModal');
+
+                    // Clear form
+                    if (type === 'quick') {
+                        document.getElementById('quick_situation').value = '';
+                        document.getElementById('quick_lesson_learned').value = '';
+                    } else {
+                        document.querySelectorAll('#fullJournalModal input, #fullJournalModal textarea, #fullJournalModal select').forEach(el => {
+                            if (el.type === 'range') el.value = 5;
+                            else el.value = '';
+                        });
+                    }
+
+                    // Reload dashboard
+                    loadDashboard();
+
+                    alert('Journal entry saved!');
+                } else {
+                    alert('Failed to save journal entry.');
+                }
+            } catch (error) {
+                console.error('Error saving journal:', error);
+                alert('Error saving journal entry.');
+            }
+        }
+
+        function openTriggeredModal() {
+            document.getElementById('triggeredModal').classList.add('active');
+            document.getElementById('coachingResponse').style.display = 'none';
+        }
+
+        async function getCoaching() {
+            const triggerType = document.getElementById('trigger_type').value;
+            const intensity = parseInt(document.getElementById('trigger_intensity').value);
+
+            try {
+                const response = await fetch('/api/inner-game/triggered', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({trigger_type: triggerType, intensity: intensity})
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const coaching = data.coaching;
+                    const coachingHtml = `
+                        <div class="coaching-card">
+                            <div class="coaching-section">
+                                <h3>🧘 CALM ACTION</h3>
+                                <p>${coaching.calm_action}</p>
+                            </div>
+
+                            <div class="coaching-section">
+                                <h3>💭 REPLACEMENT THOUGHT</h3>
+                                <p>${coaching.replacement_thought}</p>
+                            </div>
+
+                            <div class="coaching-section">
+                                <h3>📋 BEHAVIORAL RULE</h3>
+                                <p>${coaching.behavioral_rule}</p>
+                            </div>
+
+                            ${coaching.script ? `
+                                <div class="coaching-section">
+                                    <h3>💬 SCRIPT</h3>
+                                    <p>"${coaching.script}"</p>
+                                </div>
+                            ` : ''}
+
+                            <div class="coaching-section">
+                                <h3>🎯 CHALLENGE</h3>
+                                <p>${coaching.challenge}</p>
+                            </div>
+                        </div>
+                    `;
+
+                    document.getElementById('coachingResponse').innerHTML = coachingHtml;
+                    document.getElementById('coachingResponse').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error getting coaching:', error);
+                alert('Error getting coaching.');
+            }
+        }
+
+        function openRepCompletionModal() {
+            if (!currentRep) return;
+
+            document.getElementById('repTitle').textContent = currentRep.title;
+            document.getElementById('repCompletionModal').classList.add('active');
+        }
+
+        async function completeRep() {
+            if (!currentRep) return;
+
+            const repData = {
+                discomfort_before: parseInt(document.getElementById('rep_discomfort_before').value),
+                discomfort_after: parseInt(document.getElementById('rep_discomfort_after').value),
+                what_learned: document.getElementById('rep_what_learned').value
+            };
+
+            try {
+                const response = await fetch(`/api/inner-game/reps/${currentRep.id}/complete`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(repData)
+                });
+
+                if (response.ok) {
+                    closeModal('repCompletionModal');
+
+                    // Clear form
+                    document.getElementById('rep_what_learned').value = '';
+
+                    // Reload dashboard
+                    loadDashboard();
+
+                    alert('🎉 Rep completed! Great work!');
+                } else {
+                    alert('Failed to complete rep.');
+                }
+            } catch (error) {
+                console.error('Error completing rep:', error);
+                alert('Error completing rep.');
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Close modal on background click
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
+    </script>
+
+    <script src="{{ url_for('static', filename='js/pathforge-complete.js') }}"></script>
+</body>
+</html>

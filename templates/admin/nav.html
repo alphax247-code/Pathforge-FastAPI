@@ -1,0 +1,205 @@
+<style>
+    /* Admin Navigation Bar */
+    .main-nav {
+        background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(10, 10, 10, 0.98) 100%);
+        border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+        padding: 0;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    .main-nav.collapsed {
+        border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+    }
+
+    .main-nav.collapsed .nav-menu {
+        display: none;
+    }
+
+    .nav-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-right: 30px;
+        background: rgba(10, 10, 10, 0.5);
+    }
+
+    .nav-brand {
+        color: #D4AF37;
+        font-size: 24px;
+        font-weight: bold;
+        padding: 20px 30px;
+        display: inline-block;
+        letter-spacing: 1px;
+    }
+
+    .nav-toggle {
+        background: rgba(212, 175, 55, 0.2);
+        border: 1px solid rgba(212, 175, 55, 0.3);
+        color: #D4AF37;
+        padding: 10px 15px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 18px;
+        transition: all 0.3s;
+        display: block;
+    }
+
+    .nav-toggle:hover {
+        background: rgba(212, 175, 55, 0.3);
+        transform: scale(1.05);
+    }
+
+    .nav-menu-wrapper {
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+    }
+
+    .main-nav.collapsed .nav-menu-wrapper {
+        max-height: 0;
+    }
+
+    .nav-menu {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: inline-flex;
+        gap: 5px;
+        float: right;
+        margin-right: 30px;
+        flex-wrap: wrap;
+    }
+
+    .nav-menu li {
+        margin: 0;
+    }
+
+    .nav-menu a {
+        display: block;
+        padding: 20px 20px;
+        color: #9E9E9E;
+        text-decoration: none;
+        transition: all 0.3s;
+        font-weight: 500;
+        border-bottom: 3px solid transparent;
+    }
+
+    .nav-menu a:hover {
+        color: #D4AF37;
+        background: rgba(212, 175, 55, 0.05);
+    }
+
+    .nav-menu a.active {
+        color: #D4AF37;
+        border-bottom-color: #D4AF37;
+        background: rgba(212, 175, 55, 0.1);
+    }
+
+    .admin-container {
+        margin-top: 80px !important;
+        transition: margin-top 0.3s ease;
+    }
+
+    .main-nav.collapsed + .admin-container {
+        margin-top: 75px !important;
+    }
+
+    /* Collapsed nav styling */
+    .main-nav.collapsed .nav-brand {
+        padding: 15px 30px;
+    }
+
+    /* Mobile/Tablet responsive */
+    @media (max-width: 1200px) {
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            float: none;
+            margin: 0;
+            gap: 0;
+        }
+
+        .nav-menu li {
+            width: 100%;
+        }
+
+        .nav-menu a {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            border-left: 3px solid transparent;
+        }
+
+        .nav-menu a.active {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            border-left-color: #D4AF37;
+        }
+
+        .nav-menu-wrapper {
+            width: 100%;
+        }
+    }
+</style>
+
+<nav class="main-nav" id="adminNav">
+    <div class="nav-header">
+        <div class="nav-brand">
+            PATHFORGE <span style="font-size: 16px; color: #9E9E9E; font-weight: normal;">/ Admin</span>
+        </div>
+        <button class="nav-toggle" onclick="toggleAdminNav()" title="Hide Navigation Menu">
+            <span id="navToggleIcon">✕</span>
+        </button>
+    </div>
+    <div class="nav-menu-wrapper">
+        <ul class="nav-menu">
+            <li><a href="{{ url_for('admin_dashboard') }}" {% if request.endpoint == 'admin_dashboard' %}class="active"{% endif %}>Dashboard</a></li>
+            <li><a href="{{ url_for('admin_users') }}" {% if request.endpoint == 'admin_users' %}class="active"{% endif %}>Users</a></li>
+            <li><a href="{{ url_for('admin_videos') }}" {% if request.endpoint == 'admin_videos' %}class="active"{% endif %}>Videos</a></li>
+            <li><a href="{{ url_for('admin_forum_posts') }}" {% if request.endpoint == 'admin_forum_posts' %}class="active"{% endif %}>Community</a></li>
+            <li><a href="{{ url_for('admin_database') }}" {% if request.endpoint == 'admin_database' %}class="active"{% endif %}>Database</a></li>
+            <li><a href="{{ url_for('dashboard') }}" style="color: #F44336;">Exit</a></li>
+        </ul>
+    </div>
+</nav>
+
+<script>
+    function toggleAdminNav() {
+        const nav = document.getElementById('adminNav');
+        const icon = document.getElementById('navToggleIcon');
+        const button = icon.parentElement;
+
+        nav.classList.toggle('collapsed');
+
+        // Update icon and tooltip
+        if (nav.classList.contains('collapsed')) {
+            icon.textContent = '☰';
+            button.title = 'Show Navigation Menu';
+            localStorage.setItem('adminNavCollapsed', 'true');
+        } else {
+            icon.textContent = '✕';
+            button.title = 'Hide Navigation Menu';
+            localStorage.setItem('adminNavCollapsed', 'false');
+        }
+    }
+
+    // Restore collapsed state from localStorage
+    document.addEventListener('DOMContentLoaded', function() {
+        const isCollapsed = localStorage.getItem('adminNavCollapsed') === 'true';
+        const nav = document.getElementById('adminNav');
+        const icon = document.getElementById('navToggleIcon');
+        const button = icon.parentElement;
+
+        if (isCollapsed) {
+            nav.classList.add('collapsed');
+            icon.textContent = '☰';
+            button.title = 'Show Navigation Menu';
+        } else {
+            icon.textContent = '✕';
+            button.title = 'Hide Navigation Menu';
+        }
+    });
+</script>

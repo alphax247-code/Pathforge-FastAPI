@@ -1,0 +1,126 @@
+{
+  "practice_types": [
+    {
+      "id": "technique-practice",
+      "title": "Technique Practice",
+      "description": "Master attraction techniques with AI-powered drills. Practice specific conversational techniques and receive detailed feedback on your performance.",
+      "icon": "🎯",
+      "route": "/technique-practice",
+      "badge": "Core",
+      "badge_type": "default",
+      "is_active": true,
+      "requires_premium": false,
+      "order_index": 1,
+      "stats_config": {
+        "sessions": {
+          "label": "Sessions",
+          "source": "attraction_technique_sessions"
+        },
+        "techniques": {
+          "label": "Techniques",
+          "value": 28,
+          "static": true
+        },
+        "avg_score": {
+          "label": "Avg Score",
+          "source": "attraction_technique_sessions",
+          "calculation": "average"
+        }
+      }
+    },
+    {
+      "id": "text-practice",
+      "title": "Text Practice",
+      "description": "Practice texting with AI partners in realistic scenarios. Build frame, create tension, and develop your texting game with instant feedback.",
+      "icon": "💬",
+      "route": "/text-practice",
+      "badge": "Popular",
+      "badge_type": "default",
+      "is_active": true,
+      "requires_premium": false,
+      "order_index": 2,
+      "stats_config": {
+        "sessions": {
+          "label": "Sessions",
+          "source": "speech_sessions",
+          "filter": {"scenario": "text"}
+        },
+        "scenarios": {
+          "label": "Scenarios",
+          "value": 4,
+          "static": true
+        },
+        "avg_score": {
+          "label": "Avg Score",
+          "source": "speech_sessions",
+          "calculation": "average"
+        }
+      }
+    },
+    {
+      "id": "speech-practice",
+      "title": "Voice Practice",
+      "description": "Real-time conversation practice with AI voice simulation. Improve your verbal game and learn to hold frame in live interactions.",
+      "icon": "🎤",
+      "route": "/speech-practice",
+      "badge": "Premium",
+      "badge_type": "premium",
+      "is_active": true,
+      "requires_premium": true,
+      "order_index": 3,
+      "stats_config": {
+        "sessions": {
+          "label": "Sessions",
+          "source": "speech_sessions"
+        },
+        "minutes": {
+          "label": "Minutes",
+          "source": "speech_sessions",
+          "calculation": "sum_duration"
+        },
+        "avg_score": {
+          "label": "Avg Score",
+          "source": "speech_sessions",
+          "calculation": "average"
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "version": "1.0",
+    "last_updated": "2025-01-24",
+    "description": "Practice types configuration file. Add new practice types here and they will automatically appear in the practice hub."
+  },
+  "instructions": {
+    "adding_new_practice": [
+      "1. Add a new object to the practice_types array",
+      "2. Set a unique id (kebab-case)",
+      "3. Define title, description, and icon (emoji or image path)",
+      "4. Set the route where this practice is accessed",
+      "5. Choose a badge: Core, Popular, Premium, New",
+      "6. Set badge_type: default, premium, or new",
+      "7. Set is_active to true to make it visible",
+      "8. Set requires_premium if needed",
+      "9. Set order_index to control display order",
+      "10. Configure stats_config to define which stats to display"
+    ],
+    "badge_types": {
+      "default": "Gold color for core features",
+      "premium": "Bright gold for premium features",
+      "new": "Green color for new features"
+    },
+    "stats_sources": [
+      "attraction_technique_sessions",
+      "speech_sessions",
+      "challenges",
+      "lessons",
+      "custom_table_name"
+    ],
+    "stats_calculations": [
+      "count - Count total records",
+      "average - Average score/value",
+      "sum_duration - Sum of time spent",
+      "static - Use hardcoded value"
+    ]
+  }
+}

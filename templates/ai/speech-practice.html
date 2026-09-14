@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Speech Practice - PathForge{% endblock %}
+
+{% block content %}
+<div style="min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 20px;">
+    <div style="text-align: center; max-width: 600px;">
+        <div style="font-size: 80px; margin-bottom: 20px;">🎤</div>
+        <h1 style="color: #D4AF37; font-size: 2.5em; margin-bottom: 20px;">Speech Practice</h1>
+        <h2 style="color: #FFFFFF; font-size: 1.5em; margin-bottom: 30px;">Coming Soon</h2>
+        <p style="color: #B0B0B0; font-size: 1.1em; line-height: 1.6; margin-bottom: 40px;">
+            Voice-based AI practice is under development. Soon you'll be able to practice conversations with our AI coach using your voice for a more natural and immersive experience.
+        </p>
+        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+            <a href="{{ url_for('ai_menu') }}" style="display: inline-block; padding: 15px 30px; background: linear-gradient(135deg, #D4AF37 0%, #F4D03F 100%); color: #1a1a1a; text-decoration: none; border-radius: 8px; font-weight: 600; transition: transform 0.3s;">
+                Back to AI Menu
+            </a>
+            <a href="{{ url_for('text_practice') }}" style="display: inline-block; padding: 15px 30px; background: rgba(212, 175, 55, 0.2); border: 2px solid #D4AF37; color: #D4AF37; text-decoration: none; border-radius: 8px; font-weight: 600; transition: transform 0.3s;">
+                Try Text Practice
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+a:hover {
+    transform: translateY(-2px);
+}
+</style>
+{% endblock %}

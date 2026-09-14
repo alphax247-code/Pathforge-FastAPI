@@ -1,0 +1,126 @@
+{
+  "title": "Attachment Styles Assessment",
+  "description": "Discover your attachment style in relationships",
+  "questions": [
+    {
+      "id": 1,
+      "question": "How do you typically feel in close relationships?",
+      "options": [
+        {
+          "text": "I feel comfortable being close to others and depending on them",
+          "style": "secure",
+          "points": 3
+        },
+        {
+          "text": "I want to be close but worry that others don't value the relationship as much",
+          "style": "anxious",
+          "points": 3
+        },
+        {
+          "text": "I prefer to maintain my independence and not rely on others too much",
+          "style": "avoidant",
+          "points": 3
+        },
+        {
+          "text": "My feelings about closeness change frequently",
+          "style": "disorganized",
+          "points": 3
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "question": "When conflicts arise in relationships, I usually:",
+      "options": [
+        {
+          "text": "Discuss issues openly and work toward resolution",
+          "style": "secure",
+          "points": 3
+        },
+        {
+          "text": "Worry the conflict means the relationship is ending",
+          "style": "anxious",
+          "points": 3
+        },
+        {
+          "text": "Withdraw and need space to process alone",
+          "style": "avoidant",
+          "points": 3
+        },
+        {
+          "text": "Feel confused about how to respond",
+          "style": "disorganized",
+          "points": 3
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "question": "My view of relationships is generally:",
+      "options": [
+        {
+          "text": "Positive and trusting - relationships can be secure and fulfilling",
+          "style": "secure",
+          "points": 3
+        },
+        {
+          "text": "I want closeness but often fear abandonment or rejection",
+          "style": "anxious",
+          "points": 3
+        },
+        {
+          "text": "I value independence more than emotional intimacy",
+          "style": "avoidant",
+          "points": 3
+        },
+        {
+          "text": "I want closeness but also fear it",
+          "style": "disorganized",
+          "points": 3
+        }
+      ]
+    }
+  ],
+  "results": {
+    "secure": {
+      "title": "Secure Attachment",
+      "description": "You have a secure attachment style. You're comfortable with intimacy and independence, and you generally trust others and feel confident in relationships.",
+      "traits": [
+        "Comfortable with emotional intimacy",
+        "Trusting of partners",
+        "Good at balancing independence and closeness",
+        "Effective at communicating needs"
+      ]
+    },
+    "anxious": {
+      "title": "Anxious Attachment",
+      "description": "You have an anxious attachment style. You may seek high levels of intimacy and approval, and sometimes worry about your partner's commitment or availability.",
+      "traits": [
+        "Strong desire for closeness",
+        "May worry about abandonment",
+        "Sensitive to partner's moods and behaviors",
+        "May need frequent reassurance"
+      ]
+    },
+    "avoidant": {
+      "title": "Avoidant Attachment",
+      "description": "You have an avoidant attachment style. You value independence highly and may feel uncomfortable with too much emotional intimacy or dependence.",
+      "traits": [
+        "Values independence and self-sufficiency",
+        "May feel uncomfortable with too much closeness",
+        "Prefers to handle problems alone",
+        "May prioritize work or hobbies over relationships"
+      ]
+    },
+    "disorganized": {
+      "title": "Disorganized Attachment",
+      "description": "You have a disorganized attachment style. You may experience conflicting desires for closeness and independence, sometimes sending mixed signals to partners.",
+      "traits": [
+        "Conflicting feelings about closeness",
+        "May have unpredictable responses to intimacy",
+        "Can struggle with trust",
+        "May benefit from therapy to develop secure patterns"
+      ]
+    }
+  }
+}

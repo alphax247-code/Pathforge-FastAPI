@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technique Training - PathForge</title>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pathforge-complete.css') }}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000000;
+            color: white;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 60px;
+            border-bottom: 1px solid #1a1a1a;
+            background: #000000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: #D4AF37;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: white;
+            letter-spacing: 2px;
+        }
+
+        nav {
+            display: flex;
+            gap: 40px;
+        }
+
+        nav a {
+            color: #999;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover, nav a.active {
+            color: #D4AF37;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .profile-btn-header {
+            color: #999;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        .profile-btn-header:hover {
+            color: #D4AF37;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 60px 40px;
+        }
+
+        .page-header {
+            margin-bottom: 50px;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-size: 48px;
+            color: #D4AF37;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .page-header p {
+            font-size: 18px;
+            color: #888;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Category Sections */
+        .category-section {
+            margin-bottom: 50px;
+        }
+
+        .category-header {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #333;
+        }
+
+        .category-header h2 {
+            font-size: 32px;
+            color: #D4AF37;
+            margin-bottom: 5px;
+        }
+
+        .category-header .technique-count {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* Techniques Grid */
+        .techniques-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .technique-card {
+            background: #1a1a1a;
+            border: 2px solid #333;
+            border-radius: 16px;
+            padding: 25px;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .technique-card:hover {
+            border-color: #D4AF37;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+        }
+
+        .technique-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #D4AF37, #FFD700);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+
+        .technique-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .technique-card h3 {
+            font-size: 20px;
+            color: #D4AF37;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .technique-card p {
+            font-size: 15px;
+            color: #bbb;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .technique-examples {
+            background: rgba(212, 175, 55, 0.05);
+            border-left: 3px solid #D4AF37;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 15px;
+        }
+
+        .technique-examples h4 {
+            font-size: 12px;
+            color: #D4AF37;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .technique-examples ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .technique-examples li {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 5px;
+            font-style: italic;
+        }
+
+        .technique-examples li::before {
+            content: '💬 ';
+            margin-right: 5px;
+        }
+
+        /* Start Button */
+        .start-training-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #D4AF37 0%, #FFD700 100%);
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .start-training-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #1a1a1a;
+            border: 2px solid #D4AF37;
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .modal-content h2 {
+            color: #D4AF37;
+            margin-bottom: 20px;
+        }
+
+        .modal-content p {
+            color: #bbb;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .modal-btn.primary {
+            background: linear-gradient(135deg, #D4AF37 0%, #FFD700 100%);
+            color: #000;
+        }
+
+        .modal-btn.secondary {
+            background: #333;
+            color: #fff;
+        }
+
+        .modal-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .container {
+                padding: 40px 20px;
+            }
+
+            .page-header h1 {
+                font-size: 36px;
+            }
+
+            .techniques-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    {% include 'nav.html' %}
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="page-header">
+            <h1>Emotional Intelligence Training</h1>
+            <p>Master specific conversation techniques with AI-powered practice. Select a technique below and get real-time feedback from OldNameJack.</p>
+        </div>
+
+        <!-- Technique Categories -->
+        {% for category in categories %}
+        <div class="category-section">
+            <div class="category-header">
+                <h2>{{ category.category }}</h2>
+                <span class="technique-count">{{ category.techniques|length }} technique{% if category.techniques|length != 1 %}s{% endif %} available</span>
+            </div>
+
+            <div class="techniques-grid">
+                {% for technique in category.techniques %}
+                <div class="technique-card" onclick="startTechnique('{{ technique.id }}', '{{ technique.name }}')">
+                    <h3>{{ technique.name }}</h3>
+                    <p>{{ technique.description }}</p>
+
+                    <div class="technique-examples">
+                        <h4>Example Phrases:</h4>
+                        <ul>
+                            <li>"There's something I should tell you... but maybe later"</li>
+                            <li>"You'd be surprised if you knew..."</li>
+                        </ul>
+                    </div>
+
+                    <button class="start-training-btn" onclick="event.stopPropagation(); startTechnique('{{ technique.id }}', '{{ technique.name }}')">
+                        Start Training
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+
+    <script>
+        function startTechnique(techniqueId, techniqueName) {
+            // Store technique info for text-practice to use
+            sessionStorage.setItem('selectedTechnique', JSON.stringify({
+                id: techniqueId,
+                name: techniqueName
+            }));
+
+            // Redirect directly to text-practice
+            window.location.href = `/text-practice?technique=${techniqueId}`;
+        }
+    </script>
+</body>
+</html>
