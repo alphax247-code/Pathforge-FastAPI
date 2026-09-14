@@ -154,14 +154,12 @@ def after_request(response):
 # ============================================================
 # Register Blueprints
 # ============================================================
-from routes.auth_routes import auth_bp
 from routes.main_routes import main_bp
 from routes.game_routes import game_bp
 from routes.admin_routes import admin_bp
 from routes.api_routes import api_bp
 from routes.inner_game_routes import inner_game_bp
 
-app.register_blueprint(auth_bp)
 app.register_blueprint(main_bp)
 app.register_blueprint(game_bp)
 app.register_blueprint(admin_bp)
