@@ -15,6 +15,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from starlette.middleware.wsgi import WSGIMiddleware
 
+from routes.auth_routes import router as auth_router
+
 logger = logging.getLogger(__name__)
 legacy_error: str | None = None
 
@@ -43,6 +45,9 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
+
+# Native FastAPI routes must be registered before the catch-all Flask mount.
+app.include_router(auth_router)
 
 
 @app.get("/api/v1/health", tags=["system"])
