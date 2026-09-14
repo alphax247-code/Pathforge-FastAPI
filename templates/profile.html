@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - PathForge</title>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pathforge-complete.css') }}">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    {% include 'nav.html' %}
+
+    <!-- Main Content -->
+    <main>
+        <!-- Page Header -->
+        <section class="page-header">
+            <h1>Your Profile</h1>
+            <p>Track your progress and manage your account settings</p>
+        </section>
+
+        <!-- Profile Content -->
+        <div class="profile-layout">
+            <!-- Left Column -->
+            <div class="profile-main">
+                <!-- User Info Card -->
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="profile-avatar"></div>
+                        <div class="profile-details">
+                            <h2>{{ user.username }}</h2>
+                            <p>Member since {% if user.created_at %}{{ user.created_at.strftime('%B %Y') if user.created_at.__class__.__name__ == 'datetime' else user.created_at }}{% else %}Recently{% endif %}</p>
+                            <span class="level-badge">Level {{ progress.level }}</span>
+                        </div>
+                    </div>
+                    <button class="edit-profile-btn">Edit Profile</button>
+                </div>
+
+                <!-- Stats Card -->
+                <div class="profile-card">
+                    <h2>Your Statistics</h2>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value">{{ progress.level }}</div>
+                            <div class="stat-label">Current Level</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">{{ progress.completed_lessons.split(',') | length if progress.completed_lessons else 0 }}</div>
+                            <div class="stat-label">Lessons Completed</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">{{ progress.completed_exercises.split(',') | length if progress.completed_exercises else 0 }}</div>
+                            <div class="stat-label">Practice Sessions</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">{{ user.missions | selectattr('status', 'equalto', 'completed') | list | length }}</div>
+                            <div class="stat-label">Missions Done</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">{{ progress.xp }}</div>
+                            <div class="stat-label">Total XP</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">{{ progress.streak }}</div>
+                            <div class="stat-label">Day Streak</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Onboarding Info Card -->
+                {% if progress.onboarding_completed %}
+                <div class="profile-card">
+                    <h2>Your Profile</h2>
+                    <div class="onboarding-info">
+                        <div class="info-item">
+                            <strong>Goals:</strong>
+                            <p>{{ progress.goals.replace(',', ', ') if progress.goals else 'Not set' }}</p>
+                        </div>
+                        <div class="info-item">
+                            <strong>Experience Level:</strong>
+                            <p>{{ progress.experience_level.capitalize() if progress.experience_level else 'Not set' }}</p>
+                        </div>
+                        <div class="info-item">
+                            <strong>Time Commitment:</strong>
+                            <p>{{ progress.time_commitment if progress.time_commitment else 'Not set' }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Personality Assessment Results -->
+                {% if assessment %}
+                <!-- Attachment Style Card -->
+                <div class="profile-card">
+                    <h2>Attachment Style</h2>
+                    <div class="dominant-label">{{ assessment.primary_attachment_style.replace('_', ' ').title() if assessment.primary_attachment_style else 'Not assessed' }}</div>
+                    <div class="personality-description">
+                        {% if assessment.primary_attachment_style == 'secure' %}
+                        You tend to be comfortable with intimacy and independence, finding it easy to form healthy relationships. You communicate openly and trust comes naturally to you.
+                        {% elif assessment.primary_attachment_style == 'anxious' %}
+                        You may seek high levels of intimacy and approval, sometimes worrying about your relationships. You deeply value connection and want reassurance from those close to you.
+                        {% elif assessment.primary_attachment_style == 'avoidant' %}
+                        You value independence and may feel uncomfortable with too much closeness in relationships. You maintain your autonomy and prefer emotional self-reliance.
+                        {% elif assessment.primary_attachment_style == 'fearful' %}
+                        You may want close relationships but feel uncomfortable trusting or depending on others. You desire intimacy but worry about getting hurt if you let people too close.
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Seduction Archetype Card -->
+                <div class="profile-card">
+                    <h2>Seduction Archetype</h2>
+                    <div class="dominant-label">{{ assessment.primary_archetype.replace('_', ' ').title() if assessment.primary_archetype else 'Not assessed' }}</div>
+                    <div class="personality-description">
+                        {% if assessment.primary_archetype == 'siren' %}
+                        You draw others in with mystery, allure, and an irresistible aura. You have a magnetic presence that captivates people through your sensual and enigmatic energy.
+                        {% elif assessment.primary_archetype == 'rake' %}
+                        You pursue with intensity and passion, making others feel desired. You focus your attention completely on those you're interested in, making them feel like the center of your world.
+                        {% elif assessment.primary_archetype == 'ideal_lover' %}
+                        You adapt to fulfill others' deepest fantasies and longings. You have an intuitive ability to understand what people truly want and become their perfect romantic ideal.
+                        {% elif assessment.primary_archetype == 'dandy' %}
+                        You stand out through unconventional style and bold uniqueness. You challenge norms and create intrigue through your distinctive, confident self-expression.
+                        {% elif assessment.primary_archetype == 'natural' %}
+                        You charm with childlike playfulness and spontaneous joy. Your authentic, unaffected nature draws people in with its refreshing sincerity and playful energy.
+                        {% elif assessment.primary_archetype == 'coquette' %}
+                        You create desire by giving affection then pulling back. You understand the power of push-pull dynamics and keep people wanting more through strategic distance.
+                        {% elif assessment.primary_archetype == 'charmer' %}
+                        You make others feel valued, seen, and comfortable in your presence. Your warmth and attentiveness create an atmosphere where people feel accepted and appreciated.
+                        {% elif assessment.primary_archetype == 'charismatic' %}
+                        You naturally attract attention and admiration without trying. You have a radiant quality that makes people want to be near you and bask in your energy.
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Shadow Pattern Card -->
+                <div class="profile-card">
+                    <h2>Shadow Pattern</h2>
+                    <div class="dominant-label">{{ assessment.primary_shadow.replace('_', ' ').title() if assessment.primary_shadow else 'Not assessed' }}</div>
+                    <div class="personality-description">
+                        {% if assessment.primary_shadow == 'the_innocent' %}
+                        You seek simplicity and safety, sometimes avoiding harsh realities. You maintain hope and optimism, though this can lead to denial of life's darker aspects. Your challenge is to face complexity without losing your essential goodness.
+                        {% elif assessment.primary_shadow == 'the_orphan' %}
+                        You carry feelings of abandonment and struggle to trust fully. You've experienced betrayal or disappointment that makes you cautious. Your journey is to find belonging while honoring your protective instincts.
+                        {% elif assessment.primary_shadow == 'the_warrior' %}
+                        You prove yourself through battles and standing up strongly. You face challenges head-on and defend what matters to you. Your task is to know when to fight and when to surrender.
+                        {% elif assessment.primary_shadow == 'the_caregiver' %}
+                        You prioritize others' needs, sometimes at your own expense. Your nurturing nature is a gift, but you must learn that self-care isn't selfish - it's necessary.
+                        {% elif assessment.primary_shadow == 'the_seeker' %}
+                        You crave freedom and new experiences, seeking fulfillment elsewhere. You're always searching for something more, which drives growth but can prevent contentment. Your lesson is to find peace in the present.
+                        {% elif assessment.primary_shadow == 'the_destroyer' %}
+                        You sometimes end things before they can hurt you. You understand that destruction can be necessary for transformation, but you must learn to discern what needs to end and what deserves to be healed.
+                        {% elif assessment.primary_shadow == 'the_creator' %}
+                        You feel most alive when creating something new and original. Your imagination and drive to manifest ideas are powerful, but perfectionism can become self-sabotage. Your gift is bringing new realities into existence.
+                        {% elif assessment.primary_shadow == 'the_magician' %}
+                        You transform situations but worry about misusing your power. You understand how to influence and catalyze change in yourself and others. Your responsibility is to use this power wisely and ethically.
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Achievements Card -->
+                <div class="profile-card">
+                    <h2>Achievements</h2>
+                    <div class="achievements-grid">
+                        <div class="achievement-item unlocked">
+                            <div class="achievement-icon">🏆</div>
+                            <div class="achievement-info">
+                                <h3>First Steps</h3>
+                                <p>Completed your first lesson</p>
+                            </div>
+                        </div>
+                        <div class="achievement-item unlocked">
+                            <div class="achievement-icon">💬</div>
+                            <div class="achievement-info">
+                                <h3>Conversation Starter</h3>
+                                <p>Completed 10 AI practice sessions</p>
+                            </div>
+                        </div>
+                        <div class="achievement-item unlocked">
+                            <div class="achievement-icon">🔥</div>
+                            <div class="achievement-info">
+                                <h3>Week Warrior</h3>
+                                <p>7 day login streak</p>
+                            </div>
+                        </div>
+                        <div class="achievement-item locked">
+                            <div class="achievement-icon">⭐</div>
+                            <div class="achievement-info">
+                                <h3>Master Communicator</h3>
+                                <p>Complete all conversation lessons</p>
+                            </div>
+                        </div>
+                        <div class="achievement-item locked">
+                            <div class="achievement-icon">💎</div>
+                            <div class="achievement-info">
+                                <h3>Confidence King</h3>
+                                <p>Reach 95+ confidence score</p>
+                            </div>
+                        </div>
+                        <div class="achievement-item locked">
+                            <div class="achievement-icon">🎯</div>
+                            <div class="achievement-info">
+                                <h3>Mission Master</h3>
+                                <p>Complete 25 missions</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="profile-sidebar">
+                <!-- Admin Access (only visible for admin users) -->
+                {% if user.is_admin %}
+                <div class="profile-card" style="border: 2px solid #D4AF37; background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(255, 215, 0, 0.05) 100%);">
+                    <h2 style="color: #D4AF37;">⚡ Admin Access</h2>
+                    <p style="color: #9E9E9E; font-size: 14px; margin-bottom: 15px;">Manage all aspects of PathForge</p>
+                    <div class="admin-links" style="display: flex; flex-direction: column; gap: 10px;">
+                        <a href="{{ url_for('admin_dashboard') }}" class="admin-link-btn" style="display: block; padding: 12px; background: rgba(212, 175, 55, 0.2); border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 8px; color: #D4AF37; text-decoration: none; text-align: center; font-weight: 600; transition: all 0.3s;">
+                            🎛️ Admin Dashboard
+                        </a>
+                        <a href="{{ url_for('admin_users') }}" class="admin-link-btn" style="display: block; padding: 12px; background: rgba(212, 175, 55, 0.2); border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 8px; color: #D4AF37; text-decoration: none; text-align: center; font-weight: 600; transition: all 0.3s;">
+                            👥 Manage Users
+                        </a>
+                        <a href="{{ url_for('admin_videos') }}" class="admin-link-btn" style="display: block; padding: 12px; background: rgba(212, 175, 55, 0.2); border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 8px; color: #D4AF37; text-decoration: none; text-align: center; font-weight: 600; transition: all 0.3s;">
+                            📹 Manage Videos
+                        </a>
+                        {# <a href="{{ url_for('admin_lessons') }}" class="admin-link-btn">📚 Manage Lessons</a> #}
+                        {# <a href="{{ url_for('admin_challenges') }}" class="admin-link-btn">🏆 Manage Challenges</a> #}
+                    </div>
+                </div>
+                <style>
+                    .admin-link-btn:hover {
+                        background: rgba(212, 175, 55, 0.3) !important;
+                        transform: translateY(-2px);
+                        box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+                    }
+                </style>
+                {% endif %}
+
+                <!-- Account Settings -->
+                <div class="profile-card">
+                    <h2>Account Settings</h2>
+                    <div class="settings-list">
+                        <div class="setting-item" onclick="editSetting('email')">
+                            <span>Email</span>
+                            <span class="setting-value">{{ user.email }}</span>
+                        </div>
+                        <div class="setting-item" onclick="editSetting('password')">
+                            <span>Password</span>
+                            <span class="setting-value">••••••••</span>
+                        </div>
+                        <div class="setting-item" onclick="editSetting('notifications')">
+                            <span>Notifications</span>
+                            <span class="setting-value">On</span>
+                        </div>
+                        <div class="setting-item" onclick="editSetting('privacy')">
+                            <span>Privacy</span>
+                            <span class="setting-value">Private</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Subscription Card -->
+                <div class="profile-card">
+                    <h2>Subscription</h2>
+                    <div class="subscription-info">
+                        <div class="plan-name">Free Plan</div>
+                        <p>Upgrade to unlock all features</p>
+                        <button class="upgrade-plan-btn">Upgrade Now</button>
+                    </div>
+                    <div class="plan-features">
+                        <div class="feature-item">
+                            <span>✓</span>
+                            <span>5 Lessons per month</span>
+                        </div>
+                        <div class="feature-item disabled">
+                            <span>×</span>
+                            <span>Unlimited AI Practice</span>
+                        </div>
+                        <div class="feature-item disabled">
+                            <span>×</span>
+                            <span>All Missions Unlocked</span>
+                        </div>
+                        <div class="feature-item disabled">
+                            <span>×</span>
+                            <span>Priority Support</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Danger Zone -->
+                <div class="profile-card danger-zone">
+                    <h2>Account Actions</h2>
+                    {% if not user.is_admin %}
+                    <button class="upgrade-plan-btn" onclick="becomeAdmin()" style="margin-bottom: 10px; background: linear-gradient(135deg, #D4AF37 0%, #FFD700 100%); border: none;">
+                        ⚡ Become Admin (Dev Only)
+                    </button>
+                    {% endif %}
+                    <button class="danger-btn" onclick="logout()">Log Out</button>
+                    <button class="danger-btn" onclick="deleteAccount()">Delete Account</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/pathforge-complete.js') }}"></script>
+    <script>
+        async function becomeAdmin() {
+            if (!confirm('Make yourself an admin? This is for development purposes only.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/admin/make-admin', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('✅ You are now an admin! Reloading page...');
+                    window.location.reload();
+                } else {
+                    alert('❌ Error: ' + (data.error || 'Failed to become admin'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('❌ Error making you admin. Check console for details.');
+            }
+        }
+    </script>
+</body>
+</html>
