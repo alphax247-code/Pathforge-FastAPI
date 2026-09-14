@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ resource.title }} - PathForge</title>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pathforge-complete.css') }}">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-left">
+            <div class="logo-icon">
+                <img src="{{ url_for('static', filename='assets/icons/main icon.svg') }}\" alt="PathForge Logo" style="width: 60px; height: 60px;">
+            </div>
+            <div class="logo">PATHFORGE</div>
+        </div>
+        <nav>
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('lessons') }}">Lessons</a>
+            <a href="{{ url_for('missions') }}">Missions</a>
+            <a href="{{ url_for('inner_game') }}" class="active">Inner Game</a>
+        </nav>
+        <div class="header-right">
+            <a href="{{ url_for('profile') }}" class="profile-btn-header">Profile</a>
+            <button class="upgrade-btn" onclick="window.location.href='{{ url_for('pricing') }}'">Upgrade</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Breadcrumb -->
+        <div style="max-width: 1200px; margin: 80px auto 20px; padding: 0 20px;">
+            <a href="{{ url_for('inner_game') }}" style="color: #9E9E9E; text-decoration: none; font-size: 14px;">← Back to Inner Game</a>
+        </div>
+
+        <!-- Resource Content -->
+        <div style="max-width: 1200px; margin: 20px auto; padding: 0 20px;">
+            <div class="inner-game-card">
+                <!-- Header -->
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 20px;">
+                    <div>
+                        <span style="background: #D4AF37; color: #1a1a1a; padding: 6px 15px; border-radius: 15px; font-size: 13px; font-weight: bold;">{{ resource.resource_type.upper() }}</span>
+                        {% if progress and progress.completed %}
+                        <span style="color: #4CAF50; font-size: 14px; margin-left: 15px;">✓ Completed</span>
+                        {% endif %}
+                    </div>
+                    {% if resource.estimated_duration %}
+                    <span style="color: #9E9E9E; font-size: 14px;">{{ resource.estimated_duration }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- Title and Description -->
+                <h1 style="color: #D4AF37; font-size: 32px; margin-bottom: 15px;">{{ resource.title }}</h1>
+                <p style="color: #E0E0E0; font-size: 18px; line-height: 1.6; margin-bottom: 25px;">{{ resource.description }}</p>
+
+                <!-- Traits This Helps With -->
+                {% if resource.target_traits %}
+                <div style="margin-bottom: 30px;">
+                    <h3 style="color: #fff; font-size: 16px; margin-bottom: 10px;">This resource helps with:</h3>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        {% for trait in resource.target_traits %}
+                        <span style="background: rgba(212, 175, 55, 0.2); color: #D4AF37; padding: 6px 14px; border-radius: 12px; font-size: 13px;">{{ trait.display_name }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if resource.helps_with %}
+                <div style="background: rgba(76, 175, 80, 0.1); border-left: 3px solid #4CAF50; padding: 15px; margin-bottom: 30px; border-radius: 5px;">
+                    <p style="color: #4CAF50; font-size: 15px; margin: 0;"><strong>Focus:</strong> {{ resource.helps_with }}</p>
+                </div>
+                {% endif %}
+
+                <!-- Main Content -->
+                <div style="background: #0f0f0f; padding: 30px; border-radius: 10px; margin-bottom: 30px;">
+                    <div style="color: #E0E0E0; font-size: 16px; line-height: 1.8;">
+                        {{ resource.content|safe if resource.content else '<p style="color: #9E9E9E; text-align: center; padding: 40px;">Content coming soon...</p>' }}
+                    </div>
+                </div>
+
+                <!-- Completion Button -->
+                {% if not (progress and progress.completed) %}
+                <div style="text-align: center; margin-top: 40px;">
+                    <button onclick="markComplete()" style="background: linear-gradient(135deg, #D4AF37, #FFD700); color: #1a1a1a; border: none; padding: 15px 40px; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: transform 0.2s;">
+                        Mark as Complete
+                    </button>
+                </div>
+                {% else %}
+                <div style="text-align: center; margin-top: 40px;">
+                    <p style="color: #4CAF50; font-size: 16px;">✓ You've completed this resource</p>
+                    <a href="{{ url_for('inner_game') }}" style="color: #D4AF37; text-decoration: none; font-size: 14px;">Continue to more resources →</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function markComplete() {
+            fetch('{{ url_for("complete_inner_game_resource", resource_id=resource.id) }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Show success message
+                    alert('Great job! Resource marked as complete.');
+                    // Reload page to show completion status
+                    window.location.reload();
+                } else {
+                    alert('Error marking resource as complete. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error marking resource as complete. Please try again.');
+            });
+        }
+    </script>
+
+    <script src="{{ url_for('static', filename='js/pathforge-complete.js') }}"></script>
+</body>
+</html>
