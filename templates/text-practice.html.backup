@@ -1,0 +1,2544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Practice - PathForge</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000000;
+            color: white;
+            min-height: 100vh;
+            overflow-y: auto;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 60px;
+            border-bottom: 1px solid #1a1a1a;
+            background: #000000;
+            position: relative;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: #D4AF37;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: white;
+            letter-spacing: 2px;
+        }
+
+        nav {
+            display: flex;
+            gap: 40px;
+        }
+
+        nav a {
+            color: #999;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: white;
+        }
+
+        .upgrade-btn {
+            background: transparent;
+            color: #D4AF37;
+            border: 2px solid #D4AF37;
+            padding: 10px 28px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .upgrade-btn:hover {
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        /* Page Header */
+        .page-header {
+            display: none;
+        }
+
+        /* Scenario Setup Styling */
+        main {
+            padding: 60px 80px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .scenario-setup {
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.98) 0%, rgba(15, 15, 25, 1) 100%);
+            border: 3px solid rgba(212, 175, 55, 0.4);
+            border-radius: 20px;
+            padding: 60px 50px;
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.8), 0 0 100px rgba(212, 175, 55, 0.2);
+            animation: fadeInScale 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .scenario-setup h2 {
+            color: #D4AF37;
+            font-size: 36px;
+            margin-bottom: 12px;
+            text-align: center;
+            font-weight: 700;
+            text-shadow: 0 2px 20px rgba(212, 175, 55, 0.4);
+        }
+
+        .scenario-setup h3 {
+            color: #D4AF37;
+            font-size: 22px;
+            margin: 30px 0 15px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .scenario-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .scenario-card {
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.8) 0%, rgba(15, 15, 25, 0.9) 100%);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scenario-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .scenario-card:hover {
+            border-color: #D4AF37;
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
+        }
+
+        .scenario-card:hover::before {
+            opacity: 1;
+        }
+
+        .scenario-card.selected {
+            border-color: #FFD700;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(255, 215, 0, 0.1) 100%);
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.4), inset 0 0 20px rgba(212, 175, 55, 0.1);
+        }
+
+        .scenario-icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        .scenario-card h3 {
+            color: #FFD700;
+            font-size: 18px;
+            margin: 10px 0 8px;
+            font-weight: 600;
+        }
+
+        .scenario-card p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .difficulty-selector {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 25px 0;
+        }
+
+        .difficulty-btn {
+            padding: 12px 30px;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.8) 0%, rgba(15, 15, 25, 0.9) 100%);
+            color: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 15px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .difficulty-btn:hover {
+            border-color: #D4AF37;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .difficulty-btn.selected {
+            border-color: #FFD700;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(255, 215, 0, 0.15) 100%);
+            color: #FFD700;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+        }
+
+        .difficulty-btn.easy:hover,
+        .difficulty-btn.easy.selected {
+            border-color: #4CAF50;
+            color: #4CAF50;
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .difficulty-btn.medium:hover,
+        .difficulty-btn.medium.selected {
+            border-color: #FF9800;
+            color: #FF9800;
+            box-shadow: 0 0 20px rgba(255, 152, 0, 0.4);
+        }
+
+        .difficulty-btn.hard:hover,
+        .difficulty-btn.hard.selected {
+            border-color: #F44336;
+            color: #F44336;
+            box-shadow: 0 0 20px rgba(244, 67, 54, 0.4);
+        }
+
+        .start-practice-btn {
+            background: linear-gradient(135deg, #B8860B 0%, #D4AF37 50%, #FFD700 100%);
+            color: #000;
+            padding: 15px 50px;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: all 0.4s ease;
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .start-practice-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.6);
+            filter: brightness(1.2);
+        }
+
+        .start-practice-btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* Main Container */
+        .practice-container {
+            display: flex;
+            min-height: calc(100vh - 70px);
+            gap: 2px;
+            background: #1a1a1a;
+        }
+
+        /* Left Stats Sidebar */
+        .left-stats-sidebar {
+            width: 180px;
+            background: #000000;
+            padding: 12px;
+            overflow-y: auto;
+            border-right: none;
+        }
+
+        .left-stats-sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .left-stats-sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .left-stats-sidebar::-webkit-scrollbar-thumb {
+            background: rgba(212, 175, 55, 0.15);
+            border-radius: 3px;
+        }
+
+        .left-stats-sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(212, 175, 55, 0.25);
+        }
+
+        /* Chat Panel */
+        .chat-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #0a0a0a;
+            border-right: none;
+        }
+
+        .practice-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #0a0a0a;
+            border-right: none;
+        }
+
+        /* Tips Sidebar */
+        .right-tips-sidebar {
+            width: 240px;
+            background: #0a0a0a;
+            padding: 12px;
+            overflow-y: auto;
+            border-left: none;
+        }
+
+        .right-tips-sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .right-tips-sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .right-tips-sidebar::-webkit-scrollbar-thumb {
+            background: rgba(212, 175, 55, 0.15);
+            border-radius: 3px;
+        }
+
+        .right-tips-sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(212, 175, 55, 0.25);
+        }
+
+        /* Conversation Transcript */
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px 30px 24px 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            background: linear-gradient(180deg, #0a0a0a 0%, #000000 100%);
+            min-height: 0;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: rgba(212, 175, 55, 0.15);
+            border-radius: 4px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: rgba(212, 175, 55, 0.25);
+        }
+
+        .transcript-item {
+            animation: fadeInSmooth 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 8px;
+        }
+
+        @keyframes fadeInSmooth {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .user-message {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            animation: fadeInSmooth 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 8px;
+        }
+
+        .ai-message {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            animation: fadeInSmooth 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 8px;
+        }
+
+        .user-message .speaker,
+        .ai-message .speaker {
+            font-size: 11px;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .user-message .message-content,
+        .ai-message .message-content {
+            padding: 16px 22px;
+            border-radius: 18px;
+            font-size: 15px;
+            line-height: 1.6;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .ai-message .message-content {
+            background: #1A1A1A;
+            border-left: 3px solid #333;
+            color: #d4d4d4;
+        }
+
+        .user-message .message-content {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.08) 100%);
+            border-right: 3px solid rgba(212, 175, 55, 0.5);
+            color: #ffffff;
+        }
+
+        .user-message .message-content p,
+        .ai-message .message-content p {
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.08) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            width: fit-content;
+            margin: 8px 0;
+        }
+
+        .typing-indicator span {
+            height: 10px;
+            width: 10px;
+            background: #D4AF37;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 3px;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+            30% { transform: translateY(-8px); opacity: 1; }
+        }
+
+        /* Session Timer */
+        .session-timer {
+            text-align: right;
+            padding: 8px 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .timer-display {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            justify-content: flex-end;
+        }
+
+        .timer-icon {
+            font-size: 14px;
+        }
+
+        .timer-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #D4AF37;
+            font-family: 'Courier New', monospace;
+        }
+
+        .timer-value.warning {
+            color: #ff6b6b;
+            animation: pulse 1s infinite;
+        }
+
+        .timer-value.critical {
+            color: #ff4444;
+            animation: pulse 0.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Session Limit Modal */
+        .session-limit-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .session-limit-content {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0f0f19 100%);
+            border: 2px solid rgba(212, 175, 55, 0.4);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            max-width: 400px;
+        }
+
+        .session-limit-content h2 {
+            color: #D4AF37;
+            margin-bottom: 16px;
+        }
+
+        .session-limit-content p {
+            color: #999;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .session-limit-content .upgrade-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #FFD700 0%, #D4AF37 100%);
+            color: #000;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-right: 12px;
+        }
+
+        .session-limit-content .close-modal-btn {
+            background: transparent;
+            border: 1px solid #444;
+            color: #999;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* Chat Input */
+        .input-area {
+            padding: 16px 30px 20px 30px;
+            background: #0a0a0a;
+            border-top: 1px solid #1a1a1a;
+            flex-shrink: 0;
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 12px;
+            background: #000000;
+            border: 1px solid #2a2a2a;
+            border-radius: 12px;
+            padding: 16px 24px;
+            transition: all 0.3s ease;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: rgba(212, 175, 55, 0.5);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.08);
+        }
+
+        .text-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 16px;
+            resize: none;
+            font-family: inherit;
+            min-height: 50px;
+            max-height: 150px;
+            line-height: 1.6;
+            padding: 4px 0;
+        }
+
+        .text-input:focus {
+            outline: none;
+        }
+
+        .text-input::placeholder {
+            color: #666;
+        }
+
+        .send-button {
+            background: linear-gradient(135deg, #FFD700 0%, #D4AF37 50%, #B8860B 100%);
+            border: none;
+            color: #000;
+            padding: 12px 28px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+            height: fit-content;
+            align-self: flex-end;
+        }
+
+        .send-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+        }
+
+        .send-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .end-practice-btn {
+            padding: 14px 22px;
+            background: rgba(244, 67, 54, 0.2);
+            color: #F44336;
+            border: 2px solid rgba(244, 67, 54, 0.5);
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 14px;
+        }
+
+        .end-practice-btn:hover {
+            background: rgba(244, 67, 54, 0.3);
+            border-color: #F44336;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(244, 67, 54, 0.4);
+        }
+
+        /* Stats Box */
+        .stats-card, .stats-box {
+            padding: 16px;
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stats-card h3, .stats-box h4 {
+            font-size: 14px;
+            color: #D4AF37;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+
+        .stat-row span:first-child {
+            color: #999;
+        }
+
+        .stat-value {
+            color: white;
+            font-weight: 600;
+        }
+
+        /* Progress Box */
+        .progress-card, .progress-box {
+            margin-bottom: 20px;
+            padding: 16px;
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 12px;
+        }
+
+        .progress-card h3, .progress-box h4 {
+            font-size: 14px;
+            color: #D4AF37;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .progress-bar-container {
+            height: 8px;
+            background: #1A1A1A;
+            border-radius: 999px;
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+
+        .progress-bar, .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #B8860B 0%, #D4AF37 50%, #FFD700 100%);
+            transition: width 0.5s ease;
+            position: relative;
+        }
+
+        .progress-bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 30px;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3));
+        }
+
+        /* Feedback Box */
+        .voice-feedback-box, .score-history-card {
+            margin-top: 0;
+            margin-bottom: 20px;
+            padding: 16px;
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 12px;
+        }
+
+        .voice-feedback-box h4, .score-history-card h3 {
+            font-size: 14px;
+            color: #D4AF37;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .feedback-item {
+            margin-bottom: 12px;
+        }
+
+        .feedback-item span {
+            display: block;
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 6px;
+        }
+
+        .feedback-bar {
+            height: 6px;
+            background: #1A1A1A;
+            border-radius: 999px;
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+
+        .feedback-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #B8860B 0%, #D4AF37 50%, #FFD700 100%);
+            transition: width 0.5s ease;
+        }
+
+        /* Tips Card */
+        .tips-card {
+            padding: 16px;
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .tips-card h3 {
+            font-size: 14px;
+            color: #D4AF37;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .tips-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .tips-card li {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 8px 0;
+            font-size: 13px;
+            line-height: 1.5;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .tips-card li:last-child {
+            border-bottom: none;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+
+        .stat-label {
+            color: #999;
+        }
+
+        .stat-value {
+            color: white;
+            font-weight: 600;
+        }
+
+        /* Scenario Context Banner */
+        .scenario-context-banner {
+            background: rgba(15, 15, 15, 0.95);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+            padding: 10px 30px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .context-label {
+            font-size: 11px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            margin-bottom: 3px;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        .context-text {
+            font-size: 13px;
+            color: #ccc;
+            line-height: 1.5;
+            display: inline;
+        }
+
+        .context-grid {
+            display: inline-flex;
+            gap: 20px;
+            margin-left: 20px;
+        }
+
+        .context-item-value {
+            font-size: 13px;
+            color: #D4AF37;
+            font-weight: 600;
+            display: inline;
+        }
+
+        .scenario-info-bar {
+            padding: 10px 30px;
+            background: #000000;
+            border-bottom: 1px solid #1a1a1a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .scenario-details h2 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #D4AF37;
+            margin-bottom: 4px;
+            font-family: serif;
+        }
+
+        .difficulty-tag {
+            display: inline-block;
+            padding: 3px 8px;
+            background: rgba(212, 175, 55, 0.08);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            color: #D4AF37;
+        }
+
+        /* Feedback Modal */
+        .feedback-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .feedback-content {
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.98) 0%, rgba(15, 15, 25, 1) 100%);
+            border: 3px solid rgba(212, 175, 55, 0.4);
+            border-radius: 20px;
+            padding: 50px;
+            max-width: 650px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feedback-content h2 {
+            color: #D4AF37;
+            font-size: 32px;
+            margin: 0 0 20px 0;
+            font-weight: 700;
+        }
+
+        .score-display {
+            font-size: 80px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #B8860B 0%, #D4AF37 50%, #FFD700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 25px 0;
+            text-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+            filter: drop-shadow(0 4px 12px rgba(212, 175, 55, 0.4));
+        }
+
+        .feedback-text {
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.9;
+            margin: 25px 0;
+            font-size: 16px;
+            padding: 0 20px;
+        }
+
+        .xp-awarded {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(255, 215, 0, 0.1) 100%);
+            border: 2px solid rgba(212, 175, 55, 0.4);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 30px 0;
+            font-size: 22px;
+            color: #FFD700;
+            font-weight: 700;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 1400px) {
+            .left-stats-sidebar {
+                width: 160px;
+            }
+
+            .right-tips-sidebar {
+                width: 220px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .practice-container {
+                flex-direction: column;
+                gap: 2px;
+                min-height: calc(100vh - 70px);
+            }
+
+            .left-stats-sidebar {
+                width: 100%;
+                max-height: 25vh;
+                border-right: none;
+                border-bottom: none;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+                overflow-y: auto;
+            }
+
+            .right-tips-sidebar {
+                width: 100%;
+                max-height: 30vh;
+                border-left: none;
+                border-top: none;
+            }
+
+            .chat-messages {
+                padding: 20px 50px;
+            }
+
+            .input-area {
+                padding: 12px 50px 16px 50px;
+            }
+
+            .scenario-info-bar {
+                padding: 10px 50px;
+            }
+
+            .scenario-context-banner {
+                padding: 6px 50px;
+            }
+
+            .context-grid {
+                display: block;
+                margin-left: 10px;
+            }
+
+            .context-grid > div {
+                display: inline-block;
+                margin-right: 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .scenario-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .difficulty-selector {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .left-stats-sidebar {
+                grid-template-columns: 1fr;
+                max-height: 30vh;
+            }
+
+            .chat-messages {
+                padding: 16px 30px;
+            }
+
+            .input-area {
+                padding: 12px 30px 16px 30px;
+            }
+
+            .input-wrapper {
+                padding: 12px 16px;
+            }
+
+            .user-message .message-content,
+            .ai-message .message-content {
+                max-width: 90%;
+                font-size: 14px;
+                padding: 14px 18px;
+            }
+
+            .scenario-info-bar {
+                padding: 10px 30px;
+            }
+
+            .scenario-context-banner {
+                padding: 6px 30px;
+                font-size: 10px;
+            }
+
+            .context-text {
+                font-size: 10px;
+                display: block;
+                margin-bottom: 4px;
+            }
+
+            .context-grid {
+                display: block;
+                margin-left: 0;
+            }
+
+            .context-grid > div {
+                display: block;
+                margin-bottom: 2px;
+            }
+
+            .context-item-value {
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-left">
+            <div class="logo-icon">
+                <img src="{{ url_for('static', filename='assets/icons/main icon.svg') }}" alt="PathForge Logo" style="width: 60px; height: 60px;">
+            </div>
+            <div class="logo">PATHFORGE</div>
+        </div>
+        <nav>
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('lessons') }}">Lessons</a>
+            <a href="{{ url_for('practice_hub') }}">Practice</a>
+            <a href="{{ url_for('challenges') }}">Challenges</a>
+        </nav>
+        <button class="upgrade-btn" onclick="window.location.href='{{ url_for('pricing') }}'">Upgrade</button>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Page Header -->
+        <section class="page-header">
+            <h1>Text Practice</h1>
+            <p>Practice your texting skills with our AI simulator</p>
+        </section>
+
+        <!-- Mode Selection (shown initially) -->
+        <div class="scenario-setup" id="modeSelection">
+            <h2>Choose Your Practice Mode</h2>
+            <p style="text-align: center; color: #999; margin-bottom: 30px;">Select how you want to practice</p>
+
+            <div class="scenario-grid">
+                <div class="scenario-card" data-mode="technique" onclick="selectMode('technique')">
+                    <div class="scenario-icon">🎯</div>
+                    <h3>Technique Practice</h3>
+                    <p>Practice specific attraction techniques in various scenarios</p>
+                </div>
+                <div class="scenario-card" data-mode="training" onclick="selectMode('training')">
+                    <div class="scenario-icon">🎮</div>
+                    <h3>Training Game</h3>
+                    <p>Play the emotional training game with dynamic AI responses and OldNameJack feedback</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Training Category Selection -->
+        <div class="scenario-setup hidden" id="trainingCategorySelection">
+            <h2>Choose Training Category</h2>
+            <p style="text-align: center; color: #999; margin-bottom: 30px;">Select a skill area to practice</p>
+
+            <div id="trainingCategoryGrid" class="scenario-grid">
+                <!-- Training categories will be loaded here -->
+            </div>
+
+            <button class="start-practice-btn" onclick="nextToTrainingScenario()" id="nextToTrainingScenarioBtn" disabled>Next: Choose Difficulty</button>
+        </div>
+
+        <!-- Training Scenario Selection -->
+        <div class="scenario-setup hidden" id="trainingScenarioSelection">
+            <h2>Choose Difficulty Level</h2>
+            <p style="text-align: center; color: #999; margin-bottom: 20px;">
+                <strong style="color: #D4AF37;">Training:</strong> <span id="selectedCategoryDisplay">-</span>
+            </p>
+
+            <div id="trainingScenarioGrid" class="scenario-grid">
+                <!-- Training scenarios will be loaded here -->
+            </div>
+
+            <button class="start-practice-btn" onclick="startTrainingSession()" id="startTrainingBtn" disabled>Start Training</button>
+        </div>
+
+        <!-- Technique Selection -->
+        <div class="scenario-setup hidden" id="techniqueSelection">
+            <h2>Choose Your Technique to Practice</h2>
+            <p style="text-align: center; color: #999; margin-bottom: 30px;">Select an attraction technique to practice in text conversations</p>
+
+            <!-- Category Tabs -->
+            <div style="display: flex; gap: 15px; margin-bottom: 30px; overflow-x: auto; padding: 10px 0; justify-content: center; flex-wrap: wrap;">
+                <div id="categoryTabs">
+                    <!-- Categories will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Technique Grid -->
+            <div id="techniqueGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin: 25px 0;">
+                <!-- Techniques will be loaded here -->
+            </div>
+
+            <button class="start-practice-btn" onclick="nextToScenario()" id="nextToScenarioBtn" disabled>Next: Choose Scenario</button>
+        </div>
+
+        <!-- Scenario Setup (shown after technique selection) -->
+        <div class="scenario-setup hidden" id="scenarioSetup">
+            <h2>Choose Your Scenario</h2>
+            <p style="text-align: center; color: #999; margin-bottom: 20px;">
+                <strong style="color: #D4AF37;">Practicing:</strong> <span id="selectedTechniqueDisplay">-</span>
+            </p>
+            <div class="scenario-grid">
+                <div class="scenario-card" data-scenario="romantic_interest">
+                    <div class="scenario-icon">💘</div>
+                    <h3>Romantic Interest</h3>
+                    <p>Someone you're attracted to</p>
+                </div>
+                <div class="scenario-card" data-scenario="coworker">
+                    <div class="scenario-icon">💼</div>
+                    <h3>Coworker</h3>
+                    <p>Professional with flirty undertones</p>
+                </div>
+                <div class="scenario-card" data-scenario="friend">
+                    <div class="scenario-icon">😊</div>
+                    <h3>Friend</h3>
+                    <p>Friend who might want more</p>
+                </div>
+                <div class="scenario-card" data-scenario="ex">
+                    <div class="scenario-icon">💔</div>
+                    <h3>Ex-Girlfriend</h3>
+                    <p>Reconnecting with an ex</p>
+                </div>
+            </div>
+
+            <h3>Select Difficulty</h3>
+            <div class="difficulty-selector">
+                <button class="difficulty-btn easy" data-difficulty="easy">Easy</button>
+                <button class="difficulty-btn medium selected" data-difficulty="medium">Medium</button>
+                <button class="difficulty-btn hard" data-difficulty="hard">Hard</button>
+            </div>
+
+            <button class="start-practice-btn" onclick="startPractice()">Start Practice</button>
+        </div>
+
+        <!-- Practice Interface (hidden initially) -->
+        <div class="practice-container hidden" id="practiceContainer">
+            <!-- Left Stats Sidebar -->
+            <div class="left-stats-sidebar">
+                <!-- Progress Card -->
+                <div class="progress-card">
+                    <h3>Session Progress</h3>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-label" id="progressLabel">Round 0 of 10</div>
+                </div>
+
+                <!-- Emotional Intelligence Stats -->
+                <div class="stats-card">
+                    <h3>Emotional State</h3>
+                    <div class="stat-item">
+                        <span class="stat-label">Partner</span>
+                        <span class="stat-value" id="partnerDisplay">-</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Frame Meter</span>
+                        <span class="stat-value" id="frameDisplay" style="font-size: 20px;">😐 0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Streak</span>
+                        <span class="stat-value" id="streakDisplay">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Round</span>
+                        <span class="stat-value" id="roundDisplay">0</span>
+                    </div>
+                </div>
+
+                <!-- Session Stats -->
+                <div class="stats-card">
+                    <h3>Session Stats</h3>
+                    <div class="stat-item">
+                        <span class="stat-label">Scenario</span>
+                        <span class="stat-value" id="scenarioDisplay">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center Chat Panel -->
+            <div class="practice-main">
+                <!-- Scenario Info Bar -->
+                <div class="scenario-info-bar">
+                    <div class="scenario-details">
+                        <h2 id="scenarioTitleBar">Practice Session</h2>
+                        <div style="display: flex; gap: 8px; align-items: center; margin-top: 4px;">
+                            <span class="difficulty-tag" id="difficultyDisplay">Medium</span>
+                        </div>
+                    </div>
+                    <!-- Session Timer -->
+                    <div class="session-timer" id="sessionTimer" style="display: none;">
+                        <div class="timer-display">
+                            <span class="timer-icon">&#9202;</span>
+                            <span class="timer-value" id="timerValue">10:00</span>
+                        </div>
+                        <div class="sessions-remaining" id="sessionsRemaining" style="font-size: 11px; color: #888; margin-top: 2px;">
+                            Sessions: <span id="sessionsCount">3</span>/3
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scenario Context Banner -->
+                <div class="scenario-context-banner" id="contextBanner" style="display: none;">
+                    <span class="context-label">Context:</span>
+                    <span class="context-text" id="scenarioContext">—</span>
+                    <div class="context-grid">
+                        <div>
+                            <span class="context-label">Goal:</span>
+                            <span class="context-item-value" id="scenarioGoal">—</span>
+                        </div>
+                        <div>
+                            <span class="context-label">Focus:</span>
+                            <span class="context-item-value" id="scenarioTheme">Build authentic connection</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Messages -->
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Messages will be added here dynamically -->
+                </div>
+
+                <!-- Typing Indicator -->
+                <div class="typing-indicator" id="typingIndicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+
+                <!-- Text Input Area -->
+                <div class="input-area">
+                    <div class="input-wrapper">
+                        <input
+                            type="text"
+                            class="text-input"
+                            id="textInput"
+                            placeholder="Type your message..."
+                            onkeypress="handleTextEnter(event)"
+                        >
+                        <button class="send-button" onclick="sendTextMessage()">Send</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Tips Sidebar -->
+            <div class="right-tips-sidebar">
+                <!-- Coach Wisdom -->
+                <div class="tips-card">
+                    <h3>Old Man Jack</h3>
+                    <div id="oldManJackFeedback" style="color: rgba(255, 255, 255, 0.8); font-size: 14px; line-height: 1.6; padding: 10px 0;">
+                        <em style="color: #888;">Alright kid, show me how you use this technique. Don't screw it up.</em>
+                    </div>
+                </div>
+
+                <!-- Last Feedback -->
+                <div class="voice-feedback-box">
+                    <h4>Last Feedback</h4>
+                    <div id="feedbackContent">
+                        <div class="feedback-item">
+                            <span>Overall Score</span>
+                            <div class="feedback-bar">
+                                <div class="feedback-fill" id="feedbackScore" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="feedback-item">
+                            <span>Confidence</span>
+                            <div class="feedback-bar">
+                                <div class="feedback-fill" id="feedbackConfidence" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="feedback-item">
+                            <span>Empathy</span>
+                            <div class="feedback-bar">
+                                <div class="feedback-fill" id="feedbackEmpathy" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="feedback-item">
+                            <span>Playfulness</span>
+                            <div class="feedback-bar">
+                                <div class="feedback-fill" id="feedbackPlayfulness" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedback Modal -->
+        <div class="feedback-modal" id="feedbackModal">
+            <div class="feedback-content">
+                <h2>Session Complete!</h2>
+                <div class="score-display" id="scoreDisplay">-</div>
+                <div class="feedback-text" id="feedbackText">Analyzing your conversation...</div>
+                <div class="xp-awarded" id="xpDisplay">+0 XP</div>
+                <button class="start-practice-btn" onclick="closeFeedback()">Continue</button>
+            </div>
+        </div>
+
+        <!-- Session Limit Modal -->
+        <div class="session-limit-modal" id="sessionLimitModal">
+            <div class="session-limit-content">
+                <h2 id="limitModalTitle">Session Ended</h2>
+                <p id="limitModalMessage">Your session has ended.</p>
+                <a href="{{ url_for('pricing') }}" class="upgrade-link">Upgrade Now</a>
+                <button class="close-modal-btn" onclick="closeLimitModal()">Close</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/pathforge-complete.js') }}"></script>
+    <script>
+        // Text Practice JavaScript
+        let practiceMode = null; // 'technique' or 'training'
+        let selectedTechniqueId = null;
+        let selectedTechniqueName = '';
+        let selectedTechniqueDescription = '';
+        let selectedCategoryId = null;
+        let selectedScenario = 'romantic_interest';
+        let selectedDifficulty = 'medium';
+        let conversationHistory = [];
+        let messageCount = 0;
+        let allCategories = [];
+        let allTechniques = {};
+
+        // Emotional Intelligence System Variables
+        let sessionId = null;
+        let partnerName = null;
+        let frameMeter = 0;
+        let streak = 0;
+        let momentum = 0;
+        let roundNumber = 0;
+
+        // Session Timer Variables
+        let timerInterval = null;
+        let timeRemaining = 600; // 10 minutes in seconds
+        let sessionsRemaining = 3;
+        let isSessionActive = false;
+
+        // Training Game Variables
+        let trainingCategories = [];
+        let trainingScenarios = [];
+        let selectedTrainingCategory = null;
+        let selectedTrainingScenario = null;
+        let trainingSessionId = null;
+        let trainingGoalHits = 0;
+        let trainingGoalTarget = 3;
+        let trainingInterestLevel = 0;
+        let trainingTimeRemaining = 300;
+        let trainingTimerInterval = null;
+
+        // ===== MODE SELECTION =====
+        function selectMode(mode) {
+            practiceMode = mode;
+            document.getElementById('modeSelection').classList.add('hidden');
+
+            if (mode === 'technique') {
+                document.getElementById('techniqueSelection').classList.remove('hidden');
+                loadTechniques();
+            } else if (mode === 'training') {
+                document.getElementById('trainingCategorySelection').classList.remove('hidden');
+                loadTrainingCategories();
+            }
+        }
+
+        // ===== TRAINING GAME FUNCTIONS =====
+        async function loadTrainingCategories() {
+            try {
+                const response = await fetch('/api/training/categories');
+                const data = await response.json();
+
+                if (data.success) {
+                    trainingCategories = data.categories;
+                    trainingScenarios = data.scenarios;
+                    renderTrainingCategories();
+                }
+            } catch (error) {
+                console.error('Error loading training categories:', error);
+            }
+        }
+
+        function renderTrainingCategories() {
+            const grid = document.getElementById('trainingCategoryGrid');
+            grid.innerHTML = '';
+
+            const icons = {
+                'INTRIGUE': '🔮',
+                'EMOTIONAL_DYNAMICS': '⚡',
+                'SEDUCTION': '💫',
+                'INFLUENCE': '🎯',
+                'CONNECTION': '❤️'
+            };
+
+            trainingCategories.forEach(category => {
+                const card = document.createElement('div');
+                card.className = 'scenario-card';
+                card.dataset.category = category.name;
+                card.onclick = () => selectTrainingCategory(category.name);
+                card.innerHTML = `
+                    <div class="scenario-icon">${icons[category.name] || '✨'}</div>
+                    <h3>${category.value}</h3>
+                    <p>${category.description}</p>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function selectTrainingCategory(categoryName) {
+            selectedTrainingCategory = categoryName;
+            document.querySelectorAll('#trainingCategoryGrid .scenario-card').forEach(c => c.classList.remove('selected'));
+            document.querySelector(`[data-category="${categoryName}"]`).classList.add('selected');
+            document.getElementById('nextToTrainingScenarioBtn').disabled = false;
+        }
+
+        function nextToTrainingScenario() {
+            const categoryDisplay = trainingCategories.find(c => c.name === selectedTrainingCategory);
+            document.getElementById('selectedCategoryDisplay').textContent = categoryDisplay.value;
+            document.getElementById('trainingCategorySelection').classList.add('hidden');
+            document.getElementById('trainingScenarioSelection').classList.remove('hidden');
+            renderTrainingScenarios();
+        }
+
+        function renderTrainingScenarios() {
+            const grid = document.getElementById('trainingScenarioGrid');
+            grid.innerHTML = '';
+
+            const icons = {
+                'MEETING': '👋',
+                'FRIENDZONE': '😊',
+                'LOW_INTEREST': '😐'
+            };
+
+            const difficulties = {
+                'MEETING': 'Easy',
+                'FRIENDZONE': 'Medium',
+                'LOW_INTEREST': 'Hard'
+            };
+
+            trainingScenarios.forEach(scenario => {
+                const card = document.createElement('div');
+                card.className = 'scenario-card';
+                card.dataset.scenario = scenario.name;
+                card.onclick = () => selectTrainingScenario(scenario.name);
+                card.innerHTML = `
+                    <div class="scenario-icon">${icons[scenario.name] || '🎮'}</div>
+                    <h3>${scenario.value}</h3>
+                    <p>${difficulties[scenario.name]} - ${scenario.description}</p>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function selectTrainingScenario(scenarioName) {
+            selectedTrainingScenario = scenarioName;
+            document.querySelectorAll('#trainingScenarioGrid .scenario-card').forEach(c => c.classList.remove('selected'));
+            document.querySelector(`[data-scenario="${scenarioName}"]`).classList.add('selected');
+            document.getElementById('startTrainingBtn').disabled = false;
+        }
+
+        async function startTrainingSession() {
+            try {
+                const response = await fetch('/api/training/start', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        category: selectedTrainingCategory,
+                        scenario: selectedTrainingScenario
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    trainingSessionId = data.session_id;
+                    trainingGoalTarget = data.config.goal_hits;
+                    trainingTimeRemaining = data.config.duration_seconds;
+
+                    // Hide setup, show practice interface
+                    document.getElementById('trainingScenarioSelection').classList.add('hidden');
+                    document.getElementById('practiceContainer').classList.remove('hidden');
+
+                    // Update UI for training mode
+                    document.getElementById('partnerDisplay').textContent = 'AI Partner';
+                    document.getElementById('roundLabel').textContent = 'Goal Progress';
+                    document.getElementById('progressLabel').textContent = `0 / ${trainingGoalTarget} Hits`;
+                    document.getElementById('progressBar').style.width = '0%';
+
+                    // Clear messages and add opening
+                    document.getElementById('messages').innerHTML = '';
+                    conversationHistory = [];
+                    addAIMessage(data.opening_message);
+
+                    // Start training timer
+                    startTrainingTimer();
+                    isSessionActive = true;
+                } else {
+                    alert('Failed to start training: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error starting training:', error);
+                alert('Error starting training session');
+            }
+        }
+
+        function startTrainingTimer() {
+            if (trainingTimerInterval) clearInterval(trainingTimerInterval);
+
+            trainingTimerInterval = setInterval(() => {
+                trainingTimeRemaining--;
+
+                const minutes = Math.floor(trainingTimeRemaining / 60);
+                const seconds = trainingTimeRemaining % 60;
+                document.getElementById('timerDisplay').textContent =
+                    `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+                if (trainingTimeRemaining <= 0) {
+                    clearInterval(trainingTimerInterval);
+                    handleTrainingComplete();
+                }
+            }, 1000);
+        }
+
+        async function sendTrainingMessage(message) {
+            try {
+                const response = await fetch('/api/training/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Update training stats
+                    trainingGoalHits = data.goal_hits;
+                    trainingInterestLevel = data.interest_level;
+
+                    // Update UI
+                    document.getElementById('progressLabel').textContent =
+                        `${data.goal_hits} / ${data.goal_target} Hits`;
+                    document.getElementById('progressBar').style.width =
+                        `${(data.goal_hits / data.goal_target) * 100}%`;
+
+                    // Show hits detected if any
+                    if (data.hits_detected > 0) {
+                        showHitDetected(data.hits_detected);
+                    }
+
+                    // Update frame meter with interest level
+                    updateFrameMeter(data.interest_level);
+
+                    // Update stats display
+                    document.querySelector('.stat-label').nextElementSibling.textContent =
+                        `Interest: ${data.interest_level}`;
+
+                    // Check if session complete
+                    if (data.session_complete) {
+                        clearInterval(trainingTimerInterval);
+                        setTimeout(() => handleTrainingComplete(), 2000);
+                    }
+
+                    return data.ai_response;
+                } else {
+                    console.error('Training message error:', data.error);
+                    return 'Error processing message';
+                }
+            } catch (error) {
+                console.error('Error sending training message:', error);
+                return 'Error sending message';
+            }
+        }
+
+        function showHitDetected(hits) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #4CAF50, #66BB6A);
+                color: white;
+                padding: 15px 25px;
+                border-radius: 10px;
+                font-weight: bold;
+                z-index: 10000;
+                animation: slideInRight 0.3s ease;
+            `;
+            notification.textContent = `🎯 +${hits} Hit${hits > 1 ? 's' : ''} Detected!`;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 2000);
+        }
+
+        function addAIMessage(message) {
+            addMessageToChat(message, true);
+        }
+
+        async function handleTrainingComplete() {
+            isSessionActive = false;
+            document.getElementById('textInput').disabled = true;
+
+            // Get Jack's review
+            try {
+                const response = await fetch('/api/training/review', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Show review modal
+                    const modal = document.getElementById('feedbackModal');
+                    const scoreDisplay = document.getElementById('scoreDisplay');
+                    const feedbackText = document.getElementById('feedbackText');
+                    const xpDisplay = document.getElementById('xpDisplay');
+
+                    scoreDisplay.textContent = data.session_success ? '✅ SUCCESS' : '❌ TRY AGAIN';
+                    scoreDisplay.style.color = data.session_success ? '#4CAF50' : '#F44336';
+                    feedbackText.innerHTML = data.review.replace(/\n/g, '<br>');
+                    xpDisplay.textContent = `+${data.xp_earned} XP`;
+
+                    if (data.leveled_up) {
+                        xpDisplay.textContent += ` 🎉 LEVEL UP to ${data.new_level}!`;
+                    }
+
+                    modal.style.display = 'flex';
+                } else {
+                    alert('Error getting review: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error getting training review:', error);
+                alert('Error completing training session');
+            }
+        }
+
+        // ===== TECHNIQUE PRACTICE FUNCTIONS =====
+        // Load techniques on page load
+        async function loadTechniques() {
+            try {
+                const response = await fetch('/api/attraction-techniques/categories');
+                const data = await response.json();
+
+                if (data.categories) {
+                    allCategories = data.categories;
+                    renderCategories();
+                    if (allCategories.length > 0) {
+                        selectTechniqueCategory(allCategories[0].id);
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading techniques:', error);
+            }
+        }
+
+        function renderCategories() {
+            const tabsContainer = document.getElementById('categoryTabs');
+            tabsContainer.innerHTML = '';
+
+            allCategories.forEach((category, index) => {
+                const tab = document.createElement('button');
+                tab.className = 'difficulty-btn' + (index === 0 ? ' selected' : '');
+                tab.textContent = category.display_name;
+                tab.onclick = () => selectTechniqueCategory(category.id);
+                tab.style.textTransform = 'none';
+                tabsContainer.appendChild(tab);
+            });
+        }
+
+        function selectTechniqueCategory(categoryId) {
+            selectedCategoryId = categoryId;
+
+            // Update active tab
+            const tabs = document.querySelectorAll('#categoryTabs button');
+            tabs.forEach(tab => {
+                if (tab.textContent === allCategories.find(c => c.id === categoryId).display_name) {
+                    tab.classList.add('selected');
+                } else {
+                    tab.classList.remove('selected');
+                }
+            });
+
+            // Load techniques for this category
+            const category = allCategories.find(c => c.id === categoryId);
+            if (category) {
+                renderTechniques(category.techniques);
+            }
+        }
+
+        function renderTechniques(techniques) {
+            const grid = document.getElementById('techniqueGrid');
+            grid.innerHTML = '';
+
+            techniques.forEach(technique => {
+                const card = document.createElement('div');
+                card.className = 'scenario-card';
+                card.style.textAlign = 'left';
+                card.onclick = () => selectTechnique(technique.id, technique.display_name, technique.description);
+
+                card.innerHTML = `
+                    <h3 style="color: #FFD700; font-size: 18px; margin-bottom: 10px;">${technique.display_name}</h3>
+                    <p style="color: rgba(255, 255, 255, 0.7); font-size: 14px;">${technique.description}</p>
+                `;
+
+                grid.appendChild(card);
+            });
+        }
+
+        function selectTechnique(techniqueId, techniqueName, techniqueDescription) {
+            selectedTechniqueId = techniqueId;
+            selectedTechniqueName = techniqueName;
+            selectedTechniqueDescription = techniqueDescription;
+
+            // Update UI
+            const cards = document.querySelectorAll('#techniqueGrid .scenario-card');
+            cards.forEach(card => {
+                if (card.querySelector('h3').textContent === techniqueName) {
+                    card.classList.add('selected');
+                } else {
+                    card.classList.remove('selected');
+                }
+            });
+
+            // Enable next button
+            document.getElementById('nextToScenarioBtn').disabled = false;
+        }
+
+        function nextToScenario() {
+            if (!selectedTechniqueId) return;
+
+            // Hide technique selection, show scenario selection
+            document.getElementById('techniqueSelection').classList.add('hidden');
+            document.getElementById('scenarioSetup').classList.remove('hidden');
+
+            // Update technique display
+            document.getElementById('selectedTechniqueDisplay').textContent = selectedTechniqueName;
+        }
+
+        // Initialize techniques on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTechniques();
+        });
+
+        // Scenario selection
+        document.querySelectorAll('.scenario-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('.scenario-card').forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedScenario = this.dataset.scenario;
+            });
+        });
+
+        // Set initial selection
+        document.querySelector('[data-scenario="romantic_interest"]').classList.add('selected');
+
+        // Difficulty selection
+        document.querySelectorAll('.difficulty-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.difficulty-btn').forEach(b => b.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedDifficulty = this.dataset.difficulty;
+            });
+        });
+
+        // Helper to pick random element
+        function rand(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        // Dynamic story generation
+        const storyTemplates = {
+            romantic_interest: {
+                names: ['Maya', 'Sofia', 'Isabella', 'Aria', 'Luna', 'Zara', 'Chloe', 'Elena'],
+                meetLocations: [
+                    "a mutual friend's party",
+                    "a rooftop bar downtown",
+                    "a mutual friend's dinner party",
+                    "a weekend hiking trip",
+                    "a coffee shop you both frequent",
+                    "a networking event"
+                ],
+                dates: ['2-3 dates', '3 dates', '2 dates over two weeks', 'a few dates'],
+                chemistry: [
+                    "lots of laughter, deep conversations, and that electric tension when you're close",
+                    "amazing chemistry - you finish each other's sentences and the physical attraction is obvious",
+                    "incredible connection - the conversation flows naturally and there's undeniable tension",
+                    "strong attraction - playful banter mixed with genuine vulnerability"
+                ],
+                tests: [
+                    "She mentioned she's 'exploring her options' and wants to take things slow",
+                    "She's mentioned she's 'not looking for anything serious right now'",
+                    "She's been hot and cold - sometimes super engaged, sometimes distant",
+                    "She keeps mentioning how busy she is, testing if you'll chase"
+                ],
+                goals: [
+                    "Maintain confident, playful energy without chasing",
+                    "Lead with detachment and let attraction build naturally",
+                    "Stay grounded - don't seek validation or approval",
+                    "Hold frame through playful teasing and curiosity"
+                ],
+                themes: ["Frame Control & Polarity", "Scarcity & Attraction", "Emotional Leadership", "Confident Detachment"]
+            },
+            coworker: {
+                names: ['Sophia', 'Rachel', 'Jessica', 'Amanda', 'Nicole', 'Vanessa'],
+                departments: ['same department', 'marketing team', 'design team', 'operations'],
+                timeframes: ['past month', 'past few weeks', 'last two months'],
+                signs: [
+                    "lingering eye contact, finding excuses to talk, staying late when you do",
+                    "always stopping by your desk, playful teasing, asking about your weekend plans",
+                    "complimenting you often, laughing at your jokes, body language that's clearly interested",
+                    "sitting next to you in meetings, texting you about 'work stuff' at odd hours"
+                ],
+                catalysts: [
+                    "At last week's company happy hour, things got flirtier than usual",
+                    "Last week at the team offsite, you both ended up talking for hours",
+                    "At the recent company event, she was clearly into you",
+                    "Last Friday after work drinks, the energy was undeniable"
+                ],
+                goals: [
+                    "Build attraction while maintaining professionalism",
+                    "Escalate slowly without crossing workplace boundaries",
+                    "Lead with calibrated confidence and timing"
+                ],
+                themes: ["Social Calibration & Timing", "Professional Boundaries", "Strategic Escalation"]
+            },
+            friend: {
+                names: ['Emma', 'Lily', 'Grace', 'Hannah', 'Claire', 'Mia'],
+                timeframes: ['8 months', '6 months', '9 months', 'almost a year'],
+                shifts: [
+                    "Recently things shifted - more one-on-one hangouts, deeper conversations, physical touching that lingers",
+                    "Lately she's been different - texting you late at night, getting jealous when you mention other girls",
+                    "The vibe changed - she finds excuses to be alone with you, conversations got more personal",
+                    "Something's different now - she touches your arm when she laughs, holds eye contact longer"
+                ],
+                catalysts: [
+                    "Last weekend at a group dinner, she sat next to you and the tension was obvious to everyone",
+                    "At last week's party, you caught her staring at you multiple times",
+                    "Last Friday the whole friend group noticed the chemistry between you two",
+                    "At the recent hangout, everyone was joking about 'when are you two going to date'"
+                ],
+                goals: [
+                    "Transition the dynamic without forcing it",
+                    "Lead the shift with confident authenticity",
+                    "Maintain frame while showing vulnerability"
+                ],
+                themes: ["Authenticity & Emotional Leadership", "Friend-to-More Transition", "Vulnerability & Strength"]
+            },
+            ex: {
+                names: ['Olivia', 'Sarah', 'Jessica', 'Lauren', 'Ashley', 'Emily'],
+                duration: ['7 months', '8 months', '6 months', 'almost a year'],
+                endTimeframe: ['3 months ago', '4 months ago', '2 months ago'],
+                reasons: [
+                    "you were too available and she felt you lost your edge",
+                    "the dynamic got too comfortable and lost the spark",
+                    "you became too predictable and she got bored",
+                    "you were too eager to please and lost your mystery"
+                ],
+                reconnection: [
+                    "She reached out last week with a 'random' message",
+                    "She texted you out of the blue asking how you've been",
+                    "She liked your Instagram story and sent you a DM",
+                    "She messaged you pretending she needed advice"
+                ],
+                goals: [
+                    "Show growth without seeking approval",
+                    "Demonstrate you've evolved without being try-hard",
+                    "Hold frame - you're not the same person she left"
+                ],
+                themes: ["Scarcity & Detachment", "Personal Growth", "Frame Recovery", "Strategic Indifference"]
+            }
+        };
+
+        function generateStory(scenario) {
+            const templates = storyTemplates[scenario];
+            if (!templates) return null;
+
+            const name = rand(templates.names);
+
+            let context = '';
+            let goal = rand(templates.goals);
+            let theme = rand(templates.themes);
+
+            if (scenario === 'romantic_interest') {
+                const meetLocation = rand(templates.meetLocations);
+                const dates = rand(templates.dates);
+                const chemistry = rand(templates.chemistry);
+                const test = rand(templates.tests);
+
+                context = `You met ${name} at ${meetLocation} two weeks ago. You've been on ${dates} and the chemistry is undeniable - ${chemistry}. But she's keeping you on your toes. ${test}. You can tell she's testing your confidence - will you chase and lose her interest, or can you hold your frame and let the attraction build naturally?`;
+            }
+            else if (scenario === 'coworker') {
+                const department = rand(templates.departments);
+                const timeframe = rand(templates.timeframes);
+                const signs = rand(templates.signs);
+                const catalyst = rand(templates.catalysts);
+
+                context = `You work in the ${department} as ${name}. For the ${timeframe}, you've noticed the signs - ${signs}. ${catalyst}. She texted you over the weekend about 'something work-related' but the vibe was different. There's obvious tension, but you need to be calibrated since you work together.`;
+            }
+            else if (scenario === 'friend') {
+                const timeframe = rand(templates.timeframes);
+                const shift = rand(templates.shifts);
+                const catalyst = rand(templates.catalysts);
+
+                context = `You've known ${name} for ${timeframe} through your friend group. Always great banter and inside jokes. ${shift}. ${catalyst}. She knows you well, so any neediness or try-hard behavior will be spotted immediately.`;
+            }
+            else if (scenario === 'ex') {
+                const duration = rand(templates.duration);
+                const endTime = rand(templates.endTimeframe);
+                const reason = rand(templates.reasons);
+                const reconnect = rand(templates.reconnection);
+
+                context = `You dated ${name} for ${duration}. It ended ${endTime} because ${reason}. The attraction was always strong but the dynamic got stale. ${reconnect}. You've texted a few times since - friendly but charged. She's testing whether you've grown or if you'll fall back into old patterns.`;
+            }
+
+            return { name, context, goal, theme };
+        }
+
+        // Timer Functions
+        function startTimer() {
+            // Show timer display
+            document.getElementById('sessionTimer').style.display = 'block';
+            updateTimerDisplay();
+
+            // Start countdown
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimerDisplay();
+
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    handleSessionTimeout();
+                }
+            }, 1000);
+
+            isSessionActive = true;
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            const timerValue = document.getElementById('timerValue');
+            timerValue.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+            // Update sessions count
+            document.getElementById('sessionsCount').textContent = sessionsRemaining;
+
+            // Add warning classes
+            timerValue.classList.remove('warning', 'critical');
+            if (timeRemaining <= 60) {
+                timerValue.classList.add('critical');
+            } else if (timeRemaining <= 120) {
+                timerValue.classList.add('warning');
+            }
+        }
+
+        function handleSessionTimeout() {
+            isSessionActive = false;
+            showLimitModal('Time\'s Up!', 'Your 10-minute session has ended. Upgrade for longer sessions and unlimited access.');
+            disableChat();
+        }
+
+        function handleDailyLimitReached() {
+            showLimitModal('Daily Limit Reached', 'You\'ve used all 3 free sessions for today. Upgrade for unlimited sessions.');
+            disableChat();
+        }
+
+        function showLimitModal(title, message) {
+            document.getElementById('limitModalTitle').textContent = title;
+            document.getElementById('limitModalMessage').textContent = message;
+            document.getElementById('sessionLimitModal').style.display = 'flex';
+        }
+
+        function closeLimitModal() {
+            document.getElementById('sessionLimitModal').style.display = 'none';
+            window.location.href = "{{ url_for('dashboard') }}";
+        }
+
+        function disableChat() {
+            const input = document.getElementById('textInput');
+            const sendBtn = document.querySelector('.send-button');
+            input.disabled = true;
+            input.placeholder = 'Session ended';
+            sendBtn.disabled = true;
+            sendBtn.style.opacity = '0.5';
+        }
+
+        function startPractice() {
+            // Hide setup, show practice interface
+            document.getElementById('scenarioSetup').classList.add('hidden');
+            document.getElementById('practiceContainer').classList.remove('hidden');
+
+            // Generate dynamic story
+            const story = generateStory(selectedScenario) || {
+                name: "Maya",
+                context: "Practice your texting skills in this scenario.",
+                goal: "Maintain confident, authentic energy",
+                theme: "Emotional Intelligence"
+            };
+
+            // Store partner name globally
+            partnerName = story.name;
+
+            // Update scenario title bar
+            const scenarioName = selectedScenario.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+            document.getElementById('scenarioTitleBar').textContent = `${story.name} • ${scenarioName}`;
+            document.getElementById('difficultyDisplay').textContent = selectedDifficulty.charAt(0).toUpperCase() + selectedDifficulty.slice(1);
+
+            // Update displays
+            document.getElementById('scenarioDisplay').textContent = scenarioName;
+            document.getElementById('partnerDisplay').textContent = story.name;
+
+            // Show and populate context banner
+            document.getElementById('contextBanner').style.display = 'block';
+            document.getElementById('scenarioContext').textContent = story.context;
+            document.getElementById('scenarioGoal').textContent = story.goal;
+            document.getElementById('scenarioTheme').textContent = `${story.theme} • Technique: ${selectedTechniqueName}`;
+
+            // Clear chat and add initial AI message
+            document.getElementById('chatMessages').innerHTML = '';
+
+            // Add opening message from AI after a brief delay
+            setTimeout(() => {
+                const openingMessages = {
+                    romantic_interest: ["Hey! 😊", "Heyy", "Hey you 😊", "Hi! 🙂"],
+                    coworker: ["Hey you, just saw your message from earlier", "Hey! Just saw this", "Oh hey!"],
+                    friend: ["Sooo... that dinner was interesting lol", "Hey! Still thinking about last night haha", "Omg hey"],
+                    ex: ["Hey stranger", "Hey... long time", "Hi"]
+                };
+                const options = openingMessages[selectedScenario] || ["Hey!"];
+                const opening = rand(options);
+                addMessageToChat(opening, true);
+            }, 500);
+
+            // Focus input
+            document.getElementById('textInput').focus();
+
+            // Start the session timer
+            startTimer();
+        }
+
+        function handleTextEnter(event) {
+            if (event.key === 'Enter') {
+                sendTextMessage();
+            }
+        }
+
+        async function sendTextMessage() {
+            const input = document.getElementById('textInput');
+            const message = input.value.trim();
+
+            if (!message) return;
+
+            // Add user message to UI
+            addMessageToChat(message, false);
+            input.value = '';
+            messageCount++;
+
+            // Add to conversation history
+            conversationHistory.push({ text: message, isAI: false });
+
+            // Show typing indicator
+            document.getElementById('typingIndicator').style.display = 'block';
+            scrollToBottom();
+
+            try {
+                let aiResponse;
+
+                // Check practice mode and call appropriate API
+                if (practiceMode === 'training') {
+                    aiResponse = await sendTrainingMessage(message);
+                    document.getElementById('typingIndicator').style.display = 'none';
+                    addMessageToChat(aiResponse, true);
+                    return;
+                }
+
+                // Original technique practice API call
+                const response = await fetch('/api/text-practice/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        session_id: sessionId,
+                        scenario: selectedScenario
+                    })
+                });
+
+                const data = await response.json();
+
+                // Hide typing indicator
+                document.getElementById('typingIndicator').style.display = 'none';
+
+                // Check for premium access errors
+                if (response.status === 403) {
+                    if (data.error === 'session_limit') {
+                        // Handle session limit errors
+                        if (data.time_remaining === 0 && data.message.includes('expired')) {
+                            handleSessionTimeout();
+                        } else {
+                            handleDailyLimitReached();
+                        }
+                        return;
+                    }
+                    handlePremiumError(data.error, data.trial_available);
+                    return;
+                }
+
+                if (data.success) {
+                    // Update session data
+                    sessionId = data.session_id;
+                    partnerName = data.partner_name;
+                    frameMeter = data.frame_meter;
+                    roundNumber = data.round_number;
+
+                    // Sync timer with server
+                    if (data.time_remaining !== undefined) {
+                        timeRemaining = data.time_remaining;
+                        updateTimerDisplay();
+                    }
+                    if (data.sessions_remaining !== undefined) {
+                        sessionsRemaining = data.sessions_remaining;
+                        document.getElementById('sessionsCount').textContent = sessionsRemaining;
+                    }
+
+                    // Add AI response to UI
+                    addMessageToChat(data.response, true);
+                    conversationHistory.push({ text: data.response, isAI: true });
+
+                    // Get Old Man Jack's score after a brief delay
+                    setTimeout(async () => {
+                        try {
+                            const scoreResponse = await fetch('/api/text-practice/score-exchange', {
+                                method: 'POST',
+                                headers: {'Content-Type': 'application/json'},
+                                body: JSON.stringify({
+                                    session_id: sessionId,
+                                    user_message: message,
+                                    partner_response: data.response
+                                })
+                            });
+
+                            const scoreData = await scoreResponse.json();
+
+                            if (scoreData.success) {
+                                // Update state
+                                frameMeter = scoreData.frame_meter;
+                                streak = scoreData.streak;
+                                momentum = scoreData.momentum;
+
+                                // Update sidebar displays
+                                updateEmotionalState();
+
+                                // Show score notification
+                                showScoreFeedback(scoreData);
+                            }
+                        } catch (error) {
+                            console.error('Error getting score:', error);
+                        }
+                    }, 500);
+                } else {
+                    showNotification('Failed to get response. Please try again.', 'error');
+                }
+            } catch (error) {
+                document.getElementById('typingIndicator').style.display = 'none';
+                showNotification('Network error. Please try again.', 'error');
+                console.error('Error:', error);
+            }
+        }
+
+        function addMessageToChat(text, isAI) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = isAI ? 'ai-message' : 'user-message';
+
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.innerHTML = `<p>${escapeHtml(text)}</p>`;
+
+            messageDiv.appendChild(contentDiv);
+            chatMessages.appendChild(messageDiv);
+
+            scrollToBottom();
+        }
+
+        function scrollToBottom() {
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function closeFeedback() {
+            // Redirect to dashboard
+            window.location.href = "{{ url_for('dashboard') }}";
+        }
+
+        // Emotional Intelligence System Functions
+
+        function showScoreFeedback(scoreData) {
+            // Update feedback bars in right sidebar
+            document.getElementById('feedbackScore').style.width = `${(scoreData.score / 10) * 100}%`;
+
+            if (scoreData.metrics) {
+                document.getElementById('feedbackConfidence').style.width = `${(scoreData.metrics.Confidence / 10) * 100}%`;
+                document.getElementById('feedbackEmpathy').style.width = `${(scoreData.metrics.Empathy / 10) * 100}%`;
+                document.getElementById('feedbackPlayfulness').style.width = `${(scoreData.metrics.Playfulness / 10) * 100}%`;
+            }
+
+            // Update Old Man Jack's feedback with what's missing and what's needed
+            updateOldManJackFeedback(scoreData);
+        }
+
+        function getFrameMeterIcon(frameMeter) {
+            if (frameMeter >= 4) return '🔥'; // Hot
+            if (frameMeter >= 2) return '😊'; // Warm
+            if (frameMeter >= 0) return '😐'; // Neutral
+            if (frameMeter >= -2) return '🤔'; // Skeptical
+            return '❄️'; // Cold
+        }
+
+        function updateEmotionalState() {
+            // Update partner display
+            if (partnerName) {
+                document.getElementById('partnerDisplay').textContent = partnerName;
+            }
+
+            // Update frame meter with icon
+            const frameIcon = getFrameMeterIcon(frameMeter);
+            const frameSign = frameMeter >= 0 ? '+' : '';
+            document.getElementById('frameDisplay').textContent = `${frameIcon} ${frameSign}${frameMeter}`;
+
+            // Update streak
+            document.getElementById('streakDisplay').textContent = streak;
+
+            // Update round
+            document.getElementById('roundDisplay').textContent = roundNumber;
+
+            // Update progress bar (assume 10 rounds max)
+            const maxRounds = 10;
+            const progressPercent = Math.min((roundNumber / maxRounds) * 100, 100);
+            document.getElementById('progressBar').style.width = `${progressPercent}%`;
+            document.getElementById('progressLabel').textContent = `Round ${roundNumber} of ${maxRounds}`;
+        }
+
+        function updateDynamicTips(scoreData) {
+            const tipsList = document.getElementById('dynamicTipsList');
+            const tips = [];
+
+            // Dynamic tips based on score data with edge
+            if (scoreData.metrics) {
+                if (scoreData.metrics.Confidence < 6) {
+                    tips.push('Stop explaining yourself - just state it');
+                }
+                if (scoreData.metrics.Empathy < 6) {
+                    tips.push('Listen to what she\'s actually saying');
+                }
+                if (scoreData.metrics.Boundaries < 6) {
+                    tips.push('Learn to say no without apologizing');
+                }
+                if (scoreData.metrics.Playfulness < 6) {
+                    tips.push('Too serious - tease and challenge her');
+                }
+                if (scoreData.metrics.Emotional_Control < 6) {
+                    tips.push('Control your reactions or lose');
+                }
+            }
+
+            // Frame-based tips
+            if (scoreData.frame_meter < 0) {
+                tips.push('🚨 You\'re chasing - pull back NOW');
+            } else if (scoreData.frame_meter >= 3) {
+                tips.push('🔥 She\'s invested - don\'t get soft');
+            }
+
+            // Score-based tips
+            if (scoreData.score < 5) {
+                tips.push('⚠️ Weak response - step it up');
+            } else if (scoreData.score >= 8) {
+                tips.push('✓ Strong play - maintain frame');
+            }
+
+            // Default tips if none triggered
+            if (tips.length === 0) {
+                tips.push('Stay grounded - no neediness');
+                tips.push('Lead the tone, don\'t follow');
+                tips.push('Challenge her, don\'t chase her');
+            }
+
+            // Update the list with inline styles since we removed CSS
+            tipsList.innerHTML = tips.map(tip => `<li style="color: rgba(255, 255, 255, 0.7); padding: 6px 0; font-size: 13px; line-height: 1.5; border-bottom: 1px solid rgba(255, 255, 255, 0.05);">${tip}</li>`).join('');
+        }
+
+        function updateOldManJackFeedback(scoreData) {
+            const feedbackDiv = document.getElementById('oldManJackFeedback');
+            const missing = [];
+            const needed = [];
+
+            // Add technique-specific check first
+            const techniqueCheck = `<div style="border-bottom: 2px solid rgba(212, 175, 55, 0.3); padding-bottom: 10px; margin-bottom: 10px;">
+                <strong style="color: #D4AF37;">Technique:</strong> ${selectedTechniqueName}<br>
+                <span style="color: #888; font-size: 12px;">${selectedTechniqueDescription}</span>
+            </div>`;
+
+            // Analyze what's missing or weak in the user's message
+            if (scoreData.metrics) {
+                // Check each metric and identify what's missing AND what's needed
+                if (scoreData.metrics.Confidence < 4) {
+                    missing.push('Confidence - Stop sounding like you need her approval');
+                    needed.push('Stay confident and grounded - no explaining yourself');
+                } else if (scoreData.metrics.Confidence < 6) {
+                    missing.push('Confidence - You\'re hesitating');
+                    needed.push('Speak with certainty and own your words');
+                }
+
+                if (scoreData.metrics.Empathy < 4) {
+                    missing.push('Empathy - You\'re talking AT her, not WITH her');
+                    needed.push('Show empathy without validation-seeking - acknowledge her perspective');
+                } else if (scoreData.metrics.Empathy < 6) {
+                    missing.push('Empathy - Not acknowledging what she\'s saying');
+                    needed.push('Listen and mirror her emotions without trying to fix');
+                }
+
+                if (scoreData.metrics.Playfulness < 4) {
+                    missing.push('Playfulness - Too damn serious');
+                    needed.push('Use humor and teasing to create connection - lighten up');
+                } else if (scoreData.metrics.Playfulness < 6) {
+                    missing.push('Playfulness - Boring and predictable');
+                    needed.push('Add playful challenge and banter');
+                }
+
+                if (scoreData.metrics.Boundaries < 4) {
+                    missing.push('Boundaries - Too available, she smells desperation');
+                    needed.push('Set boundaries calmly - be willing to walk away');
+                } else if (scoreData.metrics.Boundaries < 6) {
+                    missing.push('Boundaries - Giving too much too fast');
+                    needed.push('Pull back and make her invest more');
+                }
+
+                if (scoreData.metrics.Emotional_Control < 4) {
+                    missing.push('Emotional Control - Reacting like a kid');
+                    needed.push('Control your reactions - breathe and respond with intention');
+                } else if (scoreData.metrics.Emotional_Control < 6) {
+                    missing.push('Emotional Control - Getting reactive');
+                    needed.push('Stay composed under pressure');
+                }
+
+                if (scoreData.metrics.Leadership < 4) {
+                    missing.push('Leadership - She\'s leading YOU');
+                    needed.push('Lead the conversation\'s tone - take the damn wheel');
+                } else if (scoreData.metrics.Leadership < 6) {
+                    missing.push('Leadership - Following instead of leading');
+                    needed.push('Set the direction and energy of the interaction');
+                }
+            }
+
+            // Build the feedback message with edgy tone
+            let feedback = techniqueCheck;
+
+            if (scoreData.score >= 8) {
+                const goodResponses = [
+                    '<strong style="color: #4CAF50;">Now that\'s what I\'m talking about.</strong> Keep playing at this level and you\'ll be fine.',
+                    '<strong style="color: #4CAF50;">Finally. You get it.</strong> This is how you talk to women. Don\'t forget it.',
+                    '<strong style="color: #4CAF50;">Solid.</strong> You\'re holding frame and she\'s feeling it. Stay here.'
+                ];
+                feedback = goodResponses[Math.floor(Math.random() * goodResponses.length)];
+            } else if (missing.length > 0) {
+                const harshIntros = [
+                    '<strong style="color: #ff6b6b;">Listen up, here\'s what you\'re missing:</strong>',
+                    '<strong style="color: #ff6b6b;">Wake up. You\'re bleeding value:</strong>',
+                    '<strong style="color: #ff6b6b;">You\'re fucking up. Fix this:</strong>'
+                ];
+                feedback = harshIntros[Math.floor(Math.random() * harshIntros.length)] + '<br><br>';
+                feedback += '<ul style="margin: 8px 0; padding-left: 20px;">';
+                missing.forEach(item => {
+                    feedback += `<li style="margin: 4px 0; color: #ff6b6b;">${item}</li>`;
+                });
+                feedback += '</ul>';
+
+                // Add what's needed section
+                feedback += '<br><strong style="color: #D4AF37;">What you NEED to do:</strong><br><br>';
+                feedback += '<ul style="margin: 8px 0; padding-left: 20px;">';
+                needed.forEach(item => {
+                    feedback += `<li style="margin: 4px 0; color: rgba(255, 255, 255, 0.9);">${item}</li>`;
+                });
+                feedback += '</ul>';
+            } else {
+                feedback = '<strong style="color: #66BB6A;">Decent.</strong> Not great, but not terrible. Keep your edge.';
+            }
+
+            // Add frame-specific feedback with edge
+            if (scoreData.frame_meter < -2) {
+                feedback += '<br><br><strong style="color: #D4AF37;">⚠️ Frame Broken:</strong> You\'re CHASING. Stop texting and let her wonder where you went.';
+            } else if (scoreData.frame_meter >= 3) {
+                feedback += '<br><br><strong style="color: #D4AF37;">🔥 Frame Locked:</strong> She\'s chasing YOU now. Don\'t blow it.';
+            }
+
+            feedbackDiv.innerHTML = feedback;
+        }
+    </script>
+
+    <!-- Include Paywall Modal -->
+    {% include 'paywall_modal.html' %}
+</body>
+</html>
