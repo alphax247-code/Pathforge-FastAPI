@@ -17,7 +17,7 @@
         <section class="hero">
             <div class="hero-background"></div>
             <div class="hero-text">
-                <h1>Welcome back{% if progress and progress.name %}, {{ progress.name }}{% elif user.username %}, {{ user.username }}{% endif %}!</h1>
+                <h1>Welcome back{% if user and user.username %}, {{ user.username }}{% elif progress and progress.name %}, {{ progress.name }}{% endif %}!</h1>
                 <p>Continue your journey to confidence and social mastery</p>
                 <button class="hero-cta-btn" onclick="window.location.href='{{ url_for('challenges') }}'">Start Your Challenge</button>
             </div>
