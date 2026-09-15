@@ -204,6 +204,18 @@
             animation: fadeInUp 0.8s ease-out 0.4s both;
         }
 
+        /* Keep numeric validation without the browser's mismatched spinner controls. */
+        .text-input[type="number"] {
+            appearance: textfield;
+            -moz-appearance: textfield;
+        }
+
+        .text-input[type="number"]::-webkit-inner-spin-button,
+        .text-input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
         .text-input:focus {
             outline: none;
             border-bottom-color: #D4AF37;
@@ -844,6 +856,7 @@
                         class="text-input"
                         placeholder="${placeholder}"
                         id="textInput"
+                        ${question.type === 'number' ? 'min="13" max="100" inputmode="numeric" autocomplete="off"' : 'autocomplete="given-name"'}
                         onkeypress="handleTextInput(event, '${question.id}')"
                         autofocus
                     >
