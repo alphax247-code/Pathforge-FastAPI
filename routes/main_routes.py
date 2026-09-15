@@ -21,6 +21,25 @@ from config import VIDEOS_BUCKET, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
 
 main_bp = Blueprint('main', __name__)
 
+# Temporary XP rank names and thresholds. Keep these centralized so the names
+# and progression can be redesigned later without changing templates.
+XP_RANKS = (
+    (3000, "Ultimate"),
+    (1500, "Pro"),
+    (500, "Intermediate"),
+    (100, "Beginner"),
+    (0, "Novice"),
+)
+
+def get_xp_rank(xp):
+    try:
+        total_xp = max(0, int(xp or 0))
+    except (TypeError, ValueError):
+        total_xp = 0
+    for minimum_xp, name in XP_RANKS:
+        if total_xp >= minimum_xp:
+            return {"name": name, "minimum_xp": minimum_xp}
+
 def needs_onboarding(profile):
     """Require both a completed onboarding flag and the user's chosen name."""
     return not profile.get("onboarding_completed") or not (profile.get("name") or "").strip()
@@ -127,17 +146,53 @@ def onboarding():
     row = ensure_profile_exists() or {}
     return render_template("onboarding.html", row=row)
 
-@main_bp.route("/profile")
+@main_bp.route("/profile", methods=["GET", "POST"])
 def profile():
     guard = require_login()
     if guard:
         return guard
 
     u = get_current_user()
-    # Use cached profile data for performance
     row = ensure_profile_exists() or {}
 
-    return render_template("profile.html", user=u, progress=row, assessment=None, is_admin=is_user_admin())
+    if needs_onboarding(row):
+        return redirect(url_for("main.onboarding"))
+
+    if request.method == "POST":
+        if not verify_form_csrf(request.form.get("csrf_token")):
+            flash("Invalid security token. Please try again.", "error")
+            return redirect(url_for("main.profile"))
+
+        name = (request.form.get("name") or "").strip()
+        if not name:
+            flash("Please enter the name you want displayed.", "error")
+            return redirect(url_for("main.profile"))
+
+        payload = {
+            "user_id": u.get("id"),
+            "name": name,
+            "updated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        }
+        response = upsert_profile_row(payload, use_service_role=True)
+        if response.status_code >= 400:
+            flash("We could not update your profile. Please try again.", "error")
+            return redirect(url_for("main.profile"))
+
+        clear_profile_cache(u.get("id"))
+        flash("Profile updated successfully.", "success")
+        return redirect(url_for("main.profile"))
+
+    rank = get_xp_rank(row.get("xp"))
+    subscription_status = row.get("subscription_status") or row.get("subscription_tier") or "Free"
+    return render_template(
+        "profile.html",
+        user=u,
+        progress=row,
+        rank=rank,
+        subscription_status=subscription_status,
+        assessment=None,
+        is_admin=is_user_admin(),
+    )
 
 # -------- Video/Lessons --------
 @main_bp.route("/my-videos")
