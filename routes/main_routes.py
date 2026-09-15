@@ -21,13 +21,17 @@ from config import VIDEOS_BUCKET, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
 
 main_bp = Blueprint('main', __name__)
 
+def needs_onboarding(profile):
+    """Require both a completed onboarding flag and the user's chosen name."""
+    return not profile.get("onboarding_completed") or not (profile.get("name") or "").strip()
+
 @main_bp.route("/")
 def index():
     user = get_current_user()
     if user:
         profile = ensure_profile_exists() or {}
         # Redirect to onboarding if not completed
-        if not profile.get("onboarding_completed"):
+        if needs_onboarding(profile):
             return redirect(url_for("main.onboarding"))
         is_admin = user.get("is_admin", False)
         return render_template("index.html", user=user, progress=profile, is_admin=is_admin)
@@ -63,7 +67,7 @@ def dashboard():
     profile = ensure_profile_exists() or {}
 
     # Redirect to onboarding if not completed
-    if not profile.get("onboarding_completed"):
+    if needs_onboarding(profile):
         return redirect(url_for("main.onboarding"))
 
     is_admin = user.get("is_admin", False)
