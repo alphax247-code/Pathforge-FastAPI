@@ -14,7 +14,8 @@ from database import (
     ensure_profile_exists,
     get_profile_row,
     upsert_profile_row,
-    clear_profile_cache
+    clear_profile_cache,
+    is_onboarding_complete,
 )
 from storage import storage_list
 from config import VIDEOS_BUCKET, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
