@@ -24,7 +24,7 @@ main_bp = Blueprint('main', __name__)
 # Temporary XP rank names and thresholds. Keep these centralized so the names
 # and progression can be redesigned later without changing templates.
 XP_RANKS = (
-    (3000, "Boss"),
+    (3000, "General"),
     (1500, "Captain"),
     (500, "Enforcer"),
     (100, "Soldier"),
