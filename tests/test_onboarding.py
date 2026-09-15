@@ -8,6 +8,7 @@ def complete_profile():
         "onboarding_completed": True,
         "assessment_json": {
             "completedAt": "2026-09-15T17:00:00Z",
+            "onboardingVersion": 2,
             "attachment": {"dominant": "secure"},
             "archetype": {"dominant": "charmer"},
             "shadow": {"dominant": "the_creator"},
@@ -30,4 +31,10 @@ def test_partial_or_sample_profile_requires_onboarding():
 def test_missing_assessment_section_requires_onboarding():
     profile = complete_profile()
     del profile["assessment_json"]["shadow"]
+    assert is_onboarding_complete(profile) is False
+
+
+def test_old_full_assessment_requires_current_onboarding():
+    profile = complete_profile()
+    del profile["assessment_json"]["onboardingVersion"]
     assert is_onboarding_complete(profile) is False
