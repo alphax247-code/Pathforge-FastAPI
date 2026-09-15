@@ -38,6 +38,21 @@ else:
 # Ensure session is always permanent when set
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=7)
 
+# Authentication is now handled by native FastAPI routes. Register build-only
+# Flask rules so legacy views and templates can still use url_for("auth.*")
+# without re-registering the removed Flask authentication blueprint.
+FASTAPI_AUTH_ROUTES = {
+    "auth.signup": "/signup",
+    "auth.login": "/login",
+    "auth.logout": "/logout",
+    "auth.login_google": "/login/google",
+    "auth.login_facebook": "/login/facebook",
+    "auth.auth_callback": "/auth/callback",
+}
+
+for endpoint, path in FASTAPI_AUTH_ROUTES.items():
+    app.add_url_rule(path, endpoint=endpoint, build_only=True)
+
 # ============================================================
 # Template Context Processor & Helper Functions
 # ============================================================
