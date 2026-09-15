@@ -1,4 +1,5 @@
 from database import is_onboarding_complete
+from routes.main_routes import needs_onboarding
 
 
 def complete_profile():
@@ -38,3 +39,7 @@ def test_old_full_assessment_requires_current_onboarding():
     profile = complete_profile()
     del profile["assessment_json"]["onboardingVersion"]
     assert is_onboarding_complete(profile) is False
+
+
+def test_dashboard_onboarding_gate_is_callable():
+    assert needs_onboarding({"name": "Gerald", "onboarding_completed": True}) is True
