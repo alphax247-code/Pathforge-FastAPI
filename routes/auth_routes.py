@@ -213,7 +213,7 @@ async def login(
     remember = remember_me == "1"
     data = _user_session(user, payload.get("access_token", ""), payload.get("refresh_token"), remember)
     _flash(data, "Logged in!", "info")
-    target = "/admin" if data["user"]["is_admin"] else "/dashboard"
+    target = "/admin/dashboard" if data["user"]["is_admin"] else "/dashboard"
     return _redirect(target, data, remember=remember)
 
 
@@ -293,7 +293,7 @@ async def auth_callback(request: Request, code: str | None = None, error: str | 
         return _redirect("/login", data)
     data = _user_session(user_response.json(), access, payload.get("refresh_token"), True)
     _flash(data, "Logged in with OAuth!", "info")
-    target = "/admin" if data["user"]["is_admin"] else "/dashboard"
+    target = "/admin/dashboard" if data["user"]["is_admin"] else "/dashboard"
     return _redirect(target, data, remember=True)
 
 
@@ -312,7 +312,7 @@ async def browser_session(request: Request):
     data = _user_session(user_response.json(), access, payload.get("refresh_token"), True)
     response = JSONResponse({
         "success": True,
-        "redirect": "/admin" if data["user"]["is_admin"] else "/dashboard",
+        "redirect": "/admin/dashboard" if data["user"]["is_admin"] else "/dashboard",
     })
     _save_session(response, data, remember=True)
     return response
