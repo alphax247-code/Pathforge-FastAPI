@@ -9,6 +9,8 @@ from config import SUPABASE_URL
 from auth import get_current_user, sb_headers_service, sb_headers_user
 from supabase_connection import get_supabase_session
 
+CURRENT_ONBOARDING_VERSION = 2
+
 # ============================================================
 # Supabase DB (REST): onboarding + progress + personal info
 # Table: public.user_profile
@@ -26,6 +28,8 @@ def is_onboarding_complete(profile: dict | None) -> bool:
 
     assessment = profile.get("assessment_json")
     if not isinstance(assessment, dict) or not assessment.get("completedAt"):
+        return False
+    if assessment.get("onboardingVersion") != CURRENT_ONBOARDING_VERSION:
         return False
 
     for section in ("attachment", "archetype", "shadow"):
