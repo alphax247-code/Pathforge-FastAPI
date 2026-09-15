@@ -15,9 +15,19 @@
     <main>
         <!-- Page Header -->
         <section class="page-header">
-            <h1>Your Profile</h1>
+            <h1>Profile &amp; Settings</h1>
             <p>Track your progress and manage your account settings</p>
         </section>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="profile-messages" role="status">
+                    {% for category, message in messages %}
+                        <div class="profile-message {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
 
         <!-- Profile Content -->
         <div class="profile-layout">
@@ -28,12 +38,26 @@
                     <div class="profile-header">
                         <div class="profile-avatar"></div>
                         <div class="profile-details">
-                            <h2>{{ user.username }}</h2>
+                            <h2>{{ progress.name }}</h2>
+                            <p>@{{ user.username }}</p>
                             <p>Member since {% if user.created_at %}{{ user.created_at.strftime('%B %Y') if user.created_at.__class__.__name__ == 'datetime' else user.created_at }}{% else %}Recently{% endif %}</p>
-                            <span class="level-badge">Level {{ progress.level }}</span>
+                            <span class="level-badge">{{ rank.name }} · Level {{ progress.level }}</span>
                         </div>
                     </div>
-                    <button class="edit-profile-btn">Edit Profile</button>
+                    <button class="edit-profile-btn" type="button" onclick="toggleProfileEditor()">Edit Profile</button>
+                    <form id="profile-editor" class="profile-editor" method="post" action="{{ url_for('profile') }}" hidden>
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <label for="profile-name">Display name</label>
+                        <input id="profile-name" name="name" type="text" value="{{ progress.name }}" required autocomplete="name">
+                        <label for="profile-email">Email</label>
+                        <input id="profile-email" type="email" value="{{ user.email }}" readonly>
+                        <label for="profile-username">Username</label>
+                        <input id="profile-username" type="text" value="{{ user.username }}" readonly>
+                        <div class="profile-editor-actions">
+                            <button class="edit-profile-btn" type="submit">Save Changes</button>
+                            <button class="profile-cancel-btn" type="button" onclick="toggleProfileEditor()">Cancel</button>
+                        </div>
+                    </form>
                 </div>
 
                 <!-- Stats Card -->
@@ -43,6 +67,10 @@
                         <div class="stat-item">
                             <div class="stat-value">{{ progress.level }}</div>
                             <div class="stat-label">Current Level</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value stat-rank">{{ rank.name }}</div>
+                            <div class="stat-label">XP Rank</div>
                         </div>
                         <div class="stat-item">
                             <div class="stat-value">{{ progress.completed_lessons.split(',') | length if progress.completed_lessons else 0 }}</div>
@@ -238,26 +266,18 @@
                 </style>
                 {% endif %}
 
-                <!-- Account Settings -->
+                <!-- Account Information -->
                 <div class="profile-card">
-                    <h2>Account Settings</h2>
+                    <h2>Account Information</h2>
                     <div class="settings-list">
-                        <div class="setting-item" onclick="editSetting('email')">
-                            <span>Email</span>
-                            <span class="setting-value">{{ user.email }}</span>
+                        <div class="setting-item"><span>Email</span><span class="setting-value">{{ user.email }}</span></div>
+                        <div class="setting-item"><span>Username</span><span class="setting-value">{{ user.username }}</span></div>
+                        <div class="setting-item">
+                            <span>Member Since</span>
+                            <span class="setting-value">{% if user.created_at %}{{ user.created_at.strftime('%B %Y') if user.created_at.__class__.__name__ == 'datetime' else user.created_at }}{% else %}Recently{% endif %}</span>
                         </div>
-                        <div class="setting-item" onclick="editSetting('password')">
-                            <span>Password</span>
-                            <span class="setting-value">••••••••</span>
-                        </div>
-                        <div class="setting-item" onclick="editSetting('notifications')">
-                            <span>Notifications</span>
-                            <span class="setting-value">On</span>
-                        </div>
-                        <div class="setting-item" onclick="editSetting('privacy')">
-                            <span>Privacy</span>
-                            <span class="setting-value">Private</span>
-                        </div>
+                        <div class="setting-item"><span>Subscription</span><span class="setting-value">{{ subscription_status }}</span></div>
+                        <div class="setting-item"><span>Onboarding</span><span class="setting-value">Complete</span></div>
                     </div>
                 </div>
 
@@ -265,7 +285,7 @@
                 <div class="profile-card">
                     <h2>Subscription</h2>
                     <div class="subscription-info">
-                        <div class="plan-name">Free Plan</div>
+                        <div class="plan-name">{{ subscription_status }} Plan</div>
                         <p>Upgrade to unlock all features</p>
                         <button class="upgrade-plan-btn">Upgrade Now</button>
                     </div>
@@ -289,16 +309,10 @@
                     </div>
                 </div>
 
-                <!-- Danger Zone -->
+                <!-- Account Actions -->
                 <div class="profile-card danger-zone">
                     <h2>Account Actions</h2>
-                    {% if not user.is_admin %}
-                    <button class="upgrade-plan-btn" onclick="becomeAdmin()" style="margin-bottom: 10px; background: linear-gradient(135deg, #D4AF37 0%, #FFD700 100%); border: none;">
-                        ⚡ Become Admin (Dev Only)
-                    </button>
-                    {% endif %}
-                    <button class="danger-btn" onclick="logout()">Log Out</button>
-                    <button class="danger-btn" onclick="deleteAccount()">Delete Account</button>
+                    <a class="danger-btn" href="{{ url_for('logout') }}">Log Out</a>
                 </div>
             </div>
         </div>
@@ -306,30 +320,11 @@
 
     <script src="{{ url_for('static', filename='js/pathforge-complete.js') }}"></script>
     <script>
-        async function becomeAdmin() {
-            if (!confirm('Make yourself an admin? This is for development purposes only.')) {
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/admin/make-admin', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    alert('✅ You are now an admin! Reloading page...');
-                    window.location.reload();
-                } else {
-                    alert('❌ Error: ' + (data.error || 'Failed to become admin'));
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('❌ Error making you admin. Check console for details.');
+        function toggleProfileEditor() {
+            const editor = document.getElementById('profile-editor');
+            editor.hidden = !editor.hidden;
+            if (!editor.hidden) {
+                document.getElementById('profile-name').focus();
             }
         }
     </script>
