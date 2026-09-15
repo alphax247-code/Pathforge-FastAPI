@@ -14,7 +14,8 @@ from database import (
     get_profile_row,
     upsert_profile_row,
     update_streak_fields,
-    clear_profile_cache
+    clear_profile_cache,
+    is_onboarding_complete,
 )
 from storage import storage_list, storage_delete
 from config import VIDEOS_BUCKET, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY as SUPABASE_SERVICE_KEY
@@ -97,7 +98,7 @@ def get_progress():
     # Use cached profile for performance
     row = ensure_profile_exists() or {}
 
-    if not row.get("onboarding_completed"):
+    if not is_onboarding_complete(row):
         return jsonify({"error": "Onboarding not completed", "redirect": "/onboarding"}), 403
 
     updated = update_streak_fields(dict(row))
@@ -128,7 +129,7 @@ def save_progress():
 
     # Use cached profile for performance
     row = ensure_profile_exists() or {}
-    if not row.get("onboarding_completed"):
+    if not is_onboarding_complete(row):
         return jsonify({"error": "Onboarding not completed", "redirect": "/onboarding"}), 403
 
     data = request.get_json(silent=True) or {}
