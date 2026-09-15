@@ -41,8 +41,8 @@ def get_xp_rank(xp):
             return {"name": name, "minimum_xp": minimum_xp}
 
 def needs_onboarding(profile):
-    """Require both a completed onboarding flag and the user's chosen name."""
-    return not profile.get("onboarding_completed") or not (profile.get("name") or "").strip()
+    """Require a fully saved onboarding assessment."""
+    return not is_onboarding_complete(profile)
 
 @main_bp.route("/")
 def index():
