@@ -97,7 +97,7 @@
 
 {% block content %}
 <div class="dashboard-header">
-    <h1>Welcome{% if user and user.username %}, {{ user.username }}{% elif progress and progress.name %}, {{ progress.name }}{% endif %}!</h1>
+    <h1>Welcome{% if progress and progress.name %}, {{ progress.name }}{% elif user and user.username %}, {{ user.username }}{% endif %}!</h1>
     <p>Your journey to mastery continues</p>
 
     {% if progress %}
