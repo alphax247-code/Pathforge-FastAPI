@@ -446,6 +446,65 @@
             overflow: hidden;
         }
 
+        /* Results use the full viewport efficiently without a nested desktop scrollbar. */
+        .results-modal {
+            width: min(1120px, calc(100vw - 32px));
+            max-width: none;
+            max-height: calc(100dvh - 32px);
+            padding: clamp(20px, 3vh, 32px);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .results-modal h2 {
+            font-size: clamp(26px, 4vh, 36px);
+            margin-bottom: 6px;
+            flex-shrink: 0;
+        }
+
+        .results-subtitle {
+            margin-bottom: clamp(12px, 2vh, 22px) !important;
+            flex-shrink: 0;
+        }
+
+        #resultsContent {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: clamp(10px, 1.5vw, 18px);
+            text-align: left;
+            position: relative;
+            z-index: 1;
+            min-height: 0;
+        }
+
+        .results-modal .result-section {
+            margin-bottom: 0;
+            padding: clamp(14px, 2vh, 22px);
+            min-width: 0;
+        }
+
+        .results-modal .result-section h3 {
+            font-size: clamp(15px, 1.8vh, 20px);
+        }
+
+        .results-modal .dominant-label {
+            font-size: clamp(18px, 2.3vh, 24px);
+            margin-bottom: clamp(6px, 1vh, 12px);
+        }
+
+        .results-modal .description {
+            font-size: clamp(12px, 1.45vh, 14px);
+            line-height: 1.5;
+            margin-bottom: 0;
+        }
+
+        .results-modal .modal-button {
+            margin-top: clamp(14px, 2.5vh, 26px);
+            align-self: center;
+            flex-shrink: 0;
+        }
+
         .modal::before {
             content: '';
             position: absolute;
@@ -644,6 +703,24 @@
             text-align: right;
         }
 
+        @media (max-width: 820px), (max-height: 620px) {
+            .modal-overlay {
+                align-items: flex-start;
+                padding: 10px;
+                overflow-y: auto;
+            }
+
+            .results-modal {
+                width: 100%;
+                max-height: none;
+                overflow: visible;
+            }
+
+            #resultsContent {
+                grid-template-columns: 1fr;
+            }
+        }
+
         @media (max-width: 768px) {
             .question-text {
                 font-size: 20px;
@@ -684,15 +761,15 @@
     </div>
 
     <div id="resultsModal" class="modal-overlay">
-        <div class="modal" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
-            <h2 id="welcomeName" style="margin-bottom: 10px;">Welcome!</h2>
-            <p style="margin-bottom: 40px; opacity: 0.8;">Here's your complete personality profile</p>
+        <div class="modal results-modal">
+            <h2 id="welcomeName">Welcome!</h2>
+            <p class="results-subtitle" style="opacity: 0.8;">Here's your complete personality profile</p>
 
-            <div id="resultsContent" style="text-align: left; position: relative; z-index: 1;">
+            <div id="resultsContent">
                 <!-- Results will be inserted here -->
             </div>
 
-            <button class="modal-button" onclick="startJourney()" style="margin-top: 30px;">START YOUR JOURNEY</button>
+            <button class="modal-button" onclick="startJourney()">START YOUR JOURNEY</button>
         </div>
     </div>
 
