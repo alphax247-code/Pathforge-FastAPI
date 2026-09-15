@@ -126,11 +126,13 @@ def _error_detail(response: httpx.Response, fallback: str) -> str:
 
 def _user_session(user: dict[str, Any], access: str, refresh: str | None, remember: bool) -> dict[str, Any]:
     metadata = user.get("user_metadata") or {}
+    email = user.get("email") or ""
     return {
         "_permanent": True,
         "user": {
             "id": user.get("id"),
-            "email": user.get("email"),
+            "email": email,
+            "username": metadata.get("username") or email.split("@")[0],
             "created_at": user.get("created_at"),
             "is_admin": bool(metadata.get("is_admin", False)),
         },
