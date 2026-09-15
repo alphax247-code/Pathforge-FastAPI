@@ -11,8 +11,19 @@ from auth import require_admin_auth, verify_form_csrf, supabase_admin_list_users
 from storage import storage_upload, storage_list
 from config import VIDEOS_BUCKET, PLAYLISTS
 from media import upload_file_to_storage, list_storage_files, delete_storage_file
+from database import ensure_profile_exists, is_onboarding_complete
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
+
+@admin_bp.before_request
+def require_admin_onboarding():
+    """Do not allow admin pages to bypass required onboarding."""
+    guard = require_admin_auth()
+    if guard:
+        return guard
+    if not is_onboarding_complete(ensure_profile_exists() or {}):
+        flash("Please complete onboarding before using the admin area.", "info")
+        return redirect(url_for("main.onboarding"))
 
 @admin_bp.route("/dashboard")
 def dashboard():
@@ -42,6 +53,18 @@ def dashboard():
                 all_users = users_data.get("users", [])
                 total_users = len(all_users)
 
+                profiles_url = f"{SUPABASE_URL}/rest/v1/user_profile?select=user_id,name,age,onboarding_completed,assessment_json"
+                profiles_response = requests.get(
+                    profiles_url,
+                    headers={
+                        "apikey": SUPABASE_SERVICE_ROLE_KEY,
+                        "Authorization": f"Bearer {SUPABASE_SERVICE_ROLE_KEY}",
+                    },
+                    timeout=30,
+                )
+                profiles = profiles_response.json() if profiles_response.status_code < 400 else []
+                profiles_by_user = {profile.get("user_id"): profile for profile in profiles}
+
                 # Process users for display
                 processed_users = []
                 for user in all_users:
@@ -51,6 +74,7 @@ def dashboard():
                         'email': user.get('email', 'N/A'),
                         'username': metadata.get('username') or user.get('email', 'N/A').split('@')[0],
                         'is_admin': metadata.get('is_admin', False),
+                        'onboarding_complete': is_onboarding_complete(profiles_by_user.get(user.get('id'))),
                         'created_at': datetime.fromisoformat(user.get('created_at', '').replace('Z', '+00:00')) if user.get('created_at') else datetime.now()
                     }
                     processed_users.append(user_obj)
@@ -121,7 +145,7 @@ def users():
             "Content-Type": "application/json"
         }
 
-        profiles_url = f"{SUPABASE_URL}/rest/v1/profiles?select=*"
+        profiles_url = f"{SUPABASE_URL}/rest/v1/user_profile?select=*"
         profiles_response = requests.get(profiles_url, headers=headers, timeout=30)
 
         if profiles_response.status_code < 400:
@@ -155,7 +179,7 @@ def users():
             'xp': profile.get('xp', 0),
             'level': profile.get('level', 1),
             'streak': profile.get('streak', 0),
-            'onboarding_completed': profile.get('onboarding_completed', False),
+            'onboarding_completed': is_onboarding_complete(profile),
             'completed_lessons': profile.get('completed_lessons', ''),
             'last_lesson_at': profile.get('last_lesson_at'),
             'created_at': profile.get('created_at'),
