@@ -2781,3 +2781,78 @@ main {
 /* ============================================================================
    END OF PATHFORGE CSS
    ============================================================================ */
+
+
+/* Combined Profile & Settings */
+.profile-messages {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.profile-message {
+    padding: 14px 16px;
+    color: #fff;
+    background: rgba(212, 175, 55, 0.12);
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    border-radius: 8px;
+}
+
+.profile-message.error {
+    background: rgba(220, 53, 69, 0.12);
+    border-color: rgba(220, 53, 69, 0.45);
+}
+
+.profile-editor {
+    margin-top: 20px;
+    display: grid;
+    gap: 10px;
+}
+
+.profile-editor[hidden] {
+    display: none;
+}
+
+.profile-editor label {
+    color: #D4AF37;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.profile-editor input {
+    width: 100%;
+    padding: 12px 14px;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(212, 175, 55, 0.25);
+    border-radius: 8px;
+}
+
+.profile-editor input[readonly] {
+    color: #9E9E9E;
+    cursor: not-allowed;
+}
+
+.profile-editor-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.profile-cancel-btn {
+    padding: 12px 20px;
+    color: #fff;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+}
+
+.stat-rank {
+    font-size: 20px;
+}
+
+.danger-btn {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+}
