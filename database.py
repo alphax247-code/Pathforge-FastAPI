@@ -17,6 +17,23 @@ def rest_url(table: str) -> str:
     """Build REST API URL for a table."""
     return f"{SUPABASE_URL}/rest/v1/{table}"
 
+def is_onboarding_complete(profile: dict | None) -> bool:
+    """Return True only when the full onboarding assessment was saved."""
+    if not isinstance(profile, dict) or profile.get("onboarding_completed") is not True:
+        return False
+    if not str(profile.get("name") or "").strip() or profile.get("age") is None:
+        return False
+
+    assessment = profile.get("assessment_json")
+    if not isinstance(assessment, dict) or not assessment.get("completedAt"):
+        return False
+
+    for section in ("attachment", "archetype", "shadow"):
+        result = assessment.get(section)
+        if not isinstance(result, dict) or not result.get("dominant"):
+            return False
+    return True
+
 def get_profile_row(user_id: str, use_service_role: bool = False):
     """
     Get a user profile row by user_id.
