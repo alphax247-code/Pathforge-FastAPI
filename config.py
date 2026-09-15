@@ -38,19 +38,17 @@ PLAYLISTS = [
     {"id": 5, "name": "Community", "description": "Community-contributed content"}
 ]
 
-# Validate required environment variables (only in production)
-if IS_PROD and (not SUPABASE_URL or not SUPABASE_ANON_KEY or not SUPABASE_SERVICE_ROLE_KEY):
-    print("=" * 80, file=sys.stderr)
-    print("ERROR: Missing required Supabase environment variables!", file=sys.stderr)
-    print("Please set the following in your deployment platform:", file=sys.stderr)
-    print("  - SUPABASE_URL", file=sys.stderr)
-    print("  - SUPABASE_ANON_KEY", file=sys.stderr)
-    print("  - SUPABASE_SERVICE_ROLE_KEY", file=sys.stderr)
-    print("=" * 80, file=sys.stderr)
-    raise RuntimeError(
-        "Missing Supabase env vars. Set SUPABASE_URL / SUPABASE_ANON_KEY / SUPABASE_SERVICE_ROLE_KEY."
+# Allow the web process to start before Supabase is configured. Routes that rely
+# on authentication, database data, or storage will remain unavailable until all
+# three values are supplied in the deployment environment.
+SUPABASE_CONFIGURED = bool(
+    SUPABASE_URL and SUPABASE_ANON_KEY and SUPABASE_SERVICE_ROLE_KEY
+)
+
+if not SUPABASE_CONFIGURED:
+    print(
+        "WARNING: Supabase is not configured. The application will start, but "
+        "authentication, database, and storage features are disabled until "
+        "SUPABASE_URL, SUPABASE_ANON_KEY, and SUPABASE_SERVICE_ROLE_KEY are set.",
+        file=sys.stderr,
     )
-elif not IS_PROD:
-    # In development, warn if Supabase vars are missing
-    if not SUPABASE_URL or not SUPABASE_ANON_KEY or not SUPABASE_SERVICE_ROLE_KEY:
-        print("WARNING: Supabase environment variables not set. Using development mode.", file=sys.stderr)
