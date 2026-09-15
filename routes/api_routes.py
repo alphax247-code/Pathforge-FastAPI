@@ -16,6 +16,7 @@ from database import (
     update_streak_fields,
     clear_profile_cache,
     is_onboarding_complete,
+    CURRENT_ONBOARDING_VERSION,
 )
 from storage import storage_list, storage_delete
 from config import VIDEOS_BUCKET, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY as SUPABASE_SERVICE_KEY
@@ -46,6 +47,9 @@ def save_assessment():
 
     u = get_current_user()
     user_id = u.get("id")
+
+    # Stamp completion server-side so old or sample assessment data cannot bypass onboarding.
+    data["onboardingVersion"] = CURRENT_ONBOARDING_VERSION
 
     # Pull simple fields (optional)
     name = (data.get("name") or "").strip() or None
